@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <title>ТКС «ОРИОН» - Панель управления</title>
+  <link rel="stylesheet" href="globals.css" />
+  <link rel="stylesheet" href="styleguide.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <main class="screen">
+    <header class="frame">
+      <div class="div">
+        <h1 class="text-wrapper">ТКС «ОРИОН»</h1>
+      </div>
+      <div class="badge" role="status" aria-label="Статус системы">
+        <div class="ellipse" aria-hidden="true"></div>
+        <span class="text-wrapper-2">Всё работает</span>
+      </div>
+      <div class="frame-2">
+        <p class="div-2">
+          <span class="span">Температура: +45℃</span>
+        </p>
+        <div class="div-2">MAC-адрес: 12.34.56.78</div>
+      </div>
+      <div class="frame-3">
+        <div class="wi-fi">WiFi Работает</div>
+        <fieldset class="thumbler" role="radiogroup" aria-labelledby="wifi-status">
+          <legend id="wifi-status" class="sr-only">Статус WiFi</legend>
+          <label class="button">
+            <input type="radio" name="wifi-toggle" value="off" class="sr-only" />
+            <span class="title">Выкл</span>
+          </label>
+          <label class="title-wrapper">
+            <input type="radio" name="wifi-toggle" value="on" checked class="sr-only" />
+            <span class="title-2">Вкл</span>
+          </label>
+        </fieldset>
+      </div>
+    </header>
+    <div class="frame-wrapper">
+      <div class="frame-4">
+        <section class="frame-5" aria-label="Статус системы">
+          <article class="frame-6">
+            <img class="component" src="https://c.animaapp.com/mg0opgtb6oSiXh/img/name-goodicon.svg"
+              alt="Иконка питания" />
+            <div class="frame-7">
+              <h3 class="text-wrapper-3">Питание</h3>
+              <div class="text-wrapper-4">Есть</div>
+            </div>
+          </article>
+          <article class="frame-8">
+            <img class="img" src="https://c.animaapp.com/mg0opgtb6oSiXh/img/component-1.svg" alt="Иконка координат" />
+            <div class="frame-7">
+              <h3 class="text-wrapper-3">Координаты</h3>
+              <p class="element">
+                <span class="text-wrapper-5">Ш: 55.73; Д: 55.73 </span>
+                <span class="text-wrapper-6">Определены</span>
+              </p>
+            </div>
+          </article>
+          <article class="frame-9">
+            <img class="img" src="https://c.animaapp.com/mg0opgtb6oSiXh/img/component-1.svg"
+              alt="Иконка спутниковой связи" />
+            <div class="frame-7">
+              <h3 class="text-wrapper-3">Связь<br />со спутником</h3>
+              <div class="text-wrapper-4">Есть</div>
+            </div>
+          </article>
+          <article class="frame-9">
+            <img class="component" src="https://c.animaapp.com/mg0opgtb6oSiXh/img/name-goodicon.svg"
+              alt="Иконка интернета" />
+            <div class="frame-7">
+              <h3 class="text-wrapper-3">Интернет</h3>
+              <div class="text-wrapper-4">Есть</div>
+            </div>
+          </article>
+          <article class="frame-10">
+            <div class="frame-11" role="progressbar" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100"
+              aria-label="Приём данных 98%">
+              <div class="rectangle"></div>
+              <div class="rectangle-2"></div>
+            </div>
+            <div class="frame-7">
+              <h3 class="text-wrapper-3">Приём данных</h3>
+              <p class="p">
+                <span class="text-wrapper-7">98% (-10 из 6,6Дб) </span>
+                <span class="text-wrapper-8">Нормально</span>
+              </p>
+            </div>
+          </article>
+          <article class="frame-12">
+            <div class="frame-11" role="progressbar" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100"
+              aria-label="Передача данных 98%">
+              <div class="rectangle"></div>
+              <div class="rectangle-2"></div>
+            </div>
+            <div class="frame-7">
+              <h3 class="text-wrapper-3">Передача данных</h3>
+              <p class="p">
+                <span class="text-wrapper-7">98% (-10 из 6,6Дб) </span>
+                <span class="text-wrapper-8">Нормально</span>
+              </p>
+            </div>
+          </article>
+        </section>
+        <section class="frame-13" aria-label="Детали подключения и управление">
+          <div class="frame-14">
+            <section class="frame-15">
+              <h2 class="text-wrapper-9">Детали подключения</h2>
+              <div class="frame-16">
+                <div class="frame-17">
+                  <div class="div-wrapper">
+                    <label class="text-wrapper-10" for="coordinates">Координаты</label>
+                  </div>
+                  <p class="span-wrapper">
+                    <span class="span">Широта: 55.73; Долгота: 37.61</span>
+                  </p>
+                  <div class="checkbox-w-label">
+                    <input type="checkbox" id="edit-coordinates" class="checkbox-input sr-only" />
+                    <label for="edit-coordinates" class="checkbox">
+                      <div class="rectangle-3"></div>
+                    </label>
+                    <label for="edit-coordinates" class="label">
+                      <span class="title-3">Изменить</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="frame-17">
+                  <div class="div-wrapper">
+                    <label class="text-wrapper-10" for="wifi-password">Пароль на WiFi</label>
+                  </div>
+                  <p class="span-wrapper">
+                    <span class="span">12345678</span>
+                  </p>
+                  <div class="checkbox-w-label">
+                    <input type="checkbox" id="edit-wifi-password" class="checkbox-input sr-only" />
+                    <label for="edit-wifi-password" class="checkbox">
+                      <div class="rectangle-3"></div>
+                    </label>
+                    <label for="edit-wifi-password" class="label">
+                      <span class="title-3">Изменить</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="frame-17">
+                  <div class="div-wrapper">
+                    <p class="div-3">Номер луча в радио-частотном (РЧ) кластере</p>
+                  </div>
+                  <p class="span-wrapper">
+                    <span class="span">29</span>
+                  </p>
+                </div>
+                <div class="frame-18">
+                  <div class="div-wrapper">
+                    <div class="text-wrapper-11">РЧ кластер / поляризация</div>
+                  </div>
+                  <p class="element-2">
+                    <span class="span">29 / А</span>
+                  </p>
+                </div>
+                <div class="frame-19">
+                  <div class="frame-20">
+                    <div class="frame-21">
+                      <div class="div-3">Температура модема</div>
+                    </div>
+                    <div class="state-default">
+                      <div class="frame-11" role="meter" aria-valuenow="45" aria-valuemin="-30" aria-valuemax="85"
+                        aria-label="Температура модема 45 градусов">
+                        <div class="rectangle-4"></div>
+                        <div class="rectangle-2"></div>
+                      </div>
+                      <div class="frame-22">
+                        <div class="text-wrapper-12">Низкая (-30℃)</div>
+                        <div class="text-wrapper-13">Нормальная (+10℃)</div>
+                        <div class="text-wrapper-14">Высокая (85℃)</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="frame-15">
+              <div class="frame-7">
+                <h2 class="text-wrapper-15">Лог событий</h2>
+                <p class="text-wrapper-16">Показано максимум 10 последних событий</p>
+              </div>
+              <div class="frame-23" role="log" aria-label="События системы">
+                <article class="frame-24">
+                  <div class="text-wrapper-17">1</div>
+                  <p class="div-3">Автовыключение — Сработало из-за повышенной температуры</p>
+                  <time class="text-wrapper-18" datetime="2025-09-25T12:41">25.09.2025, 12:41</time>
+                </article>
+                <article class="frame-25">
+                  <div class="text-wrapper-17">2</div>
+                  <p class="div-3">
+                    <span class="span">Температура модема — Высокая: 85℃, Выше нормальной на 56℃</span>
+                  </p>
+                  <time class="text-wrapper-18" datetime="2025-09-25T12:34">25.09.2025, 12:34</time>
+                </article>
+                <article class="frame-25">
+                  <div class="text-wrapper-17">3</div>
+                  <p class="div-3">
+                    <span class="span">Температура модема — Высокая: 85℃, Выше нормальной на 56℃</span>
+                  </p>
+                  <time class="text-wrapper-18" datetime="2025-09-25T12:34">25.09.2025, 12:34</time>
+                </article>
+                <article class="frame-25">
+                  <div class="text-wrapper-17">4</div>
+                  <p class="div-3">
+                    <span class="span">Температура модема — Высокая: 85℃, Выше нормальной на 56℃</span>
+                  </p>
+                  <time class="text-wrapper-18" datetime="2025-09-25T12:34">25.09.2025, 12:34</time>
+                </article>
+              </div>
+            </section>
+          </div>
+          <aside class="frame-26" aria-label="Углы наклона и поворота">
+            <div class="frame-7">
+              <h3 class="text-wrapper-19">Угол наклона (Азимута)</h3>
+              <div class="frame-27">
+                <svg  width="66" height="66" viewBox="0 0 66 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M49.1798 59.9657L37.8045 51.3335" stroke="#8C8C8C" stroke-linecap="round" />
+                  <circle cx="2.2895" cy="2.2895" r="1.7895"
+                    transform="matrix(-0.965926 0.258819 0.258819 0.965926 52.5015 58.3749)" stroke="#8C8C8C" />
+                  <path d="M24.4533 59.8131L35.6758 51.3335" stroke="#8C8C8C" stroke-linecap="round" />
+                  <circle cx="22.9032" cy="61.1789" r="1.7895" transform="rotate(15 22.9032 61.1789)"
+                    stroke="#8C8C8C" />
+                  <path d="M32.2376 59.2025L36.8166 51.2656" stroke="#8C8C8C" stroke-linecap="round" />
+                  <circle cx="31.4506" cy="61.179" r="1.7895" transform="rotate(15 31.4506 61.179)" stroke="#8C8C8C" />
+                  <rect x="-0.136116" y="0.693882" width="9.68431" height="8.46325" rx="0.721064"
+                    transform="matrix(-0.829998 0.557766 0.557766 0.829998 35.6069 39.9205)" fill="white"
+                    stroke="#8C8C8C" />
+                  <rect x="-0.136116" y="0.693882" width="19.1476" height="6.63165" rx="0.721064"
+                    transform="matrix(-0.829998 0.557766 0.557766 0.829998 35.4082 31.9626)" fill="white"
+                    stroke="#8C8C8C" />
+                  <rect x="-0.136116" y="0.693882" width="26.9988" height="7.54745" rx="0.721064"
+                    transform="matrix(-0.829998 0.557766 0.557766 0.829998 31.4568 25.6283)" fill="white"
+                    stroke="#8C8C8C" />
+                  <rect x="-0.136116" y="0.693882" width="2.35793" height="10.2948" rx="0.721064"
+                    transform="matrix(-0.829998 0.557766 0.557766 0.829998 38.8046 20.6906)" fill="white"
+                    stroke="#8C8C8C" />
+                  <rect x="-0.136116" y="0.693882" width="6.93692" height="7.92708" rx="0.721064"
+                    transform="matrix(-0.829998 0.557766 0.557766 0.829998 50.3597 14.3517)" fill="white"
+                    stroke="#8C8C8C" />
+                  <rect x="-0.136116" y="0.693882" width="5.43112" height="5.41059" rx="0.721064"
+                    transform="matrix(-0.829998 0.557766 0.557766 0.829998 44.9997 19.4697)" fill="white"
+                    stroke="#8C8C8C" />
+                  <path
+                    d="M28.3346 9.51855C27.9145 9.99881 27.6462 10.7467 27.5775 11.7922C27.4907 13.1151 27.732 14.8213 28.2943 16.8051C29.4174 20.7673 31.7892 25.7281 35.1532 30.7341C38.5172 35.7399 42.214 39.8095 45.4581 42.3462C47.0825 43.6164 48.5711 44.4843 49.8288 44.9037C50.8227 45.2352 51.616 45.2683 52.2194 45.061C45.8813 35.6295 34.9843 19.4137 28.3346 9.51855Z"
+                    fill="white" stroke="#8C8C8C" />
+                  <line x1="0.5" y1="-0.5" x2="49.5636" y2="-0.5" transform="matrix(-1 0 0 1 62.3063 63.7815)"
+                    stroke="#8C8C8C" stroke-linecap="round" />
+                </svg>
+                <div class="frame-28">
+                  <div class="text-wrapper-20">Текущий — 123</div>
+                  <div class="text-wrapper-21">Требуемый — 456</div>
+                </div>
+              </div>
+            </div>
+            <div class="frame-7">
+              <h3 class="text-wrapper-19">Угол поворота</h3>
+              <div class="frame-27">
+                <div class="group-2">
+                  <svg class="group-3" width="80" height="80" viewBox="0 0 56 56" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <rect x="-0.114869" y="0.585741" width="22.7168" height="13.6593" rx="0.601718"
+                      transform="matrix(-0.82342 0.567433 0.548114 0.836403 25.1881 21.1409)" fill="white"
+                      stroke="#8C8C8C" stroke-width="0.834486" />
+                    <rect x="-0.114869" y="0.585741" width="1.99005" height="8.75687" rx="0.601718"
+                      transform="matrix(-0.82342 0.567433 0.548114 0.836403 32.4403 18.6254)" fill="white"
+                      stroke="#8C8C8C" stroke-width="0.834486" />
+                    <rect x="-0.114869" y="0.585741" width="5.84168" height="6.74621" rx="0.601718"
+                      transform="matrix(-0.82342 0.567433 0.548114 0.836403 42.083 13.2011)" fill="white"
+                      stroke="#8C8C8C" stroke-width="0.834486" />
+                    <rect x="-0.114869" y="0.585741" width="4.57507" height="4.60925" rx="0.601718"
+                      transform="matrix(-0.82342 0.567433 0.548114 0.836403 37.6101 17.5807)" fill="white"
+                      stroke="#8C8C8C" stroke-width="0.834486" />
+                    <path
+                      d="M23.7014 9.06117C23.3494 9.47216 23.1239 10.1135 23.0664 11.0116C22.9939 12.1449 23.1956 13.6056 23.665 15.3039C24.6025 18.6957 26.5821 22.9419 29.3899 27.2265C32.1977 31.511 35.2837 34.9947 37.992 37.1664C39.348 38.2536 40.5907 38.9969 41.6413 39.3562C42.4738 39.6409 43.1377 39.6682 43.6417 39.4894C38.3519 31.4174 29.2516 17.5305 23.7014 9.06117Z"
+                      fill="white" stroke="#8C8C8C" stroke-width="0.834486" />
+                  </svg>
+                  <div class="text-wrapper-22" aria-label="Север">N</div>
+                  <div class="text-wrapper-23" aria-label="Юг">S</div>
+                  <div class="text-wrapper-24" aria-label="Запад">W</div>
+                  <div class="text-wrapper-25" aria-label="Восток">E</div>
+                </div>
+                <div class="frame-28">
+                  <p class="element-3">
+                    <span class="text-wrapper-26">Текущий — 1860</span>
+                  </p>
+                  <div class="text-wrapper-21">Требуемый — 1860</div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </section>
+        <footer class="footer">
+          <div class="frame-29">
+            <div class="text-wrapper-27">Версия ПО: 1.1</div>
+            <button type="button" class="button-2">
+              <span class="title-4">Обновить до 1.2</span>
+            </button>
+          </div>
+          <div class="button-wrapper">
+            <button type="button" class="button-2">
+              <span class="title-4">Перенастроить модем</span>
+            </button>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </main>
+</body>
+
+</html>
