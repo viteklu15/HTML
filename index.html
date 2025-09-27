@@ -721,12 +721,10 @@
       if (!connectionAttemptSection) return;
 
       const rawAttempt = state?.attempt;
-      const attemptNumber = Number(rawAttempt);
-      const isFiniteAttempt = Number.isFinite(attemptNumber);
-      const normalizedAttempt = isFiniteAttempt ? Math.max(0, Math.min(ATTEMPT_TOTAL, Math.round(attemptNumber))) : null;
-      const shouldShowAttempt = normalizedAttempt != null && normalizedAttempt <= ATTEMPT_TOTAL;
+      const attemptTextRaw = rawAttempt == null ? '' : String(rawAttempt);
+      const hasAttemptValue = attemptTextRaw.trim() !== '';
 
-      if (!shouldShowAttempt) {
+      if (!hasAttemptValue) {
         connectionAttemptSection.hidden = true;
         if (connectionDetailsSection) connectionDetailsSection.hidden = false;
         return;
@@ -735,9 +733,13 @@
       connectionAttemptSection.hidden = false;
       if (connectionDetailsSection) connectionDetailsSection.hidden = true;
 
-      const displayAttempt = normalizedAttempt === 0 ? 1 : normalizedAttempt;
+      const attemptNumber = Number(rawAttempt);
+      const displayAttemptText = Number.isFinite(attemptNumber) && attemptNumber === 0
+        ? 'ноль'
+        : attemptTextRaw;
+
       if (connectionAttemptNumber) {
-        connectionAttemptNumber.textContent = String(Math.max(1, Math.min(ATTEMPT_TOTAL, displayAttempt)));
+        connectionAttemptNumber.textContent = displayAttemptText;
       }
       if (connectionAttemptTotal) {
         connectionAttemptTotal.textContent = String(ATTEMPT_TOTAL);
