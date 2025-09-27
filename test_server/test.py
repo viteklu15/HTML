@@ -18,8 +18,6 @@ state = {
     "tx": {"progress": 0},        # качество/RSSI убраны
     # экран «Идёт подключение…»
     "attempt": 1,
-    "attempt_total": 3,
-    "eta_sec": 180,
     # общая индикация
     "system": "pending",          # pending|ok|warn|err|off
     "modem_off": False,
@@ -30,6 +28,10 @@ state = {
         "rotate_current": 1860,
         "rotate_required": 1860
     },
+    # новые поля под скрин
+    "beam_number": 34,            # Номер луча
+    "rf_cluster": 31,             # РЧ кластер
+    "polarization": "A",          # Поляризация (A/B/…)
     # логи (макс 10)
     "logs": [
         "1) Автовыключение — Сработало из-за повышенной температуры\n25.09.2025, 12:41",
@@ -80,10 +82,11 @@ def apply_form_to_state(form):
     if "temp_c" in form:
         v = _to_int(form.get("temp_c"), state["temp_c"])
         if v is not None: state["temp_c"] = v
-    for key in ("attempt", "attempt_total", "eta_sec"):
-        if key in form:
-            v = _to_int(form.get(key), state[key])
-            if v is not None: state[key] = v
+
+    # попытка (оставили только attempt)
+    if "attempt" in form:
+        v = _to_int(form.get("attempt"), state["attempt"])
+        if v is not None: state["attempt"] = v
 
     # статусы
     if form.get("coords_status") in STATUS3: state["coords_status"] = form.get("coords_status")
@@ -107,12 +110,22 @@ def apply_form_to_state(form):
         v = _to_int(form.get("tx.progress"), state["tx"]["progress"])
         if v is not None: state["tx"]["progress"] = max(0, min(100, v))
 
-    # angles
+    # углы
     for k in ("angles.tilt_current","angles.tilt_required","angles.rotate_current","angles.rotate_required"):
         if k in form:
             v = _to_int(form.get(k), None)
             if v is not None:
                 state["angles"][k.split(".",1)[1]] = v
+
+    # новые поля (как на скрине)
+    if "beam_number" in form:
+        v = _to_int(form.get("beam_number"), state["beam_number"])
+        if v is not None: state["beam_number"] = v
+    if "rf_cluster" in form:
+        v = _to_int(form.get("rf_cluster"), state["rf_cluster"])
+        if v is not None: state["rf_cluster"] = v
+    if "polarization" in form:
+        state["polarization"] = form.get("polarization", "").strip()
 
     # новый лог из формы
     if form.get("new_log", "").strip():
@@ -133,6 +146,7 @@ def index():
   .grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:16px;}
   .card{border:1px solid var(--b); border-radius:12px; padding:16px; background:#fff}
   .row{display:flex; gap:10px; align-items:center; margin:8px 0}
+  .row.split{gap:6px}
   label{font-size:13px; color:var(--muted); min-width:180px}
   input[type="text"],input[type="number"],select{width:100%; padding:8px 10px; border:1px solid var(--b); border-radius:8px}
   .switch{display:flex; align-items:center; gap:8px}
@@ -141,6 +155,9 @@ def index():
   .footer{display:flex; gap:12px; margin-top:16px}
   ul{margin:0; padding-left:18px; font-size:14px}
   .log-line{white-space:pre-line}
+  .slash{min-width:12px; text-align:center}
+  .mini{max-width:110px}
+  .mini-sm{max-width:80px}
 </style>
 
 <h1>Демо-сервер состояния</h1>
@@ -212,6 +229,20 @@ def index():
           {% endfor %}
         </select>
       </div>
+
+      <!-- НОВОЕ: Номер луча -->
+      <div class="row">
+        <label for="beam_number">Номер луча в радио-частотном (РЧ) кластере</label>
+        <input id="beam_number" name="beam_number" class="mini" type="number" step="1" value="{{ state.beam_number }}">
+      </div>
+
+      <!-- НОВОЕ: РЧ кластер / поляризация -->
+      <div class="row split">
+        <label for="rf_cluster">РЧ кластер / поляризация</label>
+        <input id="rf_cluster" name="rf_cluster" class="mini-sm" type="number" step="1" value="{{ state.rf_cluster }}">
+        <div class="slash">/</div>
+        <input id="polarization" name="polarization" class="mini-sm" type="text" maxlength="2" placeholder="A/B" value="{{ state.polarization }}">
+      </div>
     </div>
 
     <!-- Температура и подключение -->
@@ -242,14 +273,7 @@ def index():
         <label for="attempt">Попытка</label>
         <input id="attempt" name="attempt" type="number" step="1" value="{{ state.attempt }}">
       </div>
-      <div class="row">
-        <label for="attempt_total">Всего попыток</label>
-        <input id="attempt_total" name="attempt_total" type="number" step="1" value="{{ state.attempt_total }}">
-      </div>
-      <div class="row">
-        <label for="eta_sec">Осталось, сек</label>
-        <input id="eta_sec" name="eta_sec" type="number" step="1" value="{{ state.eta_sec }}">
-      </div>
+      <!-- Поля "Всего попыток" и "Осталось, сек" удалены по запросу -->
     </div>
 
     <!-- Углы -->
