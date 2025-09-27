@@ -1371,6 +1371,18 @@
   border-radius: 50%
 }
 
+.badge--pending {
+  border-color: #bfbfbf;
+}
+
+.badge--pending .ellipse {
+  background: #bfbfbf;
+}
+
+.badge--pending .text-wrapper-2 {
+  color: #8c8c8c;
+}
+
 .badge--ok {
   border-color: #1ba230
 }
@@ -1587,6 +1599,11 @@
   --si-fg: #ffffff;
 }
 
+.status-icon--pending {
+  --si-bg: #D9D9D9;
+  --si-fg: #ffffff;
+}
+
 .status-icon--err {
   --si-bg: #FF5F57;
   --si-fg: #ffffff;
@@ -1625,6 +1642,10 @@
 /* базовые цвета состояний через currentColor */
 .status-icon--ok {
   color: #27C840;
+}
+
+.status-icon--pending {
+  color: #D9D9D9;
 }
 
 /* зелёный круг */
