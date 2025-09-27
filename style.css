@@ -15,8 +15,10 @@
 /* по желанию — если хотите ограничить максимальную ширину контента и центрировать */
 @media (min-width: 1024px) {
   .screen {
-    max-width: 1200px;   /* или 1024px, 1280px — на ваш вкус */
-    margin: 0 auto;      /* центрирование */
+    max-width: 1200px;
+    /* или 1024px, 1280px — на ваш вкус */
+    margin: 0 auto;
+    /* центрирование */
   }
 }
 
@@ -494,7 +496,6 @@
   flex-direction: column;
   width: 728px;
   align-items: flex-start;
-  gap: 12px;
   position: relative;
   flex: 0 0 auto;
 }
@@ -1099,6 +1100,7 @@
   flex-grow: 1;
   background-color: #ffffff;
 }
+
 /* Original CSS code should be injected here */
 
 /* Additional styles for accessibility and semantic improvements */
@@ -1123,17 +1125,17 @@
   cursor: pointer;
 }
 
-.checkbox-input:focus + .checkbox .rectangle-3 {
+.checkbox-input:focus+.checkbox .rectangle-3 {
   outline: 2px solid #4a90e2;
   outline-offset: 2px;
 }
 
-.checkbox-input:checked + .checkbox .rectangle-3 {
+.checkbox-input:checked+.checkbox .rectangle-3 {
   background-color: #0365a7;
   border-color: #0365a7;
 }
 
-.checkbox-input:checked + .checkbox .rectangle-3::after {
+.checkbox-input:checked+.checkbox .rectangle-3::after {
   content: "✓";
   color: white;
   font-size: 14px;
@@ -1152,8 +1154,8 @@
   cursor: pointer;
 }
 
-.thumbler input[type="radio"]:focus + .title,
-.thumbler input[type="radio"]:focus + .title-2 {
+.thumbler input[type="radio"]:focus+.title,
+.thumbler input[type="radio"]:focus+.title-2 {
   outline: 2px solid #4a90e2;
   outline-offset: 2px;
 }
@@ -1178,121 +1180,6 @@
 }
 
 /* Ensure proper label association */
-
-.editable-section {
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.editable-section .span-wrapper,
-.editable-section .edit-fields {
-  flex: 1 1 240px;
-  margin: 0;
-}
-
-.editable-section .div-wrapper {
-  flex: 0 0 232px;
-}
-
-.editable-section .checkbox-w-label {
-  margin-left: auto;
-}
-
-.edit-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 12px;
-  background-color: #f3f6fb;
-  border-radius: 8px;
-  border: 1px solid #d9d9d9;
-}
-
-.editable-section--active .checkbox-w-label {
-  align-self: flex-end;
-}
-
-.input-pair {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 8px 16px;
-  align-items: center;
-}
-
-.editable-section--active .input-pair {
-  grid-template-columns: repeat(2, minmax(140px, 1fr));
-}
-
-.input-label {
-  font-family: var(--m3-body-medium-font-family);
-  font-size: 14px;
-  color: #404040;
-}
-
-.input-field {
-  width: 100%;
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #b0c4de;
-  font-family: "Roboto", Helvetica, Arial, sans-serif;
-  font-size: 14px;
-  color: #404040;
-  background-color: #ffffff;
-  box-sizing: border-box;
-}
-
-.input-field:focus {
-  outline: 2px solid #4a90e2;
-  outline-offset: 2px;
-}
-
-.button-group {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.button-primary,
-.button-secondary {
-  cursor: pointer;
-  border-radius: 20px;
-  padding: 8px 20px;
-  font-family: var(--m3-body-medium-font-family);
-  font-size: 14px;
-  line-height: 20px;
-  border: 1px solid transparent;
-}
-
-.button-primary {
-  background-color: #0365a7;
-  color: #ffffff;
-  border-color: #0365a7;
-}
-
-.button-secondary {
-  background-color: transparent;
-  color: #0365a7;
-  border-color: #0365a7;
-}
-
-.button-secondary:hover,
-.button-secondary:focus-visible {
-  background-color: rgba(3, 101, 167, 0.08);
-}
-
-.button-primary:hover,
-.button-primary:focus-visible {
-  background-color: #025385;
-  border-color: #025385;
-}
-
-.helper-text {
-  margin: 0;
-  font-size: 12px;
-  color: #6b6b6b;
-  font-family: "Roboto", Helvetica, Arial, sans-serif;
-}
 .checkbox {
   cursor: pointer;
 }
@@ -1300,3 +1187,264 @@
 .label {
   cursor: pointer;
 }
+
+/* Режим редактирования в строках настроек */
+.frame-17.editing .value-view {
+  display: none !important;
+}
+
+.frame-17 .edit-area {
+  display: none;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.frame-17.editing .edit-area {
+  display: flex;
+}
+
+.input {
+  height: 40px;
+  padding: 8px 12px;
+  border: 1px solid #cfd3da;
+  border-radius: 8px;
+  background: #fff;
+  font: 14px/1.2 "Roboto", Arial, sans-serif;
+  color: #404040;
+  min-width: 160px;
+}
+
+.input:focus {
+  outline: 2px solid #4a90e2;
+  outline-offset: 2px;
+}
+
+.btn {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font: 500 14px/1 "Roboto", Arial, sans-serif;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background: #0465a7;
+  color: #fff;
+  border-color: #0465a7;
+}
+
+.btn-secondary {
+  background: #fff;
+  color: #0465a7;
+  border-color: #0465a7;
+}
+
+.btn:focus {
+  outline: 2px solid #4a90e2;
+  outline-offset: 2px;
+}
+
+.hint {
+  font: 12px/1.4 "Roboto", Arial, sans-serif;
+  color: #8c8c8c;
+  width: 100%;
+}
+
+.separator {
+  margin: 10px 0;
+  height: 1px;
+  background: #d9d9d9;
+}
+
+/* ===== Редактирование параметров (Координаты, Wi-Fi) ===== */
+
+.frame-17 {
+  display: grid;
+  grid-template-columns: 232px 1fr auto auto;
+  align-items: center;
+  column-gap: 16px;
+  padding: 0 0 8px;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+/* Просмотр значений */
+.value-view {
+  grid-column: 2 / 3;
+}
+
+/* Чекбокс "Изменить" */
+.checkbox-w-label {
+  grid-column: 3 / 4;
+}
+
+/* Редактор — изначально скрыт */
+.edit-area {
+  display: none;
+  grid-column: 2 / 5;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+/* При включении чекбокса */
+.frame-17.editing .value-view {
+  display: none !important;
+}
+
+.frame-17.editing .checkbox-w-label {
+  display: none !important;
+}
+
+.frame-17.editing .edit-area {
+  display: flex;
+}
+
+/* Поля ввода */
+.input {
+  width: 220px;
+  height: 38px;
+  padding: 8px 12px;
+  border: 1px solid #cfd3da;
+  border-radius: 8px;
+  background: #fff;
+  font: 14px/1.2 "Roboto", Arial, sans-serif;
+  color: #404040;
+}
+
+.input:focus {
+  outline: 2px solid #4a90e2;
+  outline-offset: 2px;
+}
+
+/* Дефис между полями */
+.input-dash {
+  user-select: none;
+  display: inline-block;
+  width: 16px;
+  text-align: center;
+  opacity: .7;
+}
+
+/* Кнопки */
+.btn {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font: 500 14px/1 "Roboto", Arial, sans-serif;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background: #0465a7;
+  color: #fff;
+  border-color: #0465a7;
+}
+
+.btn-secondary {
+  background: #fff;
+  color: #0465a7;
+  border-color: #0465a7;
+}
+
+.btn:focus {
+  outline: 2px solid #4a90e2;
+  outline-offset: 2px;
+}
+
+/* Выровнять кнопки вправо */
+.edit-area {
+  justify-content: flex-start;
+}
+
+.edit-area .spacer {
+  flex: 1;
+}
+
+/* Подсказка для Wi-Fi */
+.hint {
+  font: 12px/1.4 "Roboto", Arial, sans-serif;
+  color: #8c8c8c;
+  margin-left: 8px;
+}
+
+/* добавь в самый конец style.css */
+.frame-17 .value-view .span {
+  font-weight: 700 !important;  /* 700 достаточно как на скрине */
+}
+
+/* Значение во 2-й колонке — жирным */
+.frame-17 > .span-wrapper .span,
+.frame-18 > .element-2 .span {
+  font-weight: 700 !important;
+}
+
+
+/* --- Тумблер Wi-Fi с ездящим ползунком --- */
+.thumbler{
+  position: relative;
+  width: 120px;           /* можно подстроить */
+  height: 32px;
+  border: 1px solid #0365a7;
+  border-radius: 6px;
+  background:#fff;
+  overflow: hidden;
+  display:flex;
+  user-select:none;
+}
+
+/* Кнопки-опции */
+.thumbler__option{
+  flex:1 1 50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--m3-body-medium-font-family);
+  font-weight: var(--m3-body-medium-font-weight);
+  font-size: var(--m3-body-medium-font-size);
+  letter-spacing: var(--m3-body-medium-letter-spacing);
+  line-height: var(--m3-body-medium-line-height);
+  cursor:pointer;
+  position: relative;
+  z-index: 1; /* поверх подложки */
+  color:#0365a7;
+  transition: color .2s ease;
+}
+
+.thumbler__option span{ white-space:nowrap; }
+
+/* Ползунок-подложка */
+.thumbler__knob{
+  position:absolute; inset:0 auto 0 0;
+  width:50%; height:100%;
+  background:#0465a7;
+  transition: transform .2s ease;
+  border-radius: 4px; /* чуть скруглим */
+}
+
+/* Состояния */
+.thumbler--off .thumbler__knob{ transform: translateX(0%); }
+.thumbler--on  .thumbler__knob{ transform: translateX(100%); }
+
+/* Активная сторона — белый текст поверх синей подложки */
+.thumbler--off .thumbler__option--left{ color:#fff; }
+.thumbler--on  .thumbler__option--right{ color:#fff; }
+
+/* Ховеры/фокус */
+.thumbler__option:hover{ opacity:.9; }
+.thumbler input[type="radio"]:focus-visible + span{
+  outline: 2px solid #4a90e2; outline-offset: 2px;
+}
+
+/* (Опционально) убираем старые стили старого переключателя, если они есть */
+.screen .button,
+.screen .title-wrapper,
+.screen .title,
+.screen .title-2{ all: unset; }
