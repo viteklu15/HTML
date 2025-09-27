@@ -104,27 +104,25 @@
 
           <article id="rx-status-card" class="frame-10 status-card">
             <div id="rx-progress-bar" class="frame-11" role="progressbar" aria-valuenow="0" aria-valuemin="0"
-              aria-valuemax="100" aria-label="Приём данных —">
+              aria-valuemax="100" aria-label="Приём данных —%">
               <div id="rx-progress-fill" class="rectangle"></div>
               <div id="rx-progress-rest" class="rectangle-2"></div>
             </div>
             <div class="frame-7">
               <h3 class="text-wrapper-3">Приём данных</h3>
-              <p class="p"><span id="rx-progress-text" class="text-wrapper-7">0% (— дБ) </span><br><span
-                 id="rx-quality-text" class="text-wrapper-8">Ожидание…</span></p>
+              <p class="p"><span id="rx-progress-text" class="text-wrapper-7">0%</span></p>
             </div>
           </article>
 
           <article id="tx-status-card" class="frame-12 status-card">
             <div id="tx-progress-bar" class="frame-11" role="progressbar" aria-valuenow="0" aria-valuemin="0"
-              aria-valuemax="100" aria-label="Передача данных —">
+              aria-valuemax="100" aria-label="Передача данных —%">
               <div id="tx-progress-fill" class="rectangle"></div>
               <div id="tx-progress-rest" class="rectangle-2"></div>
             </div>
             <div class="frame-7">
               <h3 class="text-wrapper-3">Передача данных</h3>
-              <p class="p"><span id="tx-progress-text" class="text-wrapper-7">0% (— дБ) </span><br><span
-                  id="tx-quality-text" class="text-wrapper-8">Ожидание…</span></p>
+              <p class="p"><span id="tx-progress-text" class="text-wrapper-7">0%</span></p>
             </div>
           </article>
         </section>
@@ -590,15 +588,13 @@
         bar: document.getElementById('rx-progress-bar'),
         fill: document.getElementById('rx-progress-fill'),
         rest: document.getElementById('rx-progress-rest'),
-        value: document.getElementById('rx-progress-text'),
-        quality: document.getElementById('rx-quality-text')
+        value: document.getElementById('rx-progress-text')
       },
       tx: {
         bar: document.getElementById('tx-progress-bar'),
         fill: document.getElementById('tx-progress-fill'),
         rest: document.getElementById('tx-progress-rest'),
-        value: document.getElementById('tx-progress-text'),
-        quality: document.getElementById('tx-quality-text')
+        value: document.getElementById('tx-progress-text')
       }
     };
 
@@ -620,7 +616,7 @@
       err: 'Нет соединения'
     };
 
-    function updateProgressState(indicator, progress, rssi, quality, labelPrefix) {
+    function updateProgressState(indicator, progress, labelPrefix) {
       if (!indicator?.bar) return;
       const clamped = clampPercent(progress);
       if (indicator.fill) indicator.fill.style.flexGrow = String(clamped);
@@ -628,13 +624,7 @@
       indicator.bar.setAttribute('aria-valuenow', String(clamped));
       indicator.bar.setAttribute('aria-label', `${labelPrefix} ${clamped}%`);
       if (indicator.value) {
-        const formattedDb = (rssi != null && rssi !== '') ? `${rssi} дБ` : '— дБ';
-        indicator.value.textContent = `${clamped}% (${formattedDb})`;
-      }
-      if (indicator.quality && quality) {
-        indicator.quality.textContent = quality;
-      } else if (indicator.quality) {
-        indicator.quality.textContent = 'Ожидание…';
+        indicator.value.textContent = `${clamped}%`;
       }
     }
 
@@ -823,11 +813,11 @@
       }
 
       if (state.rx) {
-        updateProgressState(indicators.rx, state.rx.progress, state.rx.rssi_db, state.rx.quality, 'Приём данных');
+        updateProgressState(indicators.rx, state.rx.progress, 'Приём данных');
       }
 
       if (state.tx) {
-        updateProgressState(indicators.tx, state.tx.progress, state.tx.rssi_db, state.tx.quality, 'Передача данных');
+        updateProgressState(indicators.tx, state.tx.progress, 'Передача данных');
       }
 
       if ('system' in state) {
