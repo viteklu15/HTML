@@ -27,7 +27,7 @@
         <div class="div-2">MAC-адрес: 12.34.56.78</div>
       </div>
       <div class="frame-3">
-        <div class="wi-fi">WiFi Работает</div>
+        <div class="wi-fi" id="wifi-status-text">WiFi Работает</div>
         <fieldset class="thumbler" role="radiogroup" aria-labelledby="wifi-status">
           <legend id="wifi-status" class="sr-only">Статус WiFi</legend>
           <label class="button">
@@ -112,13 +112,27 @@
             <section class="frame-15">
               <h2 class="text-wrapper-9">Детали подключения</h2>
               <div class="frame-16">
-                <div class="frame-17">
+                <div class="frame-17 editable-section" data-section="coordinates">
                   <div class="div-wrapper">
-                    <label class="text-wrapper-10" for="coordinates">Координаты</label>
+                    <label class="text-wrapper-10" for="latitude-input">Координаты</label>
                   </div>
-                  <p class="span-wrapper">
-                    <span class="span">Широта: 55.73; Долгота: 37.61</span>
+                  <p class="span-wrapper" id="coordinates-display">
+                    <span class="span">Широта: <span id="latitude-value">55.73</span>; Долгота: <span id="longitude-value">37.61</span></span>
                   </p>
+                  <form class="edit-fields" id="coordinates-form" hidden>
+                    <div class="input-pair">
+                      <label class="input-label" for="latitude-input">Широта</label>
+                      <input type="number" id="latitude-input" name="latitude" step="0.01" min="-90" max="90"
+                        class="input-field" required />
+                      <label class="input-label" for="longitude-input">Долгота</label>
+                      <input type="number" id="longitude-input" name="longitude" step="0.01" min="-180" max="180"
+                        class="input-field" required />
+                    </div>
+                    <div class="button-group">
+                      <button type="submit" class="button-primary">Сохранить</button>
+                      <button type="button" class="button-secondary" data-action="cancel">Отменить</button>
+                    </div>
+                  </form>
                   <div class="checkbox-w-label">
                     <input type="checkbox" id="edit-coordinates" class="checkbox-input sr-only" />
                     <label for="edit-coordinates" class="checkbox">
@@ -129,13 +143,23 @@
                     </label>
                   </div>
                 </div>
-                <div class="frame-17">
+                <div class="frame-17 editable-section" data-section="wifi">
                   <div class="div-wrapper">
-                    <label class="text-wrapper-10" for="wifi-password">Пароль на WiFi</label>
+                    <label class="text-wrapper-10" for="wifi-password-input">Пароль на WiFi</label>
                   </div>
-                  <p class="span-wrapper">
-                    <span class="span">12345678</span>
+                  <p class="span-wrapper" id="wifi-password-display">
+                    <span class="span" id="wifi-password-value">12345678</span>
                   </p>
+                  <form class="edit-fields" id="wifi-password-form" hidden>
+                    <label class="input-label" for="wifi-password-input">Пароль на WiFi</label>
+                    <input type="password" id="wifi-password-input" name="wifi-password" minlength="8"
+                      class="input-field" required />
+                    <p class="helper-text">Минимум 8 символов</p>
+                    <div class="button-group">
+                      <button type="submit" class="button-primary">Сохранить</button>
+                      <button type="button" class="button-secondary" data-action="cancel">Отменить</button>
+                    </div>
+                  </form>
                   <div class="checkbox-w-label">
                     <input type="checkbox" id="edit-wifi-password" class="checkbox-input sr-only" />
                     <label for="edit-wifi-password" class="checkbox">
@@ -314,6 +338,126 @@
       </div>
     </div>
   </main>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const state = {
+      coordinates: {
+        latitude: document.getElementById('latitude-value').textContent.trim(),
+        longitude: document.getElementById('longitude-value').textContent.trim()
+      },
+      wifiPassword: document.getElementById('wifi-password-value').textContent.trim()
+    };
+
+    const setupEditableSection = ({ checkboxId, formId, displayId, onSave, onReset }) => {
+      const checkbox = document.getElementById(checkboxId);
+      const form = document.getElementById(formId);
+      const display = document.getElementById(displayId);
+      const section = checkbox?.closest('.editable-section');
+
+      if (!checkbox || !form || !display) {
+        return;
+      }
+
+      checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+          form.hidden = false;
+          display.hidden = true;
+          onReset?.();
+          section?.classList.add('editable-section--active');
+        } else {
+          form.hidden = true;
+          display.hidden = false;
+          onReset?.();
+          section?.classList.remove('editable-section--active');
+        }
+      });
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        onSave?.(form, checkbox);
+      });
+
+      form.querySelectorAll('[data-action="cancel"]').forEach((button) => {
+        button.addEventListener('click', () => {
+          checkbox.checked = false;
+          form.hidden = true;
+          display.hidden = false;
+          onReset?.();
+          section?.classList.remove('editable-section--active');
+        });
+      });
+    };
+
+    setupEditableSection({
+      checkboxId: 'edit-coordinates',
+      formId: 'coordinates-form',
+      displayId: 'coordinates-display',
+      onSave: (form, checkbox) => {
+        const latitude = form.querySelector('#latitude-input').value;
+        const longitude = form.querySelector('#longitude-input').value;
+
+        state.coordinates.latitude = latitude;
+        state.coordinates.longitude = longitude;
+
+        document.getElementById('latitude-value').textContent = latitude;
+        document.getElementById('longitude-value').textContent = longitude;
+
+        checkbox.checked = false;
+        form.hidden = true;
+        document.getElementById('coordinates-display').hidden = false;
+        form.closest('.editable-section')?.classList.remove('editable-section--active');
+      },
+      onReset: () => {
+        const latitudeInput = document.getElementById('latitude-input');
+        const longitudeInput = document.getElementById('longitude-input');
+        latitudeInput.value = state.coordinates.latitude;
+        longitudeInput.value = state.coordinates.longitude;
+      }
+    });
+
+    setupEditableSection({
+      checkboxId: 'edit-wifi-password',
+      formId: 'wifi-password-form',
+      displayId: 'wifi-password-display',
+      onSave: (form, checkbox) => {
+        const password = form.querySelector('#wifi-password-input').value;
+
+        state.wifiPassword = password;
+        document.getElementById('wifi-password-value').textContent = password;
+
+        checkbox.checked = false;
+        form.hidden = true;
+        document.getElementById('wifi-password-display').hidden = false;
+        form.closest('.editable-section')?.classList.remove('editable-section--active');
+      },
+      onReset: () => {
+        const passwordInput = document.getElementById('wifi-password-input');
+        passwordInput.value = state.wifiPassword;
+      }
+    });
+
+    document.getElementById('latitude-input').value = state.coordinates.latitude;
+    document.getElementById('longitude-input').value = state.coordinates.longitude;
+    document.getElementById('wifi-password-input').value = state.wifiPassword;
+
+    const wifiStatusText = document.getElementById('wifi-status-text');
+    const wifiRadios = document.querySelectorAll('input[name="wifi-toggle"]');
+
+    const updateWifiStatus = () => {
+      const checkedRadio = Array.from(wifiRadios).find((radio) => radio.checked);
+      if (!checkedRadio || !wifiStatusText) {
+        return;
+      }
+      wifiStatusText.textContent = checkedRadio.value === 'on' ? 'WiFi работает' : 'WiFi отключен';
+    };
+
+    wifiRadios.forEach((radio) => {
+      radio.addEventListener('change', updateWifiStatus);
+    });
+
+    updateWifiStatus();
+  });
+</script>
 </body>
 
 </html>
