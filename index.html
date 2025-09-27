@@ -16,22 +16,23 @@
       <div class="div">
         <h1 class="text-wrapper">ТКС «ОРИОН»</h1>
       </div>
-      <div id="system-badge" class="badge badge--ok" role="status" aria-label="Статус системы: Всё работает">
+      <div id="system-badge" class="badge badge--pending" role="status"
+        aria-label="Статус системы: Ожидание данных">
         <div class="ellipse" aria-hidden="true"></div>
-        <span class="text-wrapper-2">Всё работает</span>
+        <span class="text-wrapper-2">Ожидание данных</span>
       </div>
 
       <div class="frame-2">
         <p class=" value-view ">
-          <span id="current-temp" class="span">Температура: +45℃</span>
+          <span id="current-temp" class="span">Температура: —℃</span>
         </p>
 
-        <div class="div-2">MAC-адрес: 12.34.56.78</div>
+        <div id="mac-address" class="div-2">MAC-адрес: —</div>
       </div>
       <div class="frame-3">
-        <div class="wi-fi" id="wifi-status-text">WiFi Работает</div>
+        <div class="wi-fi" id="wifi-status-text">WiFi: ожидание…</div>
 
-        <fieldset class="thumbler thumbler--on" role="radiogroup" aria-labelledby="wifi-status">
+        <fieldset class="thumbler" role="radiogroup" aria-labelledby="wifi-status">
           <legend id="wifi-status" class="sr-only">Статус WiFi</legend>
 
           <!-- подложка-ползунок -->
@@ -43,7 +44,7 @@
           </label>
 
           <label class="thumbler__option thumbler__option--right">
-            <input type="radio" name="wifi-toggle" value="on" checked class="sr-only" />
+            <input type="radio" name="wifi-toggle" value="on" class="sr-only" />
             <span>Вкл</span>
           </label>
         </fieldset>
@@ -54,72 +55,76 @@
     <div class="frame-wrapper">
       <div class="frame-4">
         <section class="frame-5" aria-label="Статус системы">
-          <article class="frame-6">
-            <svg class="status-icon status-icon--ok" role="img" aria-label="ОК">
-              <use href="#icon-status-ok"></use>
+          <article id="power-status-card" class="frame-6 status-card">
+            <svg id="power-status-icon" class="status-icon status-icon--pending" role="img"
+              aria-label="Ожидание">
+              <use id="power-status-use" href="#icon-status-ok"></use>
             </svg>
             <div class="frame-7">
               <h3 class="text-wrapper-3">Питание</h3>
-              <div class="text-wrapper-4">Есть</div>
+              <div id="power-status-text" class="text-wrapper-4">Ожидание…</div>
             </div>
           </article>
-          <article class="frame-9">
-            <svg class="status-icon status-icon--ok" role="img" aria-label="ОК">
-              <use href="#icon-status-ok"></use>
+          <article id="coords-status-card" class="frame-9 status-card">
+            <svg id="coords-status-icon" class="status-icon status-icon--pending" role="img"
+              aria-label="Ожидание">
+              <use id="coords-status-use" href="#icon-status-ok"></use>
             </svg>
             <div class="frame-7">
               <h3 class="text-wrapper-3">Координаты</h3>
               <p class="element">
-                <span id="coords-compact" class="text-wrapper-5">Ш: 55.73; Д: 55.73 </span>
-                <br> <span class="text-wrapper-6">Определены</span>
+                <span id="coords-compact" class="text-wrapper-5">Ш: —; Д: —</span>
+                <br> <span id="coords-status-text" class="text-wrapper-6">Определяем…</span>
               </p>
 
             </div>
           </article>
 
-          <article class="frame-9">
-            <svg class="status-icon status-icon--ok" role="img" aria-label="ОК">
-              <use href="#icon-status-ok"></use>
+          <article id="gps-status-card" class="frame-9 status-card">
+            <svg id="gps-status-icon" class="status-icon status-icon--pending" role="img"
+              aria-label="Ожидание">
+              <use id="gps-status-use" href="#icon-status-ok"></use>
             </svg>
             <div class="frame-7">
               <h3 class="text-wrapper-3">Связь<br />со спутником</h3>
-              <div class="text-wrapper-4">Есть</div>
+              <div id="gps-status-text" class="text-wrapper-4">Подключаем…</div>
             </div>
           </article>
 
-          <article class="frame-9">
-            <svg class="status-icon status-icon--ok" role="img" aria-label="ОК">
-              <use href="#icon-status-ok"></use>
+          <article id="inet-status-card" class="frame-9 status-card">
+            <svg id="inet-status-icon" class="status-icon status-icon--pending" role="img"
+              aria-label="Ожидание">
+              <use id="inet-status-use" href="#icon-status-ok"></use>
             </svg>
             <div class="frame-7">
               <h3 class="text-wrapper-3">Интернет</h3>
-              <div class="text-wrapper-4">Есть</div>
+              <div id="inet-status-text" class="text-wrapper-4">Подключаем…</div>
             </div>
           </article>
 
-          <article class="frame-10">
-            <div class="frame-11" role="progressbar" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100"
-              aria-label="Приём данных 98%">
-              <div class="rectangle"></div>
-              <div class="rectangle-2"></div>
+          <article id="rx-status-card" class="frame-10 status-card">
+            <div id="rx-progress-bar" class="frame-11" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+              aria-valuemax="100" aria-label="Приём данных —">
+              <div id="rx-progress-fill" class="rectangle"></div>
+              <div id="rx-progress-rest" class="rectangle-2"></div>
             </div>
             <div class="frame-7">
               <h3 class="text-wrapper-3">Приём данных</h3>
-              <p class="p"><span class="text-wrapper-7">98% (-10 из 6,6Дб) </span><span
-                  class="text-wrapper-8">Нормально</span></p>
+              <p class="p"><span id="rx-progress-text" class="text-wrapper-7">0% (— дБ) </span><span
+                  id="rx-quality-text" class="text-wrapper-8">Ожидание…</span></p>
             </div>
           </article>
 
-          <article class="frame-12">
-            <div class="frame-11" role="progressbar" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100"
-              aria-label="Передача данных 98%">
-              <div class="rectangle"></div>
-              <div class="rectangle-2"></div>
+          <article id="tx-status-card" class="frame-12 status-card">
+            <div id="tx-progress-bar" class="frame-11" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+              aria-valuemax="100" aria-label="Передача данных —">
+              <div id="tx-progress-fill" class="rectangle"></div>
+              <div id="tx-progress-rest" class="rectangle-2"></div>
             </div>
             <div class="frame-7">
               <h3 class="text-wrapper-3">Передача данных</h3>
-              <p class="p"><span class="text-wrapper-7">98% (-10 из 6,6Дб) </span><span
-                  class="text-wrapper-8">Нормально</span></p>
+              <p class="p"><span id="tx-progress-text" class="text-wrapper-7">0% (— дБ) </span><span
+                  id="tx-quality-text" class="text-wrapper-8">Ожидание…</span></p>
             </div>
           </article>
         </section>
@@ -139,7 +144,7 @@
 
                   <!-- Просмотр -->
                   <p class="span-wrapper value-view">
-                    <span class="span"> Широта: 55.73; Долгота: 37.61</span>
+                    <span id="coords-detailed" class="span"> Широта: —; Долгота: —</span>
                   </p>
 
                   <!-- Чекбокс -->
@@ -154,14 +159,14 @@
                   <form class="edit-area" aria-label="Редактирование координат">
                     <div class="input-group">
                       <label for="lat">Широта</label>
-                      <input id="lat" name="lat" type="text" inputmode="decimal" class="input" value="55.73">
+                      <input id="lat" name="lat" type="text" inputmode="decimal" class="input" value="">
                     </div>
 
                     <span class="input-dash" aria-hidden="true">—</span>
 
                     <div class="input-group">
                       <label for="lng">Долгота</label>
-                      <input id="lng" name="lng" type="text" inputmode="decimal" class="input" value="37.61">
+                      <input id="lng" name="lng" type="text" inputmode="decimal" class="input" value="">
                     </div>
 
                     <span class="spacer" aria-hidden="true"></span>
@@ -196,8 +201,8 @@
 
                   <!-- Редактор -->
                   <form class="edit-area" aria-label="Редактирование пароля Wi-Fi">
-                    <input id="wifi-pass" name="wifi-pass" type="password" minlength="8" class="input"
-                      placeholder="Введите новый пароль" value="12345678" aria-describedby="wifi-hint"
+                      <input id="wifi-pass" name="wifi-pass" type="password" minlength="8" class="input"
+                      placeholder="Введите новый пароль" value="" aria-describedby="wifi-hint"
                       aria-label="Пароль Wi-Fi">
                     <span id="wifi-hint" class="hint">Минимум 8 символов</span>
 
@@ -228,8 +233,9 @@
                       <div class="div-3">Температура модема</div>
                     </div>
                     <div class="state-default">
-                      <div class="frame-11 meter" id="temp-meter" role="meter" aria-valuenow="45" aria-valuemin="-30"
-                        aria-valuemax="85" aria-label="Температура модема 45 градусов">
+                      <div class="frame-11 meter" id="temp-meter" role="meter" aria-valuenow="-30"
+                        aria-valuemin="-30" aria-valuemax="85" aria-label="Температура модема — данные не получены"
+                        data-pending="true">
                         <div class="rectangle rectangle-4 meter__fill"></div>
                         <div class="rectangle-2 meter__rest"></div>
                       </div>
@@ -457,6 +463,7 @@
     });
 
     /* ===== Тумблер Wi-Fi ===== */
+    let updateWifiThumbler = null;
     (function () {
       const thumbler = document.querySelector('.thumbler');
       if (!thumbler) return;
@@ -465,13 +472,16 @@
       const statusText = document.getElementById('wifi-status-text');
 
       function applyState(value) {
-        thumbler.classList.toggle('thumbler--on', value === 'on');
-        thumbler.classList.toggle('thumbler--off', value === 'off');
-        if (statusText) statusText.textContent = (value === 'on') ? 'WiFi Работает' : 'WiFi Выключен';
+        const normalized = (value === 'on') ? 'on' : 'off';
+        thumbler.classList.toggle('thumbler--on', normalized === 'on');
+        thumbler.classList.toggle('thumbler--off', normalized === 'off');
+        if (statusText) {
+          statusText.textContent = (normalized === 'on') ? 'WiFi Работает' : 'WiFi Выключен';
+        }
+        radios.forEach(r => { r.checked = (r.value === normalized); });
       }
 
-      const checked = Array.from(radios).find(r => r.checked);
-      applyState(checked ? checked.value : 'off');
+      updateWifiThumbler = applyState;
 
       radios.forEach(r => {
         r.addEventListener('change', (e) => {
@@ -484,15 +494,154 @@
 
     /* ===== Статус системы (бейдж) ===== */
     const systemBadge = document.getElementById('system-badge');
-    function setSystemStatus(kind, textOverride) {
+    let systemStatusLocked = false;
+    function setSystemStatus(kind, textOverride, options = {}) {
       if (!systemBadge) return;
-      const textMap = { ok: 'Всё работает', warn: 'Есть проблемы', err: 'Есть проблемы', off: 'Модем отключен' };
-      systemBadge.classList.remove('badge--ok', 'badge--warn', 'badge--err', 'badge--off');
-      systemBadge.classList.add(`badge--${kind}`);
-      const text = textOverride || textMap[kind] || '';
+      if (options.unlock) systemStatusLocked = false;
+      const textMap = {
+        pending: 'Подключаемся',
+        ok: 'Всё работает',
+        warn: 'Есть проблемы',
+        err: 'Есть проблемы',
+        off: 'Модем отключен'
+      };
+      const badgeClasses = ['badge--pending', 'badge--ok', 'badge--warn', 'badge--err', 'badge--off'];
+      badgeClasses.forEach(cls => systemBadge.classList.remove(cls));
+
+      const normalized = badgeClasses.some(cls => cls.endsWith(kind)) ? kind : 'pending';
+      systemBadge.classList.add(`badge--${normalized}`);
+
+      const text = textOverride || textMap[normalized] || '';
       const span = systemBadge.querySelector('.text-wrapper-2');
       if (span) span.textContent = text;
       systemBadge.setAttribute('aria-label', `Статус системы: ${text}`);
+      if (options.lock) systemStatusLocked = true;
+    }
+
+    const STATUS_ICON_CLASSES = ['status-icon--pending', 'status-icon--ok', 'status-icon--err', 'status-icon--off'];
+    const STATUS_ICON_CONFIG = {
+      pending: { className: 'status-icon--pending', symbol: '#icon-status-ok', aria: 'Ожидание' },
+      ok: { className: 'status-icon--ok', symbol: '#icon-status-ok', aria: 'ОК' },
+      err: { className: 'status-icon--err', symbol: '#icon-status-err', aria: 'Ошибка' },
+      off: { className: 'status-icon--off', symbol: '#icon-status-off', aria: 'Выключено' }
+    };
+
+    function setIndicatorState(indicator, status, textContent) {
+      if (!indicator) return;
+      const normalizedStatus = STATUS_ICON_CONFIG[status] ? status : 'pending';
+      const config = STATUS_ICON_CONFIG[normalizedStatus];
+      if (indicator.card) {
+        indicator.card.dataset.status = normalizedStatus;
+      }
+      if (indicator.icon) {
+        STATUS_ICON_CLASSES.forEach(cls => indicator.icon.classList.remove(cls));
+        indicator.icon.classList.add(config.className);
+        indicator.icon.setAttribute('aria-label', config.aria);
+      }
+      if (indicator.use) {
+        indicator.use.setAttribute('href', config.symbol);
+      }
+      if (indicator.text && textContent != null) {
+        indicator.text.textContent = textContent;
+      }
+      if (indicator.statusText && textContent != null) {
+        indicator.statusText.textContent = textContent;
+      }
+    }
+
+    function clampPercent(v) {
+      const num = Number(v);
+      if (Number.isNaN(num)) return 0;
+      return Math.min(100, Math.max(0, num));
+    }
+
+    const indicators = {
+      power: {
+        card: document.getElementById('power-status-card'),
+        icon: document.getElementById('power-status-icon'),
+        use: document.getElementById('power-status-use'),
+        text: document.getElementById('power-status-text')
+      },
+      coords: {
+        card: document.getElementById('coords-status-card'),
+        icon: document.getElementById('coords-status-icon'),
+        use: document.getElementById('coords-status-use'),
+        text: document.getElementById('coords-status-text'),
+        compact: document.getElementById('coords-compact'),
+        detailed: document.getElementById('coords-detailed'),
+        inputs: {
+          lat: document.getElementById('lat'),
+          lng: document.getElementById('lng')
+        }
+      },
+      gps: {
+        card: document.getElementById('gps-status-card'),
+        icon: document.getElementById('gps-status-icon'),
+        use: document.getElementById('gps-status-use'),
+        text: document.getElementById('gps-status-text')
+      },
+      inet: {
+        card: document.getElementById('inet-status-card'),
+        icon: document.getElementById('inet-status-icon'),
+        use: document.getElementById('inet-status-use'),
+        text: document.getElementById('inet-status-text')
+      },
+      rx: {
+        bar: document.getElementById('rx-progress-bar'),
+        fill: document.getElementById('rx-progress-fill'),
+        rest: document.getElementById('rx-progress-rest'),
+        value: document.getElementById('rx-progress-text'),
+        quality: document.getElementById('rx-quality-text')
+      },
+      tx: {
+        bar: document.getElementById('tx-progress-bar'),
+        fill: document.getElementById('tx-progress-fill'),
+        rest: document.getElementById('tx-progress-rest'),
+        value: document.getElementById('tx-progress-text'),
+        quality: document.getElementById('tx-quality-text')
+      }
+    };
+
+    const macField = document.getElementById('mac-address');
+
+    const COORDS_STATUS_LABELS = {
+      pending: 'Определяем…',
+      ok: 'Определены',
+      err: 'Ошибка'
+    };
+    const SIMPLE_STATUS_LABELS = {
+      pending: 'Подключаем…',
+      ok: 'Есть',
+      err: 'Нет связи'
+    };
+    const INTERNET_STATUS_LABELS = {
+      pending: 'Подключаем…',
+      ok: 'Подключён',
+      err: 'Нет соединения'
+    };
+
+    function updateProgressState(indicator, progress, rssi, quality, labelPrefix) {
+      if (!indicator?.bar) return;
+      const clamped = clampPercent(progress);
+      if (indicator.fill) indicator.fill.style.flexGrow = String(clamped);
+      if (indicator.rest) indicator.rest.style.flexGrow = String(100 - clamped);
+      indicator.bar.setAttribute('aria-valuenow', String(clamped));
+      indicator.bar.setAttribute('aria-label', `${labelPrefix} ${clamped}%`);
+      if (indicator.value) {
+        const formattedDb = (rssi != null && rssi !== '') ? `${rssi} дБ` : '— дБ';
+        indicator.value.textContent = `${clamped}% (${formattedDb})`;
+      }
+      if (indicator.quality && quality) {
+        indicator.quality.textContent = quality;
+      } else if (indicator.quality) {
+        indicator.quality.textContent = 'Ожидание…';
+      }
+    }
+
+    function formatCoordinate(value, fractionDigits = 2) {
+      const num = Number(value);
+      if (Number.isNaN(num)) return '—';
+      return num.toFixed(fractionDigits);
     }
 
     /* ===== Пороги температуры ===== */
@@ -505,7 +654,14 @@
     const spanTemp = document.getElementById('current-temp');
     function updateTemperatureField(tempC) {
       if (!spanTemp) return;
-      spanTemp.textContent = `Температура: +${tempC}℃`;
+      const num = Number(tempC);
+      if (Number.isNaN(num)) {
+        spanTemp.textContent = 'Температура: —℃';
+        return;
+      }
+      const formatted = Number.isInteger(num) ? Math.abs(num) : Math.abs(num).toFixed(1);
+      const sign = num < 0 ? '−' : '+';
+      spanTemp.textContent = `Температура: ${sign}${formatted}℃`;
     }
 
     /* ===== Полоса температуры (процент + цвет) ===== */
@@ -531,6 +687,7 @@
       // aria — показываем реальную температуру
       tempMeter.setAttribute('aria-valuenow', String(Math.round(tempC)));
       tempMeter.setAttribute('aria-label', `Температура модема ${Math.round(tempC)} градусов`);
+      tempMeter.removeAttribute('data-pending');
     }
 
     /* ===== Подсказки и статус по температуре ===== */
@@ -555,7 +712,7 @@
     async function shutdownModemSafely(isAuto = false) {
       try {
         // await fetch('/api/modem/power', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ on:false }) });
-        setSystemStatus('off', 'Модем отключен');            // мгновенно в UI
+        setSystemStatus('off', 'Модем отключен', { lock: true });            // мгновенно в UI
         // НЕ скрываем предупреждение здесь — пусть пользователь видит причину
         if (btnShutdown) {
           btnShutdown.disabled = true;
@@ -572,12 +729,14 @@
     }
     btnShutdown?.addEventListener('click', () => shutdownModemSafely(false));
 
-    function applyStatusByTemperature(tempC) {
+    function applyStatusByTemperature(tempC, { allowBadgeUpdate = true } = {}) {
       if (tempC == null || isNaN(tempC)) return;
 
-      if (tempC >= TEMP_ERR) setSystemStatus('err');
-      else if (tempC >= TEMP_WARN) setSystemStatus('warn');
-      else setSystemStatus('ok');
+      if (allowBadgeUpdate && !systemStatusLocked) {
+        if (tempC >= TEMP_ERR) setSystemStatus('err');
+        else if (tempC >= TEMP_WARN) setSystemStatus('warn');
+        else setSystemStatus('ok');
+      }
 
       if (tempC >= TEMP_ERR) showOverheatAdvice('err', tempC);
       else if (tempC >= TEMP_WARN) showOverheatAdvice('warn', tempC);
@@ -597,10 +756,13 @@
     (function initTempFromDOM() {
       const meter = document.querySelector('[role="meter"][aria-label*="Температура модема"]');
       if (!meter) return;
-      const now = parseFloat(meter.getAttribute('aria-valuenow'));
-      if (!isNaN(now)) {
+      if (meter.dataset.pending === 'true') return;
+      const raw = meter.getAttribute('aria-valuenow');
+      if (!raw) return;
+      const now = parseFloat(raw);
+      if (!Number.isNaN(now)) {
         updateTemperatureField(now);
-        applyStatusByTemperature(now);
+        applyStatusByTemperature(now, { allowBadgeUpdate: !systemStatusLocked });
         updateTempBar(now);
       }
     })();
@@ -609,35 +771,100 @@
        Пример: window.onDeviceState({ temp_c: 72, modem_off:false })
     */
     window.onDeviceState = function (state) {
-      if (state?.temp_c != null) {
-        const t = Number(state.temp_c);
-        updateTemperatureField(t);
-        applyStatusByTemperature(t);
-        updateTempBar(t);
+      if (!state) return;
+
+      systemStatusLocked = false;
+
+      if (typeof state.mac === 'string' && macField) {
+        macField.textContent = `MAC-адрес: ${state.mac}`;
       }
-      if (state?.modem_off) {
-        setSystemStatus('off');
-        // НЕ скрываем предупреждение, чтобы было видно причину отключения
-        // hideOverheatAdvice();
+
+      if ('power' in state) {
+        const powerStatus = state.power === true ? 'ok' : (state.power === false ? 'off' : 'pending');
+        const powerText = state.power === true ? 'Есть' : (state.power === false ? 'Нет' : 'Ожидание…');
+        setIndicatorState(indicators.power, powerStatus, powerText);
+      }
+
+      if ('wifi_on' in state && typeof updateWifiThumbler === 'function') {
+        updateWifiThumbler(state.wifi_on ? 'on' : 'off');
+      }
+
+      const coords = state.coords || {};
+      if (indicators.coords) {
+        const formattedLat = (coords.lat != null && coords.lat !== '') ? formatCoordinate(coords.lat) : '—';
+        const formattedLng = (coords.lng != null && coords.lng !== '') ? formatCoordinate(coords.lng) : '—';
+        if (indicators.coords.compact) {
+          indicators.coords.compact.textContent = `Ш: ${formattedLat}; Д: ${formattedLng}`;
+        }
+        if (indicators.coords.detailed) {
+          indicators.coords.detailed.textContent = ` Широта: ${formattedLat}; Долгота: ${formattedLng}`;
+        }
+        if (indicators.coords.inputs?.lat) {
+          indicators.coords.inputs.lat.value = (coords.lat != null && coords.lat !== '') ? String(coords.lat) : '';
+        }
+        if (indicators.coords.inputs?.lng) {
+          indicators.coords.inputs.lng.value = (coords.lng != null && coords.lng !== '') ? String(coords.lng) : '';
+        }
+      }
+
+      if ('coords_status' in state && indicators.coords) {
+        const status = ['pending', 'ok', 'err'].includes(state.coords_status) ? state.coords_status : 'pending';
+        setIndicatorState(indicators.coords, status, COORDS_STATUS_LABELS[status] || COORDS_STATUS_LABELS.pending);
+      }
+
+      if ('gps_status' in state) {
+        const status = ['pending', 'ok', 'err'].includes(state.gps_status) ? state.gps_status : 'pending';
+        setIndicatorState(indicators.gps, status, SIMPLE_STATUS_LABELS[status] || SIMPLE_STATUS_LABELS.pending);
+      }
+
+      if ('inet_status' in state) {
+        const status = ['pending', 'ok', 'err'].includes(state.inet_status) ? state.inet_status : 'pending';
+        setIndicatorState(indicators.inet, status, INTERNET_STATUS_LABELS[status] || INTERNET_STATUS_LABELS.pending);
+      }
+
+      if (state.rx) {
+        updateProgressState(indicators.rx, state.rx.progress, state.rx.rssi_db, state.rx.quality, 'Приём данных');
+      }
+
+      if (state.tx) {
+        updateProgressState(indicators.tx, state.tx.progress, state.tx.rssi_db, state.tx.quality, 'Передача данных');
+      }
+
+      if ('system' in state) {
+        const knownStates = ['pending', 'ok', 'warn', 'err', 'off'];
+        const normalized = knownStates.includes(state.system) ? state.system : 'pending';
+        setSystemStatus(normalized, undefined, { lock: true });
+      }
+
+      if (state.modem_off) {
+        setSystemStatus('off', 'Модем отключен', { lock: true });
+      }
+
+      if (state.temp_c != null) {
+        const t = Number(state.temp_c);
+        if (!Number.isNaN(t)) {
+          updateTemperatureField(t);
+          updateTempBar(t);
+          applyStatusByTemperature(t, { allowBadgeUpdate: !systemStatusLocked });
+        }
       }
     };
 
-    /* ===== Пуллинг температуры с демо-сервера ===== */
-    const API_TEMP_URL = "http://127.0.0.1:8000/api/temp";
+    /* ===== Пуллинг состояния с демо-сервером ===== */
+    const API_STATE_URL = "http://127.0.0.1:8000/api/state";
 
-    async function pollTemperature() {
+    async function pollDeviceState() {
       try {
-        const r = await fetch(API_TEMP_URL, { cache: "no-store" });
+        const r = await fetch(API_STATE_URL, { cache: "no-store" });
+        if (!r.ok) return;
         const data = await r.json();
-        if (typeof data?.temp_c !== 'undefined') {
-          window.onDeviceState?.({ temp_c: data.temp_c });
-        }
+        window.onDeviceState?.(data);
       } catch (e) {
-        // console.debug("temp poll error", e);
+        // console.debug("state poll error", e);
       }
     }
-    pollTemperature();
-    setInterval(pollTemperature, 2000);
+    pollDeviceState();
+    setInterval(pollDeviceState, 2000);
   </script>
 
 
