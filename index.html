@@ -358,19 +358,17 @@
         return;
       }
 
-      checkbox.addEventListener('change', () => {
-        if (checkbox.checked) {
-          form.hidden = false;
-          display.hidden = true;
-          onReset?.();
-          section?.classList.add('editable-section--active');
-        } else {
-          form.hidden = true;
-          display.hidden = false;
-          onReset?.();
-          section?.classList.remove('editable-section--active');
-        }
-      });
+      const toggleVisibility = () => {
+        const isChecked = checkbox.checked;
+
+        form.hidden = !isChecked;
+        display.hidden = isChecked;
+        onReset?.();
+
+        section?.classList.toggle('editable-section--active', isChecked);
+      };
+
+      checkbox.addEventListener('change', toggleVisibility);
 
       form.addEventListener('submit', (event) => {
         event.preventDefault();
@@ -386,6 +384,8 @@
           section?.classList.remove('editable-section--active');
         });
       });
+
+      toggleVisibility();
     };
 
     setupEditableSection({
