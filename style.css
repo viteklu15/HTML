@@ -1178,6 +1178,121 @@
 }
 
 /* Ensure proper label association */
+
+.editable-section {
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.editable-section .span-wrapper,
+.editable-section .edit-fields {
+  flex: 1 1 240px;
+  margin: 0;
+}
+
+.editable-section .div-wrapper {
+  flex: 0 0 232px;
+}
+
+.editable-section .checkbox-w-label {
+  margin-left: auto;
+}
+
+.edit-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  background-color: #f3f6fb;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+}
+
+.editable-section--active .checkbox-w-label {
+  align-self: flex-end;
+}
+
+.input-pair {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 16px;
+  align-items: center;
+}
+
+.editable-section--active .input-pair {
+  grid-template-columns: repeat(2, minmax(140px, 1fr));
+}
+
+.input-label {
+  font-family: var(--m3-body-medium-font-family);
+  font-size: 14px;
+  color: #404040;
+}
+
+.input-field {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #b0c4de;
+  font-family: "Roboto", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  color: #404040;
+  background-color: #ffffff;
+  box-sizing: border-box;
+}
+
+.input-field:focus {
+  outline: 2px solid #4a90e2;
+  outline-offset: 2px;
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.button-primary,
+.button-secondary {
+  cursor: pointer;
+  border-radius: 20px;
+  padding: 8px 20px;
+  font-family: var(--m3-body-medium-font-family);
+  font-size: 14px;
+  line-height: 20px;
+  border: 1px solid transparent;
+}
+
+.button-primary {
+  background-color: #0365a7;
+  color: #ffffff;
+  border-color: #0365a7;
+}
+
+.button-secondary {
+  background-color: transparent;
+  color: #0365a7;
+  border-color: #0365a7;
+}
+
+.button-secondary:hover,
+.button-secondary:focus-visible {
+  background-color: rgba(3, 101, 167, 0.08);
+}
+
+.button-primary:hover,
+.button-primary:focus-visible {
+  background-color: #025385;
+  border-color: #025385;
+}
+
+.helper-text {
+  margin: 0;
+  font-size: 12px;
+  color: #6b6b6b;
+  font-family: "Roboto", Helvetica, Arial, sans-serif;
+}
 .checkbox {
   cursor: pointer;
 }
