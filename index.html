@@ -127,8 +127,10 @@
 
             <section id="connection-attempt" class="connection-attempt" hidden>
               <h2 class="connection-attempt__title">Идёт подключение…</h2>
-              <p class="connection-attempt__attempt">Попытка <span id="connection-attempt-number">1</span> из <span id="connection-attempt-total">3</span></p>
-              <p id="connection-attempt-eta-wrapper" class="connection-attempt__eta">Подождите ~<span id="connection-attempt-eta">3</span> мин</p>
+              <p class="connection-attempt__attempt">Попытка <span id="connection-attempt-number">1</span> из <span
+                  id="connection-attempt-total">3</span></p>
+              <p  class="connection-attempt__eta">Подождите ~<span
+                  id="connection-attempt-eta">3</span> мин</p>
             </section>
 
             <section id="connection-details" class="frame-15">
@@ -387,619 +389,552 @@
 
   <!-- Скрипт переключения режима редактирования -->
   <script>
-    /* ===== Режим редактирования/просмотра по чекбоксам ===== */
-    document.querySelectorAll('.checkbox-input').forEach(cb => {
-      cb.addEventListener('change', e => {
-        const row = e.target.closest('.frame-17');
-        if (!row) return;
-        row.classList.toggle('editing', e.target.checked);
-        if (e.target.checked) {
-          const firstInput = row.querySelector('.edit-area .input');
-          if (firstInput) firstInput.focus();
-        }
+  /* ===== Режим редактирования/просмотра по чекбоксам ===== */
+  document.querySelectorAll('.checkbox-input').forEach(cb => {
+    cb.addEventListener('change', e => {
+      const row = e.target.closest('.frame-17');
+      if (!row) return;
+      row.classList.toggle('editing', e.target.checked);
+      if (e.target.checked) {
+        const firstInput = row.querySelector('.edit-area .input');
+        if (firstInput) firstInput.focus();
+      }
+    });
+  });
+
+  document.querySelectorAll('.frame-17 .btn-cancel').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const row = e.target.closest('.frame-17');
+      const cb = row.querySelector('.checkbox-input');
+      if (cb) { cb.checked = false; row.classList.remove('editing'); }
+    });
+  });
+
+  document.querySelectorAll('.frame-17 form.edit-area').forEach(form => {
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const row = form.closest('.frame-17');
+
+      if (row.id === 'row-coords') {
+        const lat = form.querySelector('[name="lat"]').value.trim();
+        const lng = form.querySelector('[name="lng"]').value.trim();
+        row.querySelector('.value-view .span').textContent = `Широта: ${lat}; Долгота: ${lng}`;
+        const compact = document.getElementById('coords-compact');
+        if (compact) compact.textContent = `Ш: ${lat}; Д: ${lng}`;
+      }
+
+      if (row.id === 'row-wifi-pass') {
+        const pass = form.querySelector('[name="wifi-pass"]').value;
+        row.querySelector('.value-view .span').textContent = pass;
+      }
+
+      const cb = row.querySelector('.checkbox-input');
+      if (cb) { cb.checked = false; row.classList.remove('editing'); }
+    });
+  });
+
+  /* ===== Тумблер Wi-Fi ===== */
+  let updateWifiThumbler = null;
+  (function () {
+    const thumbler = document.querySelector('.thumbler');
+    if (!thumbler) return;
+
+    const radios = thumbler.querySelectorAll('input[name="wifi-toggle"]');
+    const statusText = document.getElementById('wifi-status-text');
+
+    function applyState(value) {
+      const normalized = (value === 'on') ? 'on' : 'off';
+      thumbler.classList.toggle('thumbler--on', normalized === 'on');
+      thumbler.classList.toggle('thumbler--off', normalized === 'off');
+      if (statusText) {
+        statusText.textContent = (normalized === 'on') ? 'WiFi Работает' : 'WiFi Выключен';
+      }
+      radios.forEach(r => { r.checked = (r.value === normalized); });
+    }
+
+    updateWifiThumbler = applyState;
+
+    radios.forEach(r => {
+      r.addEventListener('change', (e) => {
+        const v = e.target.value === 'on' ? 'on' : 'off';
+        applyState(v);
       });
     });
+  })();
 
-    document.querySelectorAll('.frame-17 .btn-cancel').forEach(btn => {
-      btn.addEventListener('click', e => {
-        const row = e.target.closest('.frame-17');
-        const cb = row.querySelector('.checkbox-input');
-        if (cb) { cb.checked = false; row.classList.remove('editing'); }
-      });
-    });
-
-    document.querySelectorAll('.frame-17 form.edit-area').forEach(form => {
-      form.addEventListener('submit', async e => {
-        e.preventDefault();
-        const row = form.closest('.frame-17');
-
-        if (row.id === 'row-coords') {
-          const lat = form.querySelector('[name="lat"]').value.trim();
-          const lng = form.querySelector('[name="lng"]').value.trim();
-          row.querySelector('.value-view .span').textContent = `Широта: ${lat}; Долгота: ${lng}`;
-          // await fetch('/api/coords', { ... });
-          // Обновить компактный вывод в верхней карточке "Координаты"
-          const compact = document.getElementById('coords-compact');
-          if (compact) {
-            compact.textContent = `Ш: ${lat}; Д: ${lng}`;
-          }
-
-        }
-
-        if (row.id === 'row-wifi-pass') {
-          const pass = form.querySelector('[name="wifi-pass"]').value;
-          row.querySelector('.value-view .span').textContent = pass;
-          // await fetch('/api/wifi', { ... });
-        }
-
-        const cb = row.querySelector('.checkbox-input');
-        if (cb) { cb.checked = false; row.classList.remove('editing'); }
-      });
-    });
-
-    /* ===== Тумблер Wi-Fi ===== */
-    let updateWifiThumbler = null;
-    (function () {
-      const thumbler = document.querySelector('.thumbler');
-      if (!thumbler) return;
-
-      const radios = thumbler.querySelectorAll('input[name="wifi-toggle"]');
-      const statusText = document.getElementById('wifi-status-text');
-
-      function applyState(value) {
-        const normalized = (value === 'on') ? 'on' : 'off';
-        thumbler.classList.toggle('thumbler--on', normalized === 'on');
-        thumbler.classList.toggle('thumbler--off', normalized === 'off');
-        if (statusText) {
-          statusText.textContent = (normalized === 'on') ? 'WiFi Работает' : 'WiFi Выключен';
-        }
-        radios.forEach(r => { r.checked = (r.value === normalized); });
-      }
-
-      updateWifiThumbler = applyState;
-
-      radios.forEach(r => {
-        r.addEventListener('change', (e) => {
-          const v = e.target.value === 'on' ? 'on' : 'off';
-          applyState(v);
-          // fetch('/api/wifi', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ wifi_on: v === 'on' }) }).catch(console.error);
-        });
-      });
-    })();
-
-    /* ===== Статус системы (бейдж) ===== */
-    const systemBadge = document.getElementById('system-badge');
-    let systemStatusLocked = false;
-    function setSystemStatus(kind, textOverride, options = {}) {
-      if (!systemBadge) return;
-      if (options.unlock) systemStatusLocked = false;
-      const textMap = {
-        pending: 'Подключаемся',
-        ok: 'Всё работает',
-        warn: 'Есть проблемы',
-        err: 'Есть проблемы',
-        off: 'Модем отключен'
-      };
-      const badgeClasses = ['badge--pending', 'badge--ok', 'badge--warn', 'badge--err', 'badge--off'];
-      badgeClasses.forEach(cls => systemBadge.classList.remove(cls));
-
-      const normalized = badgeClasses.some(cls => cls.endsWith(kind)) ? kind : 'pending';
-      systemBadge.classList.add(`badge--${normalized}`);
-
-      const text = textOverride || textMap[normalized] || '';
-      const span = systemBadge.querySelector('.text-wrapper-2');
-      if (span) span.textContent = text;
-      systemBadge.setAttribute('aria-label', `Статус системы: ${text}`);
-      if (options.lock) systemStatusLocked = true;
-    }
-
-    const STATUS_ICON_CLASSES = ['status-icon--pending', 'status-icon--ok', 'status-icon--err', 'status-icon--off'];
-    const STATUS_ICON_CONFIG = {
-      pending: { className: 'status-icon--pending', symbol: '#icon-status-ok', aria: 'Ожидание' },
-      ok: { className: 'status-icon--ok', symbol: '#icon-status-ok', aria: 'ОК' },
-      err: { className: 'status-icon--err', symbol: '#icon-status-err', aria: 'Ошибка' },
-      off: { className: 'status-icon--off', symbol: '#icon-status-off', aria: 'Выключено' }
+  /* ===== Статус системы (бейдж) ===== */
+  const systemBadge = document.getElementById('system-badge');
+  let systemStatusLocked = false;
+  function setSystemStatus(kind, textOverride, options = {}) {
+    if (!systemBadge) return;
+    if (options.unlock) systemStatusLocked = false;
+    const textMap = {
+      pending: 'Подключаемся',
+      ok: 'Всё работает',
+      warn: 'Есть проблемы',
+      err: 'Есть проблемы',
+      off: 'Модем отключен'
     };
+    const badgeClasses = ['badge--pending', 'badge--ok', 'badge--warn', 'badge--err', 'badge--off'];
+    badgeClasses.forEach(cls => systemBadge.classList.remove(cls));
+    const normalized = ['pending','ok','warn','err','off'].includes(kind) ? kind : 'pending';
+    systemBadge.classList.add(`badge--${normalized}`);
+    const text = textOverride || textMap[normalized] || '';
+    const span = systemBadge.querySelector('.text-wrapper-2');
+    if (span) span.textContent = text;
+    systemBadge.setAttribute('aria-label', `Статус системы: ${text}`);
+    if (options.lock) systemStatusLocked = true;
+  }
 
-    function setIndicatorState(indicator, status, textContent) {
-      if (!indicator) return;
-      const normalizedStatus = STATUS_ICON_CONFIG[status] ? status : 'pending';
-      const config = STATUS_ICON_CONFIG[normalizedStatus];
-      if (indicator.card) {
-        indicator.card.dataset.status = normalizedStatus;
-      }
-      if (indicator.icon) {
-        STATUS_ICON_CLASSES.forEach(cls => indicator.icon.classList.remove(cls));
-        indicator.icon.classList.add(config.className);
-        indicator.icon.setAttribute('aria-label', config.aria);
-      }
-      if (indicator.use) {
-        indicator.use.setAttribute('href', config.symbol);
-      }
-      if (indicator.text && textContent != null) {
-        indicator.text.textContent = textContent;
-      }
-      if (indicator.statusText && textContent != null) {
-        indicator.statusText.textContent = textContent;
-      }
+  const STATUS_ICON_CLASSES = ['status-icon--pending', 'status-icon--ok', 'status-icon--err', 'status-icon--off'];
+  const STATUS_ICON_CONFIG = {
+    pending: { className: 'status-icon--pending', symbol: '#icon-status-ok', aria: 'Ожидание' },
+    ok:      { className: 'status-icon--ok',      symbol: '#icon-status-ok', aria: 'ОК' },
+    err:     { className: 'status-icon--err',     symbol: '#icon-status-err', aria: 'Ошибка' },
+    off:     { className: 'status-icon--off',     symbol: '#icon-status-off', aria: 'Выключено' }
+  };
+
+  function setIndicatorState(indicator, status, textContent) {
+    if (!indicator) return;
+    const normalizedStatus = STATUS_ICON_CONFIG[status] ? status : 'pending';
+    const config = STATUS_ICON_CONFIG[normalizedStatus];
+    if (indicator.card) indicator.card.dataset.status = normalizedStatus;
+    if (indicator.icon) {
+      STATUS_ICON_CLASSES.forEach(cls => indicator.icon.classList.remove(cls));
+      indicator.icon.classList.add(config.className);
+      indicator.icon.setAttribute('aria-label', config.aria);
     }
+    if (indicator.use) indicator.use.setAttribute('href', config.symbol);
+    if (indicator.text && textContent != null) indicator.text.textContent = textContent;
+    if (indicator.statusText && textContent != null) indicator.statusText.textContent = textContent;
+  }
 
-    function clampPercent(v) {
-      const num = Number(v);
-      if (Number.isNaN(num)) return 0;
-      return Math.min(100, Math.max(0, num));
-    }
+  function clampPercent(v) {
+    const num = Number(v);
+    if (Number.isNaN(num)) return 0;
+    return Math.min(100, Math.max(0, num));
+  }
 
-    const indicators = {
-      power: {
-        card: document.getElementById('power-status-card'),
-        icon: document.getElementById('power-status-icon'),
-        use: document.getElementById('power-status-use'),
-        text: document.getElementById('power-status-text')
-      },
-      coords: {
-        card: document.getElementById('coords-status-card'),
-        icon: document.getElementById('coords-status-icon'),
-        use: document.getElementById('coords-status-use'),
-        text: document.getElementById('coords-status-text'),
-        compact: document.getElementById('coords-compact'),
-        detailed: document.getElementById('coords-detailed'),
-        inputs: {
-          lat: document.getElementById('lat'),
-          lng: document.getElementById('lng')
-        }
-      },
-      gps: {
-        card: document.getElementById('gps-status-card'),
-        icon: document.getElementById('gps-status-icon'),
-        use: document.getElementById('gps-status-use'),
-        text: document.getElementById('gps-status-text')
-      },
-      inet: {
-        card: document.getElementById('inet-status-card'),
-        icon: document.getElementById('inet-status-icon'),
-        use: document.getElementById('inet-status-use'),
-        text: document.getElementById('inet-status-text')
-      },
-      rx: {
-        bar: document.getElementById('rx-progress-bar'),
-        fill: document.getElementById('rx-progress-fill'),
-        rest: document.getElementById('rx-progress-rest'),
-        value: document.getElementById('rx-progress-text')
-      },
-      tx: {
-        bar: document.getElementById('tx-progress-bar'),
-        fill: document.getElementById('tx-progress-fill'),
-        rest: document.getElementById('tx-progress-rest'),
-        value: document.getElementById('tx-progress-text')
+  const indicators = {
+    power: {
+      card: document.getElementById('power-status-card'),
+      icon: document.getElementById('power-status-icon'),
+      use:  document.getElementById('power-status-use'),
+      text: document.getElementById('power-status-text')
+    },
+    coords: {
+      card: document.getElementById('coords-status-card'),
+      icon: document.getElementById('coords-status-icon'),
+      use:  document.getElementById('coords-status-use'),
+      text: document.getElementById('coords-status-text'),
+      compact:  document.getElementById('coords-compact'),
+      detailed: document.getElementById('coords-detailed'),
+      inputs: {
+        lat: document.getElementById('lat'),
+        lng: document.getElementById('lng')
       }
-    };
-
-    const angleFields = {
-      tiltCurrent: document.getElementById('tilt-angle-current'),
-      tiltRequired: document.getElementById('tilt-angle-required'),
-      rotateCurrent: document.getElementById('rotate-angle-current'),
-      rotateRequired: document.getElementById('rotate-angle-required')
-    };
-    // Стартовые значения прогресса = 0%
-    updateProgressState(indicators.rx, 0, 'Приём данных');
-    updateProgressState(indicators.tx, 0, 'Передача данных');
-    const eventLog = document.getElementById('event-log');
-    const logEmptyMessage = eventLog?.querySelector('.frame-23__empty') || null;
-    const MAX_LOG_ENTRIES = 10;
-
-    const macField = document.getElementById('mac-address');
-
-    const connectionAttemptSection = document.getElementById('connection-attempt');
-    const connectionDetailsSection = document.getElementById('connection-details');
-    const connectionAttemptNumber = document.getElementById('connection-attempt-number');
-    const connectionAttemptTotal = document.getElementById('connection-attempt-total');
-    const connectionAttemptEta = document.getElementById('connection-attempt-eta');
-    const connectionAttemptEtaWrapper = document.getElementById('connection-attempt-eta-wrapper');
-    const ATTEMPT_TOTAL = 3;
-
-    const COORDS_STATUS_LABELS = {
-      pending: 'Определяем…',
-      ok: 'Определены',
-      err: 'Ошибка'
-    };
-    const SIMPLE_STATUS_LABELS = {
-      pending: 'Подключаем…',
-      ok: 'Есть',
-      err: 'Нет связи'
-    };
-    const INTERNET_STATUS_LABELS = {
-      pending: 'Подключаем…',
-      ok: 'Подключён',
-      err: 'Нет соединения'
-    };
-
-    function updateProgressState(indicator, progress, labelPrefix) {
-      if (!indicator?.bar) return;
-      const clamped = clampPercent(progress);
-      if (indicator.fill) indicator.fill.style.flexGrow = String(clamped);
-      if (indicator.rest) indicator.rest.style.flexGrow = String(100 - clamped);
-      indicator.bar.setAttribute('aria-valuenow', String(clamped));
-      indicator.bar.setAttribute('aria-label', `${labelPrefix} ${clamped}%`);
-      if (indicator.value) {
-        indicator.value.textContent = `${clamped}%`;
-      }
+    },
+    gps: {
+      card: document.getElementById('gps-status-card'),
+      icon: document.getElementById('gps-status-icon'),
+      use:  document.getElementById('gps-status-use'),
+      text: document.getElementById('gps-status-text')
+    },
+    inet: {
+      card: document.getElementById('inet-status-card'),
+      icon: document.getElementById('inet-status-icon'),
+      use:  document.getElementById('inet-status-use'),
+      text: document.getElementById('inet-status-text')
+    },
+    rx: {
+      bar:   document.getElementById('rx-progress-bar'),
+      fill:  document.getElementById('rx-progress-fill'),
+      rest:  document.getElementById('rx-progress-rest'),
+      value: document.getElementById('rx-progress-text')
+    },
+    tx: {
+      bar:   document.getElementById('tx-progress-bar'),
+      fill:  document.getElementById('tx-progress-fill'),
+      rest:  document.getElementById('tx-progress-rest'),
+      value: document.getElementById('tx-progress-text')
     }
+  };
 
-    function formatCoordinate(value, fractionDigits = 2) {
-      const num = Number(value);
-      if (Number.isNaN(num)) return '—';
-      return num.toFixed(fractionDigits);
-    }
+  const angleFields = {
+    tiltCurrent:   document.getElementById('tilt-angle-current'),
+    tiltRequired:  document.getElementById('tilt-angle-required'),
+    rotateCurrent: document.getElementById('rotate-angle-current'),
+    rotateRequired:document.getElementById('rotate-angle-required')
+  };
 
-    function formatAngle(value) {
-      if (value == null || value === '') return '—';
-      const num = Number(value);
-      if (Number.isNaN(num)) return String(value);
-      return Number.isInteger(num) ? String(num) : num.toFixed(1);
-    }
+  // Стартовые значения прогресса = 0%
+  updateProgressState(indicators.rx, 0, 'Приём данных');
+  updateProgressState(indicators.tx, 0, 'Передача данных');
 
-    function setAngleValue(el, value) {
-      if (!el) return;
-      el.textContent = formatAngle(value);
-    }
+  const eventLog = document.getElementById('event-log');
+  const logEmptyMessage = eventLog?.querySelector('.frame-23__empty') || null;
+  const MAX_LOG_ENTRIES = 10;
 
-    function parseLogTimestamp(raw) {
-      if (typeof raw !== 'string') return null;
-      const match = raw.trim().match(/^(\d{2})\.(\d{2})\.(\d{4}),\s*(\d{2}):(\d{2})$/);
-      if (!match) return null;
-      const [, dd, mm, yyyy, hh, min] = match;
-      return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
-    }
+  const macField = document.getElementById('mac-address');
 
-    function parseLogRecord(raw, fallbackIndex) {
-      const text = raw == null ? '' : String(raw);
-      const parts = text.split(/\n+/);
-      const firstLine = (parts.shift() || '').trim();
-      const numberMatch = firstLine.match(/^(\d+)\)\s*(.*)$/);
-      const number = numberMatch ? (parseInt(numberMatch[1], 10) || fallbackIndex) : fallbackIndex;
-      const messageRaw = numberMatch ? numberMatch[2] : firstLine;
-      const message = (messageRaw && messageRaw.trim()) || '—';
-      const timestampText = (parts.pop() || '').trim();
-      return {
-        number,
-        message,
-        timestampText,
-        datetime: parseLogTimestamp(timestampText)
-      };
-    }
+  const connectionAttemptSection = document.getElementById('connection-attempt');
+  const connectionDetailsSection = document.getElementById('connection-details');
+  const connectionAttemptNumber = document.getElementById('connection-attempt-number');
+  const connectionAttemptTotal  = document.getElementById('connection-attempt-total');
+  const connectionAttemptEta    = document.getElementById('connection-attempt-eta');
+  const connectionAttemptEtaWrapper = document.getElementById('connection-attempt-eta-wrapper');
+  const ATTEMPT_TOTAL = 3;
 
-    function renderLogs(logs) {
-      if (!eventLog) return;
-      eventLog.querySelectorAll('article').forEach(node => node.remove());
-      const items = Array.isArray(logs) ? logs.slice(0, MAX_LOG_ENTRIES) : [];
-      if (items.length === 0) {
-        if (logEmptyMessage) {
-          logEmptyMessage.hidden = false;
-          if (!logEmptyMessage.parentElement) {
-            eventLog.appendChild(logEmptyMessage);
-          }
-        }
-        return;
-      }
+  const COORDS_STATUS_LABELS = {
+    pending: 'Определяем…',
+    ok:      'Определены',
+    err:     'Ошибка'
+  };
+  const SIMPLE_STATUS_LABELS = {
+    pending: 'Подключаем…',
+    ok:      'Есть',
+    err:     'Нет связи'
+  };
+  const INTERNET_STATUS_LABELS = {
+    pending: 'Подключаем…',
+    ok:      'Подключён',
+    err:     'Нет соединения'
+  };
 
+  function updateProgressState(indicator, progress, labelPrefix) {
+    if (!indicator?.bar) return;
+    const clamped = clampPercent(progress);
+    if (indicator.fill) indicator.fill.style.flexGrow = String(clamped);
+    if (indicator.rest) indicator.rest.style.flexGrow = String(100 - clamped);
+    indicator.bar.setAttribute('aria-valuenow', String(clamped));
+    indicator.bar.setAttribute('aria-label', `${labelPrefix} ${clamped}%`);
+    if (indicator.value) indicator.value.textContent = `${clamped}%`;
+  }
+
+  function formatCoordinate(value, fractionDigits = 2) {
+    const num = Number(value);
+    if (Number.isNaN(num)) return '—';
+    return num.toFixed(fractionDigits);
+  }
+
+  function formatAngle(value) {
+    if (value == null || value === '') return '—';
+    const num = Number(value);
+    if (Number.isNaN(num)) return String(value);
+    return Number.isInteger(num) ? String(num) : num.toFixed(1);
+  }
+
+  function setAngleValue(el, value) {
+    if (!el) return;
+    el.textContent = formatAngle(value);
+  }
+
+  function parseLogTimestamp(raw) {
+    if (typeof raw !== 'string') return null;
+    const m = raw.trim().match(/^(\d{2})\.(\d{2})\.(\d{4}),\s*(\d{2}):(\d{2})$/);
+    if (!m) return null;
+    const [, dd, mm, yyyy, hh, min] = m;
+    return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+  }
+
+  function parseLogRecord(raw, fallbackIndex) {
+    const text = raw == null ? '' : String(raw);
+    const parts = text.split(/\n+/);
+    const firstLine = (parts.shift() || '').trim();
+    const numberMatch = firstLine.match(/^(\d+)\)\s*(.*)$/);
+    const number = numberMatch ? (parseInt(numberMatch[1], 10) || fallbackIndex) : fallbackIndex;
+    const messageRaw = numberMatch ? numberMatch[2] : firstLine;
+    const message = (messageRaw && messageRaw.trim()) || '—';
+    const timestampText = (parts.pop() || '').trim();
+    return { number, message, timestampText, datetime: parseLogTimestamp(timestampText) };
+  }
+
+  function renderLogs(logs) {
+    if (!eventLog) return;
+    eventLog.querySelectorAll('article').forEach(node => node.remove());
+    const items = Array.isArray(logs) ? logs.slice(0, MAX_LOG_ENTRIES) : [];
+    if (items.length === 0) {
       if (logEmptyMessage) {
-        logEmptyMessage.hidden = true;
+        logEmptyMessage.hidden = false;
+        if (!logEmptyMessage.parentElement) eventLog.appendChild(logEmptyMessage);
       }
-
-      items.forEach((raw, index) => {
-        const { number, message, timestampText, datetime } = parseLogRecord(raw, index + 1);
-        const article = document.createElement('article');
-        article.className = index === 0 ? 'frame-24' : 'frame-25';
-
-        const numberEl = document.createElement('div');
-        numberEl.className = 'text-wrapper-17';
-        numberEl.textContent = String(number);
-
-        const messageEl = document.createElement('p');
-        messageEl.className = 'div-3';
-        messageEl.textContent = message;
-
-        article.appendChild(numberEl);
-        article.appendChild(messageEl);
-
-        if (timestampText) {
-          const timeEl = document.createElement('time');
-          timeEl.className = 'text-wrapper-18';
-          timeEl.textContent = timestampText;
-          if (datetime) {
-            timeEl.setAttribute('datetime', datetime);
-          }
-          article.appendChild(timeEl);
-        }
-
-        eventLog.appendChild(article);
-      });
+      return;
     }
+    if (logEmptyMessage) logEmptyMessage.hidden = true;
 
-    function updateConnectionAttemptView(state) {
-      if (!connectionAttemptSection) return;
+    items.forEach((raw, index) => {
+      const { number, message, timestampText, datetime } = parseLogRecord(raw, index + 1);
+      const article = document.createElement('article');
+      article.className = index === 0 ? 'frame-24' : 'frame-25';
 
-      const rawAttempt = state?.attempt;
-      const attemptTextRaw = rawAttempt == null ? '' : String(rawAttempt);
-      const hasAttemptValue = attemptTextRaw.trim() !== '';
+      const numberEl = document.createElement('div');
+      numberEl.className = 'text-wrapper-17';
+      numberEl.textContent = String(number);
 
-      if (!hasAttemptValue) {
-        connectionAttemptSection.hidden = true;
-        if (connectionDetailsSection) connectionDetailsSection.hidden = false;
-        return;
+      const messageEl = document.createElement('p');
+      messageEl.className = 'div-3';
+      messageEl.textContent = message;
+
+      article.appendChild(numberEl);
+      article.appendChild(messageEl);
+
+      if (timestampText) {
+        const timeEl = document.createElement('time');
+        timeEl.className = 'text-wrapper-18';
+        timeEl.textContent = timestampText;
+        if (datetime) timeEl.setAttribute('datetime', datetime);
+        article.appendChild(timeEl);
       }
 
-      const attemptNumber = Number(rawAttempt);
-      const hasValidAttemptNumber = Number.isFinite(attemptNumber);
-      const shouldShowAttempt = hasValidAttemptNumber && attemptNumber >= 0 && attemptNumber <= 2;
-      const shouldShowDetails = hasValidAttemptNumber && attemptNumber === 4;
+      eventLog.appendChild(article);
+    });
+  }
 
-      if (shouldShowDetails || !shouldShowAttempt) {
-        connectionAttemptSection.hidden = true;
-        if (connectionDetailsSection) connectionDetailsSection.hidden = false;
-        return;
-      }
+/* ===== ПРОСТАЯ ЛОГИКА ПОКАЗ/СКРЫТИЕ ATTEMPT/DETAILS ===== */
+function updateConnectionAttemptView(state = {}) {
+  const n = Number(state.attempt);
+  const showAttempt = Number.isFinite(n) && n >= 0 && n <= ATTEMPT_TOTAL;
 
-      connectionAttemptSection.hidden = false;
-      if (connectionDetailsSection) connectionDetailsSection.hidden = true;
+  // Один переключатель на обе секции:
+  if (connectionAttemptSection) connectionAttemptSection.hidden = !showAttempt;
+  if (connectionDetailsSection) connectionDetailsSection.hidden =  showAttempt;
 
-      const displayAttemptText = attemptNumber === 0 ? 'ноль' : attemptTextRaw;
+  if (showAttempt) {
+    if (n === ATTEMPT_TOTAL) {
+      // если достигнут лимит попыток — выводим "Перезагрузить"
+      if (connectionAttemptNumber) connectionAttemptNumber.textContent = "Перезагрузить";
+      if (connectionAttemptTotal)  connectionAttemptTotal.textContent  = "";
+      if (connectionAttemptEtaWrapper) connectionAttemptEtaWrapper.hidden = true;
+    } else {
+      // обычный режим с цифрами
+      if (connectionAttemptNumber) connectionAttemptNumber.textContent = String(n+1);
+      if (connectionAttemptTotal)  connectionAttemptTotal.textContent  = String(ATTEMPT_TOTAL);
 
-      if (connectionAttemptNumber) {
-        connectionAttemptNumber.textContent = displayAttemptText;
-      }
-      if (connectionAttemptTotal) {
-        connectionAttemptTotal.textContent = String(ATTEMPT_TOTAL);
-      }
-
-      const etaSeconds = Number(state?.eta_sec);
-      if (Number.isFinite(etaSeconds) && etaSeconds > 0) {
-        const etaMinutes = Math.max(1, Math.round(etaSeconds / 60));
-        if (connectionAttemptEta) {
-          connectionAttemptEta.textContent = String(etaMinutes);
-        }
+      const etaSec = Number(state.eta_sec);
+      if (Number.isFinite(etaSec) && etaSec > 0) {
+        const m = Math.max(1, Math.round(etaSec / 60));
+        if (connectionAttemptEta) connectionAttemptEta.textContent = String(m);
         if (connectionAttemptEtaWrapper) connectionAttemptEtaWrapper.hidden = false;
       } else if (connectionAttemptEtaWrapper) {
         connectionAttemptEtaWrapper.hidden = true;
       }
     }
+  }
+}
 
-    /* ===== Пороги температуры ===== */
-    const TEMP_WARN = 70;   // жёлтый
-    const TEMP_ERR = 85;   // красный
-    const TEMP_MIN = -30;  // как в подписи
-    const TEMP_MAX = 85;
 
-    /* ===== Обновление текста "Температура: +N℃" ===== */
-    const spanTemp = document.getElementById('current-temp');
-    function updateTemperatureField(tempC) {
-      if (!spanTemp) return;
-      const num = Number(tempC);
-      if (Number.isNaN(num)) {
-        spanTemp.textContent = 'Температура: —℃';
-        return;
+  /* ===== Пороги температуры ===== */
+  const TEMP_WARN = 70;   // жёлтый
+  const TEMP_ERR  = 85;   // красный
+  const TEMP_MIN  = -30;
+  const TEMP_MAX  = 85;
+
+  /* ===== Обновление текста "Температура: +N℃" ===== */
+  const spanTemp = document.getElementById('current-temp');
+  function updateTemperatureField(tempC) {
+    if (!spanTemp) return;
+    const num = Number(tempC);
+    if (Number.isNaN(num)) {
+      spanTemp.textContent = 'Температура: —℃';
+      return;
+    }
+    const formatted = Number.isInteger(num) ? Math.abs(num) : Math.abs(num).toFixed(1);
+    const sign = num < 0 ? '−' : '+';
+    spanTemp.textContent = `Температура: ${sign}${formatted}℃`;
+  }
+
+  /* ===== Полоса температуры ===== */
+  const tempMeter = document.getElementById('temp-meter');
+  const fillEl = tempMeter?.querySelector('.meter__fill');
+  const restEl = tempMeter?.querySelector('.meter__rest');
+
+  function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+
+  function updateTempBar(tempC) {
+    if (!tempMeter || !fillEl || !restEl) return;
+    const p = (clamp(tempC, TEMP_MIN, TEMP_MAX) - TEMP_MIN) / (TEMP_MAX - TEMP_MIN);
+    fillEl.style.flexGrow = String(p * 100);
+    restEl.style.flexGrow = String((1 - p) * 100);
+
+    tempMeter.classList.remove('meter--ok', 'meter--warn', 'meter--err');
+    if (tempC >= TEMP_ERR) tempMeter.classList.add('meter--err');
+    else if (tempC >= TEMP_WARN) tempMeter.classList.add('meter--warn');
+    else tempMeter.classList.add('meter--ok');
+
+    tempMeter.setAttribute('aria-valuenow', String(Math.round(tempC)));
+    tempMeter.setAttribute('aria-label', `Температура модема ${Math.round(tempC)} градусов`);
+    tempMeter.removeAttribute('data-pending');
+  }
+
+  /* ===== Подсказки и статус по температуре ===== */
+  const tempAlert = document.getElementById('temp-alert');
+  const tempAlertText = document.getElementById('temp-alert-text');
+  const btnShutdown = document.getElementById('btn-shutdown-modem');
+  const cbAuto = document.getElementById('auto-shutdown-hot');
+
+  function showOverheatAdvice(level, tempC) {
+    if (!tempAlert) return;
+    tempAlertText.textContent = (level === 'err')
+      ? 'Опасная температура! Немедленно выключите модем или переместите его в прохладное место.'
+      : 'Рекомендуется выключить модем на время или укрыть / перенести его от прямых солнечных лучей';
+    tempAlert.hidden = false;
+    tempAlert.setAttribute('aria-label', `Предупреждение о перегреве: ${Math.round(tempC)}℃`);
+  }
+  function hideOverheatAdvice() { if (tempAlert) tempAlert.hidden = true; }
+
+  let autoShutdownSent = false;
+  async function shutdownModemSafely(isAuto = false) {
+    try {
+      setSystemStatus('off', 'Модем отключен', { lock: true });
+      if (btnShutdown) {
+        btnShutdown.disabled = true;
+        btnShutdown.textContent = 'Выключаем...';
       }
-      const formatted = Number.isInteger(num) ? Math.abs(num) : Math.abs(num).toFixed(1);
-      const sign = num < 0 ? '−' : '+';
-      spanTemp.textContent = `Температура: ${sign}${formatted}℃`;
-    }
-
-    /* ===== Полоса температуры (процент + цвет) ===== */
-    const tempMeter = document.getElementById('temp-meter');
-    const fillEl = tempMeter?.querySelector('.meter__fill');
-    const restEl = tempMeter?.querySelector('.meter__rest');
-
-    function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
-
-    function updateTempBar(tempC) {
-      if (!tempMeter || !fillEl || !restEl) return;
-
-      // ограничиваем только визуальное заполнение
-      const p = (clamp(tempC, TEMP_MIN, TEMP_MAX) - TEMP_MIN) / (TEMP_MAX - TEMP_MIN);
-      fillEl.style.flexGrow = String(p * 100);
-      restEl.style.flexGrow = String((1 - p) * 100);
-
-      tempMeter.classList.remove('meter--ok', 'meter--warn', 'meter--err');
-      if (tempC >= TEMP_ERR) tempMeter.classList.add('meter--err');
-      else if (tempC >= TEMP_WARN) tempMeter.classList.add('meter--warn');
-      else tempMeter.classList.add('meter--ok');
-
-      // aria — показываем реальную температуру
-      tempMeter.setAttribute('aria-valuenow', String(Math.round(tempC)));
-      tempMeter.setAttribute('aria-label', `Температура модема ${Math.round(tempC)} градусов`);
-      tempMeter.removeAttribute('data-pending');
-    }
-
-    /* ===== Подсказки и статус по температуре ===== */
-    const tempAlert = document.getElementById('temp-alert');
-    const tempAlertText = document.getElementById('temp-alert-text');
-    const btnShutdown = document.getElementById('btn-shutdown-modem');
-    const cbAuto = document.getElementById('auto-shutdown-hot');
-
-    function showOverheatAdvice(level, tempC) {
-      if (!tempAlert) return;
-      tempAlertText.textContent = (level === 'err')
-        ? 'Опасная температура! Немедленно выключите модем или переместите его в прохладное место.'
-        : 'Рекомендуется выключить модем на время или укрыть / перенести его от прямых солнечных лучей';
-      tempAlert.hidden = false;
-      tempAlert.setAttribute('aria-label', `Предупреждение о перегреве: ${Math.round(tempC)}℃`);
-    }
-    function hideOverheatAdvice() { if (tempAlert) tempAlert.hidden = true; }
-
-    // флаг, чтобы авто-выключение отправлялось один раз на «красной» зоне
-    let autoShutdownSent = false;
-
-    async function shutdownModemSafely(isAuto = false) {
-      try {
-        // await fetch('/api/modem/power', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ on:false }) });
-        setSystemStatus('off', 'Модем отключен', { lock: true });            // мгновенно в UI
-        // НЕ скрываем предупреждение здесь — пусть пользователь видит причину
-        if (btnShutdown) {
-          btnShutdown.disabled = true;
-          btnShutdown.textContent = isAuto ? 'Выключаем...' : 'Выключаем...';
-        }
-      } catch (e) {
-        console.error('Не удалось выключить модем:', e);
-        autoShutdownSent = false;
-        if (btnShutdown) {
-          btnShutdown.disabled = false;
-          btnShutdown.textContent = 'Выключить модем';
-        }
+    } catch (e) {
+      console.error('Не удалось выключить модем:', e);
+      autoShutdownSent = false;
+      if (btnShutdown) {
+        btnShutdown.disabled = false;
+        btnShutdown.textContent = 'Выключить модем';
       }
     }
-    btnShutdown?.addEventListener('click', () => shutdownModemSafely(false));
+  }
+  btnShutdown?.addEventListener('click', () => shutdownModemSafely(false));
 
-    function applyStatusByTemperature(tempC, { allowBadgeUpdate = true } = {}) {
-      if (tempC == null || isNaN(tempC)) return;
+  function applyStatusByTemperature(tempC, { allowBadgeUpdate = true } = {}) {
+    if (tempC == null || isNaN(tempC)) return;
 
-      if (allowBadgeUpdate && !systemStatusLocked) {
-        if (tempC >= TEMP_ERR) setSystemStatus('err');
-        else if (tempC >= TEMP_WARN) setSystemStatus('warn');
-        else setSystemStatus('ok');
-      }
-
-      if (tempC >= TEMP_ERR) showOverheatAdvice('err', tempC);
-      else if (tempC >= TEMP_WARN) showOverheatAdvice('warn', tempC);
-      else {
-        hideOverheatAdvice();
-        autoShutdownSent = false; // сброс, когда вернулись в норму
-      }
-
-      // авто-отключение: только один раз и не скрываем предупреждение
-      if (cbAuto?.checked && tempC >= TEMP_ERR && !autoShutdownSent) {
-        autoShutdownSent = true;
-        shutdownModemSafely(true);
-      }
+    if (allowBadgeUpdate && !systemStatusLocked) {
+      if (tempC >= TEMP_ERR) setSystemStatus('err');
+      else if (tempC >= TEMP_WARN) setSystemStatus('warn');
+      else setSystemStatus('ok');
     }
 
-    /* ===== Инициализация из DOM-метра при загрузке ===== */
-    (function initTempFromDOM() {
-      const meter = document.querySelector('[role="meter"][aria-label*="Температура модема"]');
-      if (!meter) return;
-      if (meter.dataset.pending === 'true') return;
-      const raw = meter.getAttribute('aria-valuenow');
-      if (!raw) return;
-      const now = parseFloat(raw);
-      if (!Number.isNaN(now)) {
-        updateTemperatureField(now);
-        applyStatusByTemperature(now, { allowBadgeUpdate: !systemStatusLocked });
-        updateTempBar(now);
-      }
-    })();
+    if (tempC >= TEMP_ERR) showOverheatAdvice('err', tempC);
+    else if (tempC >= TEMP_WARN) showOverheatAdvice('warn', tempC);
+    else {
+      hideOverheatAdvice();
+      autoShutdownSent = false;
+    }
 
-    /* ===== Точка входа новых данных от устройства =====
-       Пример: window.onDeviceState({ temp_c: 72, modem_off:false })
-    */
-    window.onDeviceState = function (state) {
-      if (!state) return;
+    if (cbAuto?.checked && tempC >= TEMP_ERR && !autoShutdownSent) {
+      autoShutdownSent = true;
+      shutdownModemSafely(true);
+    }
+  }
 
-      systemStatusLocked = false;
+  /* ===== Инициализация из DOM-метра при загрузке ===== */
+  (function initTempFromDOM() {
+    const meter = document.querySelector('[role="meter"][aria-label*="Температура модема"]');
+    if (!meter) return;
+    if (meter.dataset.pending === 'true') return;
+    const raw = meter.getAttribute('aria-valuenow');
+    if (!raw) return;
+    const now = parseFloat(raw);
+    if (!Number.isNaN(now)) {
+      updateTemperatureField(now);
+      applyStatusByTemperature(now, { allowBadgeUpdate: !systemStatusLocked });
+      updateTempBar(now);
+    }
+  })();
 
-      if (typeof state.mac === 'string' && macField) {
-        macField.textContent = `MAC-адрес: ${state.mac}`;
-      }
+  /* ===== Точка входа новых данных от устройства ===== */
+  window.onDeviceState = function (state) {
+    if (!state) return;
 
-      if ('power' in state) {
-        const powerStatus = state.power === true ? 'ok' : (state.power === false ? 'off' : 'pending');
-        const powerText = state.power === true ? 'Есть' : (state.power === false ? 'Нет' : 'Ожидание…');
-        setIndicatorState(indicators.power, powerStatus, powerText);
-      }
+    systemStatusLocked = false;
 
-      if ('wifi_on' in state && typeof updateWifiThumbler === 'function') {
-        updateWifiThumbler(state.wifi_on ? 'on' : 'off');
-      }
+    if (typeof state.mac === 'string' && macField) {
+      macField.textContent = `MAC-адрес: ${state.mac}`;
+    }
 
-      const coords = state.coords || {};
-      if (indicators.coords) {
-        const formattedLat = (coords.lat != null && coords.lat !== '') ? formatCoordinate(coords.lat) : '—';
-        const formattedLng = (coords.lng != null && coords.lng !== '') ? formatCoordinate(coords.lng) : '—';
-        if (indicators.coords.compact) {
-          indicators.coords.compact.textContent = `Ш: ${formattedLat}; Д: ${formattedLng}`;
-        }
-        if (indicators.coords.detailed) {
-          indicators.coords.detailed.textContent = ` Широта: ${formattedLat}; Долгота: ${formattedLng}`;
-        }
-        if (indicators.coords.inputs?.lat) {
-          indicators.coords.inputs.lat.value = (coords.lat != null && coords.lat !== '') ? String(coords.lat) : '';
-        }
-        if (indicators.coords.inputs?.lng) {
-          indicators.coords.inputs.lng.value = (coords.lng != null && coords.lng !== '') ? String(coords.lng) : '';
-        }
-      }
+    if ('power' in state) {
+      const powerStatus = state.power === true ? 'ok' : (state.power === false ? 'off' : 'pending');
+      const powerText = state.power === true ? 'Есть' : (state.power === false ? 'Нет' : 'Ожидание…');
+      setIndicatorState(indicators.power, powerStatus, powerText);
+    }
 
-      if ('coords_status' in state && indicators.coords) {
-        const status = ['pending', 'ok', 'err'].includes(state.coords_status) ? state.coords_status : 'pending';
-        setIndicatorState(indicators.coords, status, COORDS_STATUS_LABELS[status] || COORDS_STATUS_LABELS.pending);
-      }
+    if ('wifi_on' in state && typeof updateWifiThumbler === 'function') {
+      updateWifiThumbler(state.wifi_on ? 'on' : 'off');
+    }
 
-      if ('gps_status' in state) {
-        const status = ['pending', 'ok', 'err'].includes(state.gps_status) ? state.gps_status : 'pending';
-        setIndicatorState(indicators.gps, status, SIMPLE_STATUS_LABELS[status] || SIMPLE_STATUS_LABELS.pending);
-      }
+    const coords = state.coords || {};
+    if (indicators.coords) {
+      const formattedLat = (coords.lat != null && coords.lat !== '') ? formatCoordinate(coords.lat) : '—';
+      const formattedLng = (coords.lng != null && coords.lng !== '') ? formatCoordinate(coords.lng) : '—';
+      if (indicators.coords.compact)  indicators.coords.compact.textContent  = `Ш: ${formattedLat}; Д: ${formattedLng}`;
+      if (indicators.coords.detailed) indicators.coords.detailed.textContent = ` Широта: ${formattedLat}; Долгота: ${formattedLng}`;
+      if (indicators.coords.inputs?.lat) indicators.coords.inputs.lat.value = (coords.lat != null && coords.lat !== '') ? String(coords.lat) : '';
+      if (indicators.coords.inputs?.lng) indicators.coords.inputs.lng.value = (coords.lng != null && coords.lng !== '') ? String(coords.lng) : '';
+    }
 
-      if ('inet_status' in state) {
-        const status = ['pending', 'ok', 'err'].includes(state.inet_status) ? state.inet_status : 'pending';
-        setIndicatorState(indicators.inet, status, INTERNET_STATUS_LABELS[status] || INTERNET_STATUS_LABELS.pending);
-      }
+    if ('coords_status' in state && indicators.coords) {
+      const status = ['pending','ok','err'].includes(state.coords_status) ? state.coords_status : 'pending';
+      setIndicatorState(indicators.coords, status, COORDS_STATUS_LABELS[status] || COORDS_STATUS_LABELS.pending);
+    }
 
-      if (state.rx) {
-        updateProgressState(indicators.rx, state.rx.progress, 'Приём данных');
-      }
+    if ('gps_status' in state) {
+      const status = ['pending','ok','err'].includes(state.gps_status) ? state.gps_status : 'pending';
+      setIndicatorState(indicators.gps, status, SIMPLE_STATUS_LABELS[status] || SIMPLE_STATUS_LABELS.pending);
+    }
 
-      if (state.tx) {
-        updateProgressState(indicators.tx, state.tx.progress, 'Передача данных');
-      }
+    if ('inet_status' in state) {
+      const status = ['pending','ok','err'].includes(state.inet_status) ? state.inet_status : 'pending';
+      setIndicatorState(indicators.inet, status, INTERNET_STATUS_LABELS[status] || INTERNET_STATUS_LABELS.pending);
+    }
 
-      if (state.angles) {
-        setAngleValue(angleFields.tiltCurrent, state.angles.tilt_current);
-        setAngleValue(angleFields.tiltRequired, state.angles.tilt_required);
-        setAngleValue(angleFields.rotateCurrent, state.angles.rotate_current);
-        setAngleValue(angleFields.rotateRequired, state.angles.rotate_required);
-      }
+    if (state.rx) updateProgressState(indicators.rx, state.rx.progress, 'Приём данных');
+    if (state.tx) updateProgressState(indicators.tx, state.tx.progress, 'Передача данных');
 
-      if ('logs' in state) {
-        renderLogs(state.logs);
-      }
+    if (state.angles) {
+      setAngleValue(angleFields.tiltCurrent,   state.angles.tilt_current);
+      setAngleValue(angleFields.tiltRequired,  state.angles.tilt_required);
+      setAngleValue(angleFields.rotateCurrent, state.angles.rotate_current);
+      setAngleValue(angleFields.rotateRequired,state.angles.rotate_required);
+    }
 
-      updateConnectionAttemptView(state);
+    if ('logs' in state) renderLogs(state.logs);
 
-      if ('system' in state) {
-        const knownStates = ['pending', 'ok', 'warn', 'err', 'off'];
-        const normalized = knownStates.includes(state.system) ? state.system : 'pending';
-        setSystemStatus(normalized, undefined, { lock: true });
-      }
+    // Показываем/скрываем "Идёт подключение…" vs "Детали"
+    updateConnectionAttemptView(state);
 
-      if (state.modem_off) {
-        setSystemStatus('off', 'Модем отключен', { lock: true });
-      }
+    if ('system' in state) {
+      const knownStates = ['pending','ok','warn','err','off'];
+      const normalized = knownStates.includes(state.system) ? state.system : 'pending';
+      setSystemStatus(normalized, undefined, { lock: true });
+    }
 
-      if (state.temp_c != null) {
-        const t = Number(state.temp_c);
-        if (!Number.isNaN(t)) {
-          updateTemperatureField(t);
-          updateTempBar(t);
-          applyStatusByTemperature(t, { allowBadgeUpdate: !systemStatusLocked });
-        }
-      }
-    };
+    if (state.modem_off) {
+      setSystemStatus('off', 'Модем отключен', { lock: true });
+    }
 
-    /* ===== Пуллинг состояния с демо-сервером ===== */
-    const API_STATE_URL = "http://127.0.0.1:8000/api/state";
-
-    async function pollDeviceState() {
-      try {
-        const r = await fetch(API_STATE_URL, { cache: "no-store" });
-        if (!r.ok) return;
-        const data = await r.json();
-        window.onDeviceState?.(data);
-      } catch (e) {
-        // console.debug("state poll error", e);
+    if (state.temp_c != null) {
+      const t = Number(state.temp_c);
+      if (!Number.isNaN(t)) {
+        updateTemperatureField(t);
+        updateTempBar(t);
+        applyStatusByTemperature(t, { allowBadgeUpdate: !systemStatusLocked });
       }
     }
-    pollDeviceState();
-    setInterval(pollDeviceState, 2000);
-  </script>
+  };
+
+  /* ===== Пуллинг состояния с демо-сервером ===== */
+  const API_STATE_URL = "http://127.0.0.1:8000/api/state";
+
+  async function pollDeviceState() {
+    try {
+      const r = await fetch(API_STATE_URL, { cache: "no-store" });
+      if (!r.ok) return;
+      const data = await r.json();
+      window.onDeviceState?.(data);
+    } catch (e) {
+      // console.debug("state poll error", e);
+    }
+  }
+  pollDeviceState();
+  setInterval(pollDeviceState, 2000);
+</script>
+
 
 
   <!-- SVG SPRITE -->
