@@ -16,8 +16,7 @@
       <div class="div">
         <h1 class="text-wrapper">ТКС «ОРИОН»</h1>
       </div>
-      <div id="system-badge" class="badge badge--pending" role="status"
-        aria-label="Статус системы: Ожидание данных">
+      <div id="system-badge" class="badge badge--pending" role="status" aria-label="Статус системы: Ожидание данных">
         <div class="ellipse" aria-hidden="true"></div>
         <span class="text-wrapper-2">Ожидание данных</span>
       </div>
@@ -56,8 +55,7 @@
       <div class="frame-4">
         <section class="frame-5" aria-label="Статус системы">
           <article id="power-status-card" class="frame-6 status-card">
-            <svg id="power-status-icon" class="status-icon status-icon--pending" role="img"
-              aria-label="Ожидание">
+            <svg id="power-status-icon" class="status-icon status-icon--pending" role="img" aria-label="Ожидание">
               <use id="power-status-use" href="#icon-status-ok"></use>
             </svg>
             <div class="frame-7">
@@ -66,8 +64,7 @@
             </div>
           </article>
           <article id="coords-status-card" class="frame-9 status-card">
-            <svg id="coords-status-icon" class="status-icon status-icon--pending" role="img"
-              aria-label="Ожидание">
+            <svg id="coords-status-icon" class="status-icon status-icon--pending" role="img" aria-label="Ожидание">
               <use id="coords-status-use" href="#icon-status-ok"></use>
             </svg>
             <div class="frame-7">
@@ -81,8 +78,7 @@
           </article>
 
           <article id="gps-status-card" class="frame-9 status-card">
-            <svg id="gps-status-icon" class="status-icon status-icon--pending" role="img"
-              aria-label="Ожидание">
+            <svg id="gps-status-icon" class="status-icon status-icon--pending" role="img" aria-label="Ожидание">
               <use id="gps-status-use" href="#icon-status-ok"></use>
             </svg>
             <div class="frame-7">
@@ -92,8 +88,7 @@
           </article>
 
           <article id="inet-status-card" class="frame-9 status-card">
-            <svg id="inet-status-icon" class="status-icon status-icon--pending" role="img"
-              aria-label="Ожидание">
+            <svg id="inet-status-icon" class="status-icon status-icon--pending" role="img" aria-label="Ожидание">
               <use id="inet-status-use" href="#icon-status-ok"></use>
             </svg>
             <div class="frame-7">
@@ -199,7 +194,7 @@
 
                   <!-- Редактор -->
                   <form class="edit-area" aria-label="Редактирование пароля Wi-Fi">
-                      <input id="wifi-pass" name="wifi-pass"  minlength="8" class="input"
+                    <input id="wifi-pass" name="wifi-pass" minlength="8" class="input"
                       placeholder="Введите новый пароль" value="" aria-describedby="wifi-hint"
                       aria-label="Пароль Wi-Fi">
                     <span id="wifi-hint" class="hint">Минимум 8 символов</span>
@@ -231,9 +226,8 @@
                       <div class="div-3">Температура модема</div>
                     </div>
                     <div class="state-default">
-                      <div class="frame-11 meter" id="temp-meter" role="meter" aria-valuenow="-30"
-                        aria-valuemin="-30" aria-valuemax="85" aria-label="Температура модема — данные не получены"
-                        data-pending="true">
+                      <div class="frame-11 meter" id="temp-meter" role="meter" aria-valuenow="-30" aria-valuemin="-30"
+                        aria-valuemax="85" aria-label="Температура модема — данные не получены" data-pending="true">
                         <div class="rectangle rectangle-4 meter__fill"></div>
                         <div class="rectangle-2 meter__rest"></div>
                       </div>
@@ -581,7 +575,9 @@
       rotateCurrent: document.getElementById('rotate-angle-current'),
       rotateRequired: document.getElementById('rotate-angle-required')
     };
-
+    // Стартовые значения прогресса = 0%
+    updateProgressState(indicators.rx, 0, 'Приём данных');
+    updateProgressState(indicators.tx, 0, 'Передача данных');
     const eventLog = document.getElementById('event-log');
     const logEmptyMessage = eventLog?.querySelector('.frame-23__empty') || null;
     const MAX_LOG_ENTRIES = 10;
