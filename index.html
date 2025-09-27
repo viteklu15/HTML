@@ -16,36 +16,38 @@
       <div class="div">
         <h1 class="text-wrapper">ТКС «ОРИОН»</h1>
       </div>
-      <div class="badge" role="status" aria-label="Статус системы">
+      <div id="system-badge" class="badge badge--ok" role="status" aria-label="Статус системы: Всё работает">
         <div class="ellipse" aria-hidden="true"></div>
         <span class="text-wrapper-2">Всё работает</span>
       </div>
+
       <div class="frame-2">
-        <p class="div-2">
-          <span class="span">Температура: +45℃</span>
+        <p class=" value-view ">
+          <span id="current-temp" class="span">Температура: +45℃</span>
         </p>
+
         <div class="div-2">MAC-адрес: 12.34.56.78</div>
       </div>
-  <div class="frame-3">
-  <div class="wi-fi" id="wifi-status-text">WiFi Работает</div>
+      <div class="frame-3">
+        <div class="wi-fi" id="wifi-status-text">WiFi Работает</div>
 
-  <fieldset class="thumbler thumbler--on" role="radiogroup" aria-labelledby="wifi-status">
-    <legend id="wifi-status" class="sr-only">Статус WiFi</legend>
+        <fieldset class="thumbler thumbler--on" role="radiogroup" aria-labelledby="wifi-status">
+          <legend id="wifi-status" class="sr-only">Статус WiFi</legend>
 
-    <!-- подложка-ползунок -->
-    <div class="thumbler__knob" aria-hidden="true"></div>
+          <!-- подложка-ползунок -->
+          <div class="thumbler__knob" aria-hidden="true"></div>
 
-    <label class="thumbler__option thumbler__option--left">
-      <input type="radio" name="wifi-toggle" value="off" class="sr-only" />
-      <span>Выкл</span>
-    </label>
+          <label class="thumbler__option thumbler__option--left">
+            <input type="radio" name="wifi-toggle" value="off" class="sr-only" />
+            <span>Выкл</span>
+          </label>
 
-    <label class="thumbler__option thumbler__option--right">
-      <input type="radio" name="wifi-toggle" value="on" checked class="sr-only" />
-      <span>Вкл</span>
-    </label>
-  </fieldset>
-</div>
+          <label class="thumbler__option thumbler__option--right">
+            <input type="radio" name="wifi-toggle" value="on" checked class="sr-only" />
+            <span>Вкл</span>
+          </label>
+        </fieldset>
+      </div>
 
     </header>
 
@@ -53,16 +55,18 @@
       <div class="frame-4">
         <section class="frame-5" aria-label="Статус системы">
           <article class="frame-6">
-            <img class="component" src="https://c.animaapp.com/mg0opgtb6oSiXh/img/name-goodicon.svg"
-              alt="Иконка питания" />
+            <svg class="status-icon status-icon--ok" role="img" aria-label="ОК">
+              <use href="#icon-status-ok"></use>
+            </svg>
             <div class="frame-7">
               <h3 class="text-wrapper-3">Питание</h3>
               <div class="text-wrapper-4">Есть</div>
             </div>
           </article>
-
-          <article class="frame-8">
-            <img class="img" src="https://c.animaapp.com/mg0opgtb6oSiXh/img/component-1.svg" alt="Иконка координат" />
+          <article class="frame-9">
+            <svg class="status-icon status-icon--ok" role="img" aria-label="ОК">
+              <use href="#icon-status-ok"></use>
+            </svg>
             <div class="frame-7">
               <h3 class="text-wrapper-3">Координаты</h3>
               <p class="element">
@@ -73,8 +77,9 @@
           </article>
 
           <article class="frame-9">
-            <img class="img" src="https://c.animaapp.com/mg0opgtb6oSiXh/img/component-1.svg"
-              alt="Иконка спутниковой связи" />
+            <svg class="status-icon status-icon--ok" role="img" aria-label="ОК">
+              <use href="#icon-status-ok"></use>
+            </svg>
             <div class="frame-7">
               <h3 class="text-wrapper-3">Связь<br />со спутником</h3>
               <div class="text-wrapper-4">Есть</div>
@@ -82,8 +87,9 @@
           </article>
 
           <article class="frame-9">
-            <img class="component" src="https://c.animaapp.com/mg0opgtb6oSiXh/img/name-goodicon.svg"
-              alt="Иконка интернета" />
+            <svg class="status-icon status-icon--ok" role="img" aria-label="ОК">
+              <use href="#icon-status-ok"></use>
+            </svg>
             <div class="frame-7">
               <h3 class="text-wrapper-3">Интернет</h3>
               <div class="text-wrapper-4">Есть</div>
@@ -216,10 +222,10 @@
                       <div class="div-3">Температура модема</div>
                     </div>
                     <div class="state-default">
-                      <div class="frame-11" role="meter" aria-valuenow="45" aria-valuemin="-30" aria-valuemax="85"
-                        aria-label="Температура модема 45 градусов">
-                        <div class="rectangle-4"></div>
-                        <div class="rectangle-2"></div>
+                      <div class="frame-11 meter" id="temp-meter" role="meter" aria-valuenow="45" aria-valuemin="-30"
+                        aria-valuemax="85" aria-label="Температура модема 45 градусов">
+                        <div class="rectangle rectangle-4 meter__fill"></div>
+                        <div class="rectangle-2 meter__rest"></div>
                       </div>
                       <div class="frame-22">
                         <div class="text-wrapper-12">Низкая (-30℃)</div>
@@ -228,6 +234,30 @@
                       </div>
                     </div>
                   </div>
+                  <!-- Блок рекомендаций при перегреве -->
+                  <div id="temp-alert" class="temp-alert" role="region" aria-live="polite" hidden>
+                    <div class="temp-alert__row">
+                      <!-- маленькая иконка-warning -->
+                      <svg class="temp-alert__icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 2 1 21h22L12 2Zm1 14h-2v2h2v-2Zm0-8h-2v6h2V8Z" fill="currentColor" />
+                      </svg>
+                      <p id="temp-alert-text" class="temp-alert__text">
+                        Рекомендуется выключить модем на время или укрыть / перенести его от прямых солнечных лучей
+                      </p>
+                    </div>
+
+                    <div class="temp-alert__actions">
+                      <button id="btn-shutdown-modem" type="button" class="btn btn-primary temp-alert__btn">
+                        Выключить модем
+                      </button>
+
+                      <label class="temp-alert__auto">
+                        <input id="auto-shutdown-hot" type="checkbox" class="temp-alert__checkbox" checked />
+                        Выключать автоматически при опасных температурах
+                      </label>
+                    </div>
+                  </div>
+
                 </div>
 
               </div>
@@ -370,7 +400,7 @@
 
   <!-- Скрипт переключения режима редактирования -->
   <script>
-    // Переключение «редактирование/просмотр» по чекбоксу
+    /* ===== Режим редактирования/просмотра по чекбоксам ===== */
     document.querySelectorAll('.checkbox-input').forEach(cb => {
       cb.addEventListener('change', e => {
         const row = e.target.closest('.frame-17');
@@ -383,7 +413,6 @@
       });
     });
 
-    // "Отменить" — закрыть режим и не менять текст
     document.querySelectorAll('.frame-17 .btn-cancel').forEach(btn => {
       btn.addEventListener('click', e => {
         const row = e.target.closest('.frame-17');
@@ -392,7 +421,6 @@
       });
     });
 
-    // "Сохранить" — для демо обновляем текст; здесь же можно сделать fetch на сервер
     document.querySelectorAll('.frame-17 form.edit-area').forEach(form => {
       form.addEventListener('submit', async e => {
         e.preventDefault();
@@ -402,62 +430,231 @@
           const lat = form.querySelector('[name="lat"]').value.trim();
           const lng = form.querySelector('[name="lng"]').value.trim();
           row.querySelector('.value-view .span').textContent = `Широта: ${lat}; Долгота: ${lng}`;
-
-          // Пример отправки:
-          // await fetch('/api/coords', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ lat, lng }) });
+          // await fetch('/api/coords', { ... });
         }
 
         if (row.id === 'row-wifi-pass') {
           const pass = form.querySelector('[name="wifi-pass"]').value;
           row.querySelector('.value-view .span').textContent = pass;
-
-          // Пример отправки:
-          // await fetch('/api/wifi', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ password: pass }) });
+          // await fetch('/api/wifi', { ... });
         }
 
         const cb = row.querySelector('.checkbox-input');
         if (cb) { cb.checked = false; row.classList.remove('editing'); }
       });
     });
-      // Тумблер Wi-Fi: анимация ползунка и смена подписи
-  (function () {
-    const thumbler = document.querySelector('.thumbler');                       // сам переключатель
-    if (!thumbler) return;
 
-    const radios = thumbler.querySelectorAll('input[name="wifi-toggle"]');      // радио "off"/"on"
-    const statusText = document.getElementById('wifi-status-text');             // подпись "WiFi Работает/Выключен"
+    /* ===== Тумблер Wi-Fi ===== */
+    (function () {
+      const thumbler = document.querySelector('.thumbler');
+      if (!thumbler) return;
 
-    function applyState(value) {
-      // визуальное состояние тумблера
-      thumbler.classList.toggle('thumbler--on',  value === 'on');
-      thumbler.classList.toggle('thumbler--off', value === 'off');
+      const radios = thumbler.querySelectorAll('input[name="wifi-toggle"]');
+      const statusText = document.getElementById('wifi-status-text');
 
-      // текст слева от тумблера
-      if (statusText) {
-        statusText.textContent = (value === 'on') ? 'WiFi Работает' : 'WiFi Выключен';
+      function applyState(value) {
+        thumbler.classList.toggle('thumbler--on', value === 'on');
+        thumbler.classList.toggle('thumbler--off', value === 'off');
+        if (statusText) statusText.textContent = (value === 'on') ? 'WiFi Работает' : 'WiFi Выключен';
+      }
+
+      const checked = Array.from(radios).find(r => r.checked);
+      applyState(checked ? checked.value : 'off');
+
+      radios.forEach(r => {
+        r.addEventListener('change', (e) => {
+          const v = e.target.value === 'on' ? 'on' : 'off';
+          applyState(v);
+          // fetch('/api/wifi', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ wifi_on: v === 'on' }) }).catch(console.error);
+        });
+      });
+    })();
+
+    /* ===== Статус системы (бейдж) ===== */
+    const systemBadge = document.getElementById('system-badge');
+    function setSystemStatus(kind, textOverride) {
+      if (!systemBadge) return;
+      const textMap = { ok: 'Всё работает', warn: 'Есть проблемы', err: 'Есть проблемы', off: 'Модем отключен' };
+      systemBadge.classList.remove('badge--ok', 'badge--warn', 'badge--err', 'badge--off');
+      systemBadge.classList.add(`badge--${kind}`);
+      const text = textOverride || textMap[kind] || '';
+      const span = systemBadge.querySelector('.text-wrapper-2');
+      if (span) span.textContent = text;
+      systemBadge.setAttribute('aria-label', `Статус системы: ${text}`);
+    }
+
+    /* ===== Пороги температуры ===== */
+    const TEMP_WARN = 70;   // жёлтый
+    const TEMP_ERR = 85;   // красный
+    const TEMP_MIN = -30;  // как в подписи
+    const TEMP_MAX = 85;
+
+    /* ===== Обновление текста "Температура: +N℃" ===== */
+    const spanTemp = document.getElementById('current-temp');
+    function updateTemperatureField(tempC) {
+      if (!spanTemp) return;
+      spanTemp.textContent = `Температура: +${tempC}℃`;
+    }
+
+    /* ===== Полоса температуры (процент + цвет) ===== */
+    const tempMeter = document.getElementById('temp-meter');
+    const fillEl = tempMeter?.querySelector('.meter__fill');
+    const restEl = tempMeter?.querySelector('.meter__rest');
+
+    function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+
+    function updateTempBar(tempC) {
+      if (!tempMeter || !fillEl || !restEl) return;
+
+      // ограничиваем только визуальное заполнение
+      const p = (clamp(tempC, TEMP_MIN, TEMP_MAX) - TEMP_MIN) / (TEMP_MAX - TEMP_MIN);
+      fillEl.style.flexGrow = String(p * 100);
+      restEl.style.flexGrow = String((1 - p) * 100);
+
+      tempMeter.classList.remove('meter--ok', 'meter--warn', 'meter--err');
+      if (tempC >= TEMP_ERR) tempMeter.classList.add('meter--err');
+      else if (tempC >= TEMP_WARN) tempMeter.classList.add('meter--warn');
+      else tempMeter.classList.add('meter--ok');
+
+      // aria — показываем реальную температуру
+      tempMeter.setAttribute('aria-valuenow', String(Math.round(tempC)));
+      tempMeter.setAttribute('aria-label', `Температура модема ${Math.round(tempC)} градусов`);
+    }
+
+    /* ===== Подсказки и статус по температуре ===== */
+    const tempAlert = document.getElementById('temp-alert');
+    const tempAlertText = document.getElementById('temp-alert-text');
+    const btnShutdown = document.getElementById('btn-shutdown-modem');
+    const cbAuto = document.getElementById('auto-shutdown-hot');
+
+    function showOverheatAdvice(level, tempC) {
+      if (!tempAlert) return;
+      tempAlertText.textContent = (level === 'err')
+        ? 'Опасная температура! Немедленно выключите модем или переместите его в прохладное место.'
+        : 'Рекомендуется выключить модем на время или укрыть / перенести его от прямых солнечных лучей';
+      tempAlert.hidden = false;
+      tempAlert.setAttribute('aria-label', `Предупреждение о перегреве: ${Math.round(tempC)}℃`);
+    }
+    function hideOverheatAdvice() { if (tempAlert) tempAlert.hidden = true; }
+
+    // флаг, чтобы авто-выключение отправлялось один раз на «красной» зоне
+    let autoShutdownSent = false;
+
+    async function shutdownModemSafely(isAuto = false) {
+      try {
+        // await fetch('/api/modem/power', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ on:false }) });
+        setSystemStatus('off', 'Модем отключен');            // мгновенно в UI
+        // НЕ скрываем предупреждение здесь — пусть пользователь видит причину
+        if (btnShutdown) {
+          btnShutdown.disabled = true;
+          btnShutdown.textContent = isAuto ? 'Выключаем...' : 'Выключаем...';
+        }
+      } catch (e) {
+        console.error('Не удалось выключить модем:', e);
+        autoShutdownSent = false;
+        if (btnShutdown) {
+          btnShutdown.disabled = false;
+          btnShutdown.textContent = 'Выключить модем';
+        }
+      }
+    }
+    btnShutdown?.addEventListener('click', () => shutdownModemSafely(false));
+
+    function applyStatusByTemperature(tempC) {
+      if (tempC == null || isNaN(tempC)) return;
+
+      if (tempC >= TEMP_ERR) setSystemStatus('err');
+      else if (tempC >= TEMP_WARN) setSystemStatus('warn');
+      else setSystemStatus('ok');
+
+      if (tempC >= TEMP_ERR) showOverheatAdvice('err', tempC);
+      else if (tempC >= TEMP_WARN) showOverheatAdvice('warn', tempC);
+      else {
+        hideOverheatAdvice();
+        autoShutdownSent = false; // сброс, когда вернулись в норму
+      }
+
+      // авто-отключение: только один раз и не скрываем предупреждение
+      if (cbAuto?.checked && tempC >= TEMP_ERR && !autoShutdownSent) {
+        autoShutdownSent = true;
+        shutdownModemSafely(true);
       }
     }
 
-    // начальное состояние — по отмеченной радиокнопке
-    const checked = Array.from(radios).find(r => r.checked);
-    applyState(checked ? checked.value : 'off');
+    /* ===== Инициализация из DOM-метра при загрузке ===== */
+    (function initTempFromDOM() {
+      const meter = document.querySelector('[role="meter"][aria-label*="Температура модема"]');
+      if (!meter) return;
+      const now = parseFloat(meter.getAttribute('aria-valuenow'));
+      if (!isNaN(now)) {
+        updateTemperatureField(now);
+        applyStatusByTemperature(now);
+        updateTempBar(now);
+      }
+    })();
 
-    // обработчик переключения
-    radios.forEach(r => {
-      r.addEventListener('change', (e) => {
-        const v = e.target.value === 'on' ? 'on' : 'off';
-        applyState(v);
+    /* ===== Точка входа новых данных от устройства =====
+       Пример: window.onDeviceState({ temp_c: 72, modem_off:false })
+    */
+    window.onDeviceState = function (state) {
+      if (state?.temp_c != null) {
+        const t = Number(state.temp_c);
+        updateTemperatureField(t);
+        applyStatusByTemperature(t);
+        updateTempBar(t);
+      }
+      if (state?.modem_off) {
+        setSystemStatus('off');
+        // НЕ скрываем предупреждение, чтобы было видно причину отключения
+        // hideOverheatAdvice();
+      }
+    };
 
-        // здесь можно отправить команду на сервер/устройство
-        // fetch('/api/wifi', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({ wifi_on: v === 'on' })
-        // }).catch(console.error);
-      });
-    });
-  })();
+    /* ===== Пуллинг температуры с демо-сервера ===== */
+    const API_TEMP_URL = "http://127.0.0.1:8000/api/temp";
+
+    async function pollTemperature() {
+      try {
+        const r = await fetch(API_TEMP_URL, { cache: "no-store" });
+        const data = await r.json();
+        if (typeof data?.temp_c !== 'undefined') {
+          window.onDeviceState?.({ temp_c: data.temp_c });
+        }
+      } catch (e) {
+        // console.debug("temp poll error", e);
+      }
+    }
+    pollTemperature();
+    setInterval(pollTemperature, 2000);
   </script>
+
+
+<!-- SVG SPRITE -->
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
+     width="0" height="0" style="position:absolute;left:-9999px;">
+  <defs>
+    <symbol id="icon-status-ok" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="12" fill="currentColor"/>
+      <path d="M6 12L10 16.5L18.5 7"
+            stroke="#fff" stroke-width="2" fill="none"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+
+    <symbol id="icon-status-err" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="12" fill="currentColor"/>
+      <path d="M7 17.4497L17.4497 7"  stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M17.4497 17.4497L7 7" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="icon-status-off" viewBox="0 0 28 28">
+      <circle cx="14" cy="14" r="13" fill="currentColor" stroke="#fff" stroke-width="2"/>
+      <path d="M8 14L12 18.5L20.5 9"
+            stroke="#8C8C8C" stroke-width="2" fill="none"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </defs>
+</svg>
+
 </body>
 
 </html>

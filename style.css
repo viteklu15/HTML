@@ -1,12 +1,9 @@
-/* style.css */
 .screen {
   display: flex;
   flex-direction: column;
-
   /* было: width: 1024px; height: 914px; */
   width: 100%;
   min-height: 100vh;
-
   align-items: flex-start;
   position: relative;
   background-color: #f0f3f8;
@@ -21,7 +18,6 @@
     /* центрирование */
   }
 }
-
 
 .screen .frame {
   padding: 16px 24px;
@@ -1102,7 +1098,6 @@
 }
 
 /* Original CSS code should be injected here */
-
 /* Additional styles for accessibility and semantic improvements */
 .sr-only {
   position: absolute;
@@ -1262,7 +1257,6 @@
 }
 
 /* ===== Редактирование параметров (Координаты, Wi-Fi) ===== */
-
 .frame-17 {
   display: grid;
   grid-template-columns: 232px 1fr auto auto;
@@ -1379,72 +1373,391 @@
 
 /* добавь в самый конец style.css */
 .frame-17 .value-view .span {
-  font-weight: 700 !important;  /* 700 достаточно как на скрине */
+  font-weight: 700 !important;
+  /* 700 достаточно как на скрине */
 }
 
 /* Значение во 2-й колонке — жирным */
-.frame-17 > .span-wrapper .span,
-.frame-18 > .element-2 .span {
+.frame-17>.span-wrapper .span,
+.frame-18>.element-2 .span {
   font-weight: 700 !important;
 }
 
-
 /* --- Тумблер Wi-Fi с ездящим ползунком --- */
-.thumbler{
+.thumbler {
   position: relative;
-  width: 120px;           /* можно подстроить */
+  width: 120px;
+  /* можно подстроить */
   height: 32px;
   border: 1px solid #0365a7;
   border-radius: 6px;
-  background:#fff;
+  background: #fff;
   overflow: hidden;
-  display:flex;
-  user-select:none;
+  display: flex;
+  user-select: none;
 }
 
 /* Кнопки-опции */
-.thumbler__option{
-  flex:1 1 50%;
-  display:flex; align-items:center; justify-content:center;
+.thumbler__option {
+  flex: 1 1 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--m3-body-medium-font-family);
   font-weight: var(--m3-body-medium-font-weight);
   font-size: var(--m3-body-medium-font-size);
   letter-spacing: var(--m3-body-medium-letter-spacing);
   line-height: var(--m3-body-medium-line-height);
-  cursor:pointer;
+  cursor: pointer;
   position: relative;
-  z-index: 1; /* поверх подложки */
-  color:#0365a7;
+  z-index: 1;
+  /* поверх подложки */
+  color: #0365a7;
   transition: color .2s ease;
 }
 
-.thumbler__option span{ white-space:nowrap; }
+.thumbler__option span {
+  white-space: nowrap;
+}
 
 /* Ползунок-подложка */
-.thumbler__knob{
-  position:absolute; inset:0 auto 0 0;
-  width:50%; height:100%;
-  background:#0465a7;
+.thumbler__knob {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 50%;
+  height: 100%;
+  background: #0465a7;
   transition: transform .2s ease;
-  border-radius: 4px; /* чуть скруглим */
+  border-radius: 4px;
+  /* чуть скруглим */
 }
 
 /* Состояния */
-.thumbler--off .thumbler__knob{ transform: translateX(0%); }
-.thumbler--on  .thumbler__knob{ transform: translateX(100%); }
+.thumbler--off .thumbler__knob {
+  transform: translateX(0%);
+}
+
+.thumbler--on .thumbler__knob {
+  transform: translateX(100%);
+}
 
 /* Активная сторона — белый текст поверх синей подложки */
-.thumbler--off .thumbler__option--left{ color:#fff; }
-.thumbler--on  .thumbler__option--right{ color:#fff; }
+.thumbler--off .thumbler__option--left {
+  color: #fff;
+}
+
+.thumbler--on .thumbler__option--right {
+  color: #fff;
+}
 
 /* Ховеры/фокус */
-.thumbler__option:hover{ opacity:.9; }
-.thumbler input[type="radio"]:focus-visible + span{
-  outline: 2px solid #4a90e2; outline-offset: 2px;
+.thumbler__option:hover {
+  opacity: .9;
+}
+
+.thumbler input[type="radio"]:focus-visible+span {
+  outline: 2px solid #4a90e2;
+  outline-offset: 2px;
 }
 
 /* (Опционально) убираем старые стили старого переключателя, если они есть */
 .screen .button,
 .screen .title-wrapper,
 .screen .title,
-.screen .title-2{ all: unset; }
+.screen .title-2 {
+  all: unset;
+}
+
+/* --- Статусы системы --- */
+.badge {
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid;
+  padding: 2px 10px;
+  gap: 8px
+}
+
+.badge .ellipse {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%
+}
+
+.badge--ok {
+  border-color: #1ba230
+}
+
+.badge--ok .ellipse {
+  background: #1ba230
+}
+
+.badge--ok .text-wrapper-2 {
+  color: #1ba230
+}
+
+.badge--warn {
+  border-color: #f6b31a
+}
+
+.badge--warn .ellipse {
+  background: #f6b31a
+}
+
+.badge--warn .text-wrapper-2 {
+  color: #f6b31a
+}
+
+.badge--err {
+  border-color: #ff5f57
+}
+
+.badge--err .ellipse {
+  background: #ff5f57
+}
+
+.badge--err .text-wrapper-2 {
+  color: #ff5f57
+}
+
+.badge--off {
+  border-color: #bfbfbf
+}
+
+.badge--off .ellipse {
+  background: #9e9e9e
+}
+
+.badge--off .text-wrapper-2 {
+  color: #9e9e9e
+}
+
+/* ===== Блок предупреждения при высокой температуре ===== */
+.temp-alert {
+  margin-top: 12px;
+  padding: 8px 0 0;
+}
+
+.temp-alert[hidden] {
+  display: none !important;
+}
+
+.temp-alert__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: #ff5f57;
+  margin-bottom: 12px;
+}
+
+.temp-alert__icon {
+  flex: 0 0 18px;
+}
+
+.temp-alert__text {
+  margin: 0;
+  font: 400 14px/1.35 "Roboto", Arial, sans-serif;
+}
+
+.temp-alert__actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.temp-alert__btn {
+  background: #045b9a;
+  /* насыщенный синий как в макете */
+  border-color: #045b9a;
+  padding: 10px 16px;
+  border-radius: 8px;
+}
+
+.temp-alert__btn:hover {
+  filter: brightness(1.05);
+}
+
+.temp-alert__auto {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  color: #404040;
+  font: 400 14px/1.2 "Roboto", Arial, sans-serif;
+}
+
+.temp-alert__checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #0b74d0;
+  /* нативная синяя галочка как на скрине */
+}
+
+/* Цвета метра по уровням */
+.meter--ok .meter__fill {
+  background: #27c840;
+}
+
+/* зелёный */
+.meter--warn .meter__fill {
+  background: #f6b31a;
+}
+
+/* жёлтый */
+.meter--err .meter__fill {
+  background: #ff5f57;
+}
+
+/* красный */
+/* чтобы flex корректно делил ширину по flex-grow */
+.meter {
+  display: flex;
+}
+
+.meter__fill,
+.meter__rest {
+  flex-basis: 0;
+}
+
+/* чтобы flex-grow работал как проценты */
+.meter__fill,
+.meter__rest {
+  transition: flex-grow .25s ease;
+}
+
+/* верхний ряд карточек: все в одну строку */
+.frame-5 {
+  display: grid !important;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  /* было 5 → стало 6 */
+  gap: 1px;
+  align-items: stretch;
+  padding: 24px;
+  background-color: #0465a7;
+}
+
+/* сбросы ширин */
+.frame-5>article {
+  width: auto !important;
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  background: #fff;
+  border-radius: 0;
+  box-sizing: border-box;
+}
+
+/* скругления только у крайних */
+.frame-5>article:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.frame-5>article:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+/* чтоб при узком экране не ломалось — горизонтальный скролл */
+@media (max-width: 900px) {
+  .frame-5 {
+    grid-auto-flow: column;
+    overflow-x: auto;
+    grid-template-columns: repeat(6, 280px);
+    /* фикс-минимум ширины карточки */
+  }
+}
+
+/* === Статус-иконки (SVG <use>) === */
+.status-icon {
+  inline-size: 24px;
+  block-size: 24px;
+  display: inline-block;
+}
+
+/* Размеры (если где-то нужен 28px) */
+.status-icon--lg {
+  inline-size: 28px;
+  block-size: 28px;
+}
+
+/* Цвета через CSS-переменные: фон круга и штрихи */
+.status-icon {
+  --si-bg: #27C840;
+  /* фон круга по умолчанию (ok) */
+  --si-fg: #ffffff;
+  /* линии/галочки */
+}
+
+.status-icon .si-bg {
+  fill: var(--si-bg);
+}
+
+.status-icon .si-fg {
+  stroke: var(--si-fg);
+}
+
+/* Состояния */
+.status-icon--ok {
+  --si-bg: #27C840;
+  --si-fg: #ffffff;
+}
+
+.status-icon--err {
+  --si-bg: #FF5F57;
+  --si-fg: #ffffff;
+}
+
+.status-icon--off {
+  --si-bg: #D9D9D9;
+  --si-fg: #8C8C8C;
+}
+
+/* Если символ "off" имеет кольцо со stroke, поддержим его: */
+.status-icon--off .si-bg {
+  fill: #D9D9D9;
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+/* Для доступности рядом с текстом выравниваем по базовой линии: */
+.status-icon {
+  vertical-align: -4px;
+}
+
+/* размеры */
+.status-icon {
+  inline-size: 24px;
+  block-size: 24px;
+  vertical-align: -4px;
+  display: inline-block;
+}
+
+.status-icon--lg {
+  inline-size: 28px;
+  block-size: 28px;
+}
+
+/* базовые цвета состояний через currentColor */
+.status-icon--ok {
+  color: #27C840;
+}
+
+/* зелёный круг */
+.status-icon--err {
+  color: #FF5F57;
+}
+
+/* красный круг */
+.status-icon--off {
+  color: #D9D9D9;
+}
+
+/* серый круг */
+/* цвет линий (галочка/крест) */
+.status-icon .si-fg {
+  stroke: #fff;
+}
+
+/* по умолчанию белые */
+.status-icon--off .si-fg {
+  stroke: #8C8C8C;
+}
+
+/* для серого статуса — серая галочка */
