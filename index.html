@@ -279,33 +279,8 @@
                 <p class="text-wrapper-16">Показано максимум 10 последних событий</p>
               </div>
 
-              <div class="frame-23" role="log" aria-label="События системы">
-                <article class="frame-24">
-                  <div class="text-wrapper-17">1</div>
-                  <p class="div-3">Автовыключение — Сработало из-за повышенной температуры</p>
-                  <time class="text-wrapper-18" datetime="2025-09-25T12:41">25.09.2025, 12:41</time>
-                </article>
-
-                <article class="frame-25">
-                  <div class="text-wrapper-17">2</div>
-                  <p class="div-3"><span class="span">Температура модема — Высокая: 85℃, Выше нормальной на 56℃</span>
-                  </p>
-                  <time class="text-wrapper-18" datetime="2025-09-25T12:34">25.09.2025, 12:34</time>
-                </article>
-
-                <article class="frame-25">
-                  <div class="text-wrapper-17">3</div>
-                  <p class="div-3"><span class="span">Температура модема — Высокая: 85℃, Выше нормальной на 56℃</span>
-                  </p>
-                  <time class="text-wrapper-18" datetime="2025-09-25T12:34">25.09.2025, 12:34</time>
-                </article>
-
-                <article class="frame-25">
-                  <div class="text-wrapper-17">4</div>
-                  <p class="div-3"><span class="span">Температура модема — Высокая: 85℃, Выше нормальной на 56℃</span>
-                  </p>
-                  <time class="text-wrapper-18" datetime="2025-09-25T12:34">25.09.2025, 12:34</time>
-                </article>
+              <div id="event-log" class="frame-23" role="log" aria-live="polite" aria-label="События системы">
+                <p class="frame-23__empty text-wrapper-16">События отсутствуют</p>
               </div>
             </section>
           </div>
@@ -349,8 +324,8 @@
                     stroke="#8C8C8C" stroke-linecap="round" />
                 </svg>
                 <div class="frame-28">
-                  <div class="text-wrapper-20">Текущий — 123</div>
-                  <div class="text-wrapper-21">Требуемый — 456</div>
+                  <div class="text-wrapper-20">Текущий — <span id="tilt-angle-current">—</span></div>
+                  <div class="text-wrapper-21">Требуемый — <span id="tilt-angle-required">—</span></div>
                 </div>
               </div>
             </div>
@@ -383,8 +358,10 @@
                   <div class="text-wrapper-25" aria-label="Восток">E</div>
                 </div>
                 <div class="frame-28">
-                  <p class="element-3"><span class="text-wrapper-26">Текущий — 1860</span></p>
-                  <div class="text-wrapper-21">Требуемый — 1860</div>
+                  <p class="element-3">
+                    <span class="text-wrapper-26">Текущий — <span id="rotate-angle-current">—</span></span>
+                  </p>
+                  <div class="text-wrapper-21">Требуемый — <span id="rotate-angle-required">—</span></div>
                 </div>
               </div>
             </div>
@@ -598,6 +575,17 @@
       }
     };
 
+    const angleFields = {
+      tiltCurrent: document.getElementById('tilt-angle-current'),
+      tiltRequired: document.getElementById('tilt-angle-required'),
+      rotateCurrent: document.getElementById('rotate-angle-current'),
+      rotateRequired: document.getElementById('rotate-angle-required')
+    };
+
+    const eventLog = document.getElementById('event-log');
+    const logEmptyMessage = eventLog?.querySelector('.frame-23__empty') || null;
+    const MAX_LOG_ENTRIES = 10;
+
     const macField = document.getElementById('mac-address');
 
     const COORDS_STATUS_LABELS = {
@@ -632,6 +620,91 @@
       const num = Number(value);
       if (Number.isNaN(num)) return '—';
       return num.toFixed(fractionDigits);
+    }
+
+    function formatAngle(value) {
+      if (value == null || value === '') return '—';
+      const num = Number(value);
+      if (Number.isNaN(num)) return String(value);
+      return Number.isInteger(num) ? String(num) : num.toFixed(1);
+    }
+
+    function setAngleValue(el, value) {
+      if (!el) return;
+      el.textContent = formatAngle(value);
+    }
+
+    function parseLogTimestamp(raw) {
+      if (typeof raw !== 'string') return null;
+      const match = raw.trim().match(/^(\d{2})\.(\d{2})\.(\d{4}),\s*(\d{2}):(\d{2})$/);
+      if (!match) return null;
+      const [, dd, mm, yyyy, hh, min] = match;
+      return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+    }
+
+    function parseLogRecord(raw, fallbackIndex) {
+      const text = raw == null ? '' : String(raw);
+      const parts = text.split(/\n+/);
+      const firstLine = (parts.shift() || '').trim();
+      const numberMatch = firstLine.match(/^(\d+)\)\s*(.*)$/);
+      const number = numberMatch ? (parseInt(numberMatch[1], 10) || fallbackIndex) : fallbackIndex;
+      const messageRaw = numberMatch ? numberMatch[2] : firstLine;
+      const message = (messageRaw && messageRaw.trim()) || '—';
+      const timestampText = (parts.pop() || '').trim();
+      return {
+        number,
+        message,
+        timestampText,
+        datetime: parseLogTimestamp(timestampText)
+      };
+    }
+
+    function renderLogs(logs) {
+      if (!eventLog) return;
+      eventLog.querySelectorAll('article').forEach(node => node.remove());
+      const items = Array.isArray(logs) ? logs.slice(0, MAX_LOG_ENTRIES) : [];
+      if (items.length === 0) {
+        if (logEmptyMessage) {
+          logEmptyMessage.hidden = false;
+          if (!logEmptyMessage.parentElement) {
+            eventLog.appendChild(logEmptyMessage);
+          }
+        }
+        return;
+      }
+
+      if (logEmptyMessage) {
+        logEmptyMessage.hidden = true;
+      }
+
+      items.forEach((raw, index) => {
+        const { number, message, timestampText, datetime } = parseLogRecord(raw, index + 1);
+        const article = document.createElement('article');
+        article.className = index === 0 ? 'frame-24' : 'frame-25';
+
+        const numberEl = document.createElement('div');
+        numberEl.className = 'text-wrapper-17';
+        numberEl.textContent = String(number);
+
+        const messageEl = document.createElement('p');
+        messageEl.className = 'div-3';
+        messageEl.textContent = message;
+
+        article.appendChild(numberEl);
+        article.appendChild(messageEl);
+
+        if (timestampText) {
+          const timeEl = document.createElement('time');
+          timeEl.className = 'text-wrapper-18';
+          timeEl.textContent = timestampText;
+          if (datetime) {
+            timeEl.setAttribute('datetime', datetime);
+          }
+          article.appendChild(timeEl);
+        }
+
+        eventLog.appendChild(article);
+      });
     }
 
     /* ===== Пороги температуры ===== */
@@ -818,6 +891,17 @@
 
       if (state.tx) {
         updateProgressState(indicators.tx, state.tx.progress, 'Передача данных');
+      }
+
+      if (state.angles) {
+        setAngleValue(angleFields.tiltCurrent, state.angles.tilt_current);
+        setAngleValue(angleFields.tiltRequired, state.angles.tilt_required);
+        setAngleValue(angleFields.rotateCurrent, state.angles.rotate_current);
+        setAngleValue(angleFields.rotateRequired, state.angles.rotate_required);
+      }
+
+      if ('logs' in state) {
+        renderLogs(state.logs);
       }
 
       if ('system' in state) {
