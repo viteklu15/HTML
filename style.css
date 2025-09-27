@@ -1649,3 +1649,21 @@
 }
 
 /* для серого статуса — серая галочка */
+
+/* Группа поля с подписью сверху */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;           /* расстояние между label и input */
+}
+
+/* Подпись над полем */
+.input-group > label {
+  font: 12px/1.2 "Roboto", Arial, sans-serif;
+  color: #555;
+}
+
+/* Чтоб кнопки справа выравнивались по низу инпутов с подписями */
+.edit-area {
+  align-items: flex-end;  /* было center */
+}

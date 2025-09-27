@@ -70,9 +70,10 @@
             <div class="frame-7">
               <h3 class="text-wrapper-3">Координаты</h3>
               <p class="element">
-                <span class="text-wrapper-5">Ш: 55.73; Д: 55.73 </span>
-                <span class="text-wrapper-6">Определены</span>
+                <span id="coords-compact" class="text-wrapper-5">Ш: 55.73; Д: 55.73 </span>
+                <br> <span class="text-wrapper-6">Определены</span>
               </p>
+
             </div>
           </article>
 
@@ -150,19 +151,24 @@
                     <label for="edit-coordinates" class="label"><span class="title-3">Изменить</span></label>
                   </div>
 
-                  <!-- Редактор (в одну строку: широта — долгота ... справа кнопки) -->
                   <form class="edit-area" aria-label="Редактирование координат">
-                    <input id="lat" name="lat" type="text" inputmode="decimal" class="input" value="55.73"
-                      aria-label="Широта">
+                    <div class="input-group">
+                      <label for="lat">Широта</label>
+                      <input id="lat" name="lat" type="text" inputmode="decimal" class="input" value="55.73">
+                    </div>
+
                     <span class="input-dash" aria-hidden="true">—</span>
-                    <input id="lng" name="lng" type="text" inputmode="decimal" class="input" value="37.61"
-                      aria-label="Долгота">
+
+                    <div class="input-group">
+                      <label for="lng">Долгота</label>
+                      <input id="lng" name="lng" type="text" inputmode="decimal" class="input" value="37.61">
+                    </div>
 
                     <span class="spacer" aria-hidden="true"></span>
                     <button class="btn btn-primary btn-save" type="submit">Сохранить</button>
                     <button class="btn btn-secondary btn-cancel" type="button">Отменить</button>
-
                   </form>
+
                 </div>
 
 
@@ -431,6 +437,12 @@
           const lng = form.querySelector('[name="lng"]').value.trim();
           row.querySelector('.value-view .span').textContent = `Широта: ${lat}; Долгота: ${lng}`;
           // await fetch('/api/coords', { ... });
+          // Обновить компактный вывод в верхней карточке "Координаты"
+          const compact = document.getElementById('coords-compact');
+          if (compact) {
+            compact.textContent = `Ш: ${lat}; Д: ${lng}`;
+          }
+
         }
 
         if (row.id === 'row-wifi-pass') {
@@ -629,31 +641,29 @@
   </script>
 
 
-<!-- SVG SPRITE -->
-<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
-     width="0" height="0" style="position:absolute;left:-9999px;">
-  <defs>
-    <symbol id="icon-status-ok" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="12" fill="currentColor"/>
-      <path d="M6 12L10 16.5L18.5 7"
-            stroke="#fff" stroke-width="2" fill="none"
-            stroke-linecap="round" stroke-linejoin="round"/>
-    </symbol>
+  <!-- SVG SPRITE -->
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" width="0" height="0"
+    style="position:absolute;left:-9999px;">
+    <defs>
+      <symbol id="icon-status-ok" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="12" fill="currentColor" />
+        <path d="M6 12L10 16.5L18.5 7" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </symbol>
 
-    <symbol id="icon-status-err" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="12" fill="currentColor"/>
-      <path d="M7 17.4497L17.4497 7"  stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M17.4497 17.4497L7 7" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
-    </symbol>
+      <symbol id="icon-status-err" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="12" fill="currentColor" />
+        <path d="M7 17.4497L17.4497 7" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" />
+        <path d="M17.4497 17.4497L7 7" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" />
+      </symbol>
 
-    <symbol id="icon-status-off" viewBox="0 0 28 28">
-      <circle cx="14" cy="14" r="13" fill="currentColor" stroke="#fff" stroke-width="2"/>
-      <path d="M8 14L12 18.5L20.5 9"
-            stroke="#8C8C8C" stroke-width="2" fill="none"
-            stroke-linecap="round" stroke-linejoin="round"/>
-    </symbol>
-  </defs>
-</svg>
+      <symbol id="icon-status-off" viewBox="0 0 28 28">
+        <circle cx="14" cy="14" r="13" fill="currentColor" stroke="#fff" stroke-width="2" />
+        <path d="M8 14L12 18.5L20.5 9" stroke="#8C8C8C" stroke-width="2" fill="none" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </symbol>
+    </defs>
+  </svg>
 
 </body>
 
