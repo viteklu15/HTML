@@ -157,72 +157,6 @@
   height: 28px;
 }
 
-.screen .button {
-  all: unset;
-  box-sizing: border-box;
-  width: 56.99%;
-  left: 0;
-  background-color: var(--white);
-  border-radius: 4px 0px 0px 4px;
-  border: 1px solid;
-  border-color: #0365a7;
-  display: flex;
-  height: 100%;
-  align-items: center;
-  padding: 4px 8px;
-  position: absolute;
-  top: 0;
-}
-
-.screen .title {
-  color: #0365a7;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: fit-content;
-  margin-top: -1.00px;
-  font-family: var(--m3-body-medium-font-family);
-  font-weight: var(--m3-body-medium-font-weight);
-  font-size: var(--m3-body-medium-font-size);
-  letter-spacing: var(--m3-body-medium-letter-spacing);
-  line-height: var(--m3-body-medium-line-height);
-  white-space: nowrap;
-  font-style: var(--m3-body-medium-font-style);
-}
-
-.screen .title-wrapper {
-  all: unset;
-  box-sizing: border-box;
-  width: 44.09%;
-  left: 55.91%;
-  background-color: #0465a7;
-  border-radius: 0px 4px 4px 0px;
-  display: flex;
-  height: 100%;
-  align-items: center;
-  padding: 4px 8px;
-  position: absolute;
-  top: 0;
-}
-
-.screen .title-2 {
-  color: #ffffff;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: fit-content;
-  margin-top: -1.00px;
-  font-family: var(--m3-body-medium-font-family);
-  font-weight: var(--m3-body-medium-font-weight);
-  font-size: var(--m3-body-medium-font-size);
-  letter-spacing: var(--m3-body-medium-letter-spacing);
-  line-height: var(--m3-body-medium-line-height);
-  white-space: nowrap;
-  font-style: var(--m3-body-medium-font-style);
-}
-
 .screen .frame-wrapper {
   display: flex;
   align-items: flex-start;
@@ -272,12 +206,6 @@
   align-self: stretch;
 }
 
-.screen .component {
-  position: relative;
-  width: 24px;
-  height: 24px;
-}
-
 .screen .frame-7 {
   display: flex;
   flex-direction: column;
@@ -312,24 +240,6 @@
   line-height: normal;
   position: relative;
   font-family: "Roboto", Helvetica;
-}
-
-.screen .frame-8 {
-  display: flex;
-  flex-direction: column;
-  width: 140px;
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
-  position: relative;
-  background-color: #ffffff;
-}
-
-.screen .img {
-  position: relative;
-  width: 28px;
-  height: 28px;
-  margin-top: -2.00px;
 }
 
 .screen .element {
@@ -880,12 +790,6 @@
   flex: 0 0 auto;
 }
 
-.screen .group {
-  position: relative;
-  width: 66px;
-  height: 66px;
-}
-
 .screen .frame-28 {
   display: flex;
   flex-direction: column;
@@ -1147,22 +1051,6 @@
   height: 100%;
   margin: 0;
   cursor: pointer;
-}
-
-.thumbler input[type="radio"]:focus+.title,
-.thumbler input[type="radio"]:focus+.title-2 {
-  outline: 2px solid #4a90e2;
-  outline-offset: 2px;
-}
-
-.button,
-.title-wrapper {
-  cursor: pointer;
-}
-
-.button:hover,
-.title-wrapper:hover {
-  opacity: 0.9;
 }
 
 .button-2:hover {
@@ -1458,14 +1346,6 @@
 .thumbler input[type="radio"]:focus-visible+span {
   outline: 2px solid #4a90e2;
   outline-offset: 2px;
-}
-
-/* (Опционально) убираем старые стили старого переключателя, если они есть */
-.screen .button,
-.screen .title-wrapper,
-.screen .title,
-.screen .title-2 {
-  all: unset;
 }
 
 /* --- Статусы системы --- */
