@@ -730,13 +730,21 @@
         return;
       }
 
+      const attemptNumber = Number(rawAttempt);
+      const hasValidAttemptNumber = Number.isFinite(attemptNumber);
+      const shouldShowAttempt = hasValidAttemptNumber && attemptNumber >= 0 && attemptNumber <= 2;
+      const shouldShowDetails = hasValidAttemptNumber && attemptNumber === 4;
+
+      if (shouldShowDetails || !shouldShowAttempt) {
+        connectionAttemptSection.hidden = true;
+        if (connectionDetailsSection) connectionDetailsSection.hidden = false;
+        return;
+      }
+
       connectionAttemptSection.hidden = false;
       if (connectionDetailsSection) connectionDetailsSection.hidden = true;
 
-      const attemptNumber = Number(rawAttempt);
-      const displayAttemptText = Number.isFinite(attemptNumber) && attemptNumber === 0
-        ? 'ноль'
-        : attemptTextRaw;
+      const displayAttemptText = attemptNumber === 0 ? 'ноль' : attemptTextRaw;
 
       if (connectionAttemptNumber) {
         connectionAttemptNumber.textContent = displayAttemptText;
