@@ -1,31 +1,45 @@
 # server.py
-from flask import Flask, request, jsonify, redirect, url_for, render_template_string
+from flask import Flask, request, jsonify, redirect, url_for, render_template_string, abort
 
 app = Flask(__name__)
 
 # "память" сервера (вместо БД)
 state = {
-    "power": True,                          # питание есть
-    "wifi_on": True,                        # тумблер Wi-Fi
+    "power": True,
+    "wifi_on": True,
     "mac": "12.34.56.78",
     "temp_c": 45,
     "coords": {"lat": 55.73, "lng": 37.61},
     # верхняя линейка статусов
-    "coords_status": "pending",             # pending|ok|err
-    "gps_status": "pending",                # pending|ok|err
-    "inet_status": "pending",               # pending|ok|err
-    "rx": {"progress": 0, "rssi_db": -10, "quality": "Подключаем"},
-    "tx": {"progress": 0, "rssi_db": -10, "quality": "Подключаем"},
+    "coords_status": "pending",   # pending|ok|err
+    "gps_status": "pending",      # pending|ok|err
+    "inet_status": "pending",     # pending|ok|err
+    "rx": {"progress": 0},        # качество/RSSI убраны
+    "tx": {"progress": 0},        # качество/RSSI убраны
     # экран «Идёт подключение…»
     "attempt": 1,
     "attempt_total": 3,
     "eta_sec": 180,
     # общая индикация
-    "system": "pending",                    # pending|ok|warn|err|off
-    "modem_off": False
+    "system": "pending",          # pending|ok|warn|err|off
+    "modem_off": False,
+    # углы
+    "angles": {
+        "tilt_current": 123,
+        "tilt_required": 456,
+        "rotate_current": 1860,
+        "rotate_required": 1860
+    },
+    # логи (макс 10)
+    "logs": [
+        "1) Автовыключение — Сработало из-за повышенной температуры\n25.09.2025, 12:41",
+        "2) Температура модема — Высокая: 85℃, Выше нормальной на 56℃\n25.09.2025, 12:34",
+        "3) Температура модема — Высокая: 85℃, Выше нормальной на 56℃\n25.09.2025, 12:34",
+        "4) Температура модема — Высокая: 85℃, Выше нормальной на 56℃\n25.09.2025, 12:34"
+    ]
 }
 
-# CORS для вашего сайта на :5500
+# CORS
 ALLOWED_ORIGIN = "http://127.0.0.1:5500"
 
 @app.after_request
@@ -35,7 +49,7 @@ def add_cors_headers(resp):
     resp.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
     return resp
 
-# --------- утилиты парсинга формы ---------
+# --------- утилиты ---------
 STATUS3 = ["pending", "ok", "err"]
 SYSTEM_STATES = ["pending", "ok", "warn", "err", "off"]
 
@@ -51,101 +65,60 @@ def _to_float(v, default=None):
     except Exception:
         return default
 
-def _norm_bool(val):
-    # для чекбоксов: "on" или "1" -> True, отсутствие поля -> False
-    return str(val).lower() in ("1", "true", "on", "yes")
+def add_log(line: str):
+    state["logs"].append(line)
+    if len(state["logs"]) > 10:
+        state["logs"] = state["logs"][-10:]
 
 def apply_form_to_state(form):
-    """
-    Обновляет state из request.form.
-    Поддерживает простые поля, чекбоксы и вложенные словари coords/rx/tx.
-    """
-    # булевы поля управляем наличием чекбокса
-    bool_keys = ["power", "wifi_on", "modem_off"]
-    for k in bool_keys:
+    # булевы
+    for k in ["power", "wifi_on", "modem_off"]:
         state[k] = (k in form)
 
-    # строки
-    if "mac" in form:
-        state["mac"] = form.get("mac", "").strip()
-
-    # числа
+    # строки/числа
+    if "mac" in form: state["mac"] = form.get("mac", "").strip()
     if "temp_c" in form:
         v = _to_int(form.get("temp_c"), state["temp_c"])
-        if v is not None:
-            state["temp_c"] = v
+        if v is not None: state["temp_c"] = v
+    for key in ("attempt", "attempt_total", "eta_sec"):
+        if key in form:
+            v = _to_int(form.get(key), state[key])
+            if v is not None: state[key] = v
 
-    if "attempt" in form:
-        v = _to_int(form.get("attempt"), state["attempt"])
-        if v is not None:
-            state["attempt"] = v
+    # статусы
+    if form.get("coords_status") in STATUS3: state["coords_status"] = form.get("coords_status")
+    if form.get("gps_status")   in STATUS3: state["gps_status"]   = form.get("gps_status")
+    if form.get("inet_status")  in STATUS3: state["inet_status"]  = form.get("inet_status")
+    if form.get("system")       in SYSTEM_STATES: state["system"] = form.get("system")
 
-    if "attempt_total" in form:
-        v = _to_int(form.get("attempt_total"), state["attempt_total"])
-        if v is not None:
-            state["attempt_total"] = v
-
-    if "eta_sec" in form:
-        v = _to_int(form.get("eta_sec"), state["eta_sec"])
-        if v is not None:
-            state["eta_sec"] = v
-
-    # селекты-статусы
-    if "coords_status" in form:
-        val = form.get("coords_status")
-        if val in STATUS3:
-            state["coords_status"] = val
-
-    if "gps_status" in form:
-        val = form.get("gps_status")
-        if val in STATUS3:
-            state["gps_status"] = val
-
-    if "inet_status" in form:
-        val = form.get("inet_status")
-        if val in STATUS3:
-            state["inet_status"] = val
-
-    if "system" in form:
-        val = form.get("system")
-        if val in SYSTEM_STATES:
-            state["system"] = val
-
-    # вложенные: coords
+    # coords
     if "coords.lat" in form:
-        v = _to_float(form.get("coords.lat"), state["coords"].get("lat"))
-        if v is not None:
-            state["coords"]["lat"] = v
-
+        v = _to_float(form.get("coords.lat"), state["coords"]["lat"])
+        if v is not None: state["coords"]["lat"] = v
     if "coords.lng" in form:
-        v = _to_float(form.get("coords.lng"), state["coords"].get("lng"))
-        if v is not None:
-            state["coords"]["lng"] = v
+        v = _to_float(form.get("coords.lng"), state["coords"]["lng"])
+        if v is not None: state["coords"]["lng"] = v
 
-    # вложенные: rx
+    # rx/tx progress
     if "rx.progress" in form:
-        v = _to_int(form.get("rx.progress"), state["rx"].get("progress"))
-        if v is not None:
-            state["rx"]["progress"] = max(0, min(100, v))
-    if "rx.rssi_db" in form:
-        v = _to_int(form.get("rx.rssi_db"), state["rx"].get("rssi_db"))
-        if v is not None:
-            state["rx"]["rssi_db"] = v
-    if "rx.quality" in form:
-        state["rx"]["quality"] = form.get("rx.quality", "").strip() or state["rx"]["quality"]
-
-    # вложенные: tx
+        v = _to_int(form.get("rx.progress"), state["rx"]["progress"])
+        if v is not None: state["rx"]["progress"] = max(0, min(100, v))
     if "tx.progress" in form:
-        v = _to_int(form.get("tx.progress"), state["tx"].get("progress"))
-        if v is not None:
-            state["tx"]["progress"] = max(0, min(100, v))
-    if "tx.rssi_db" in form:
-        v = _to_int(form.get("tx.rssi_db"), state["tx"].get("rssi_db"))
-        if v is not None:
-            state["tx"]["rssi_db"] = v
-    if "tx.quality" in form:
-        state["tx"]["quality"] = form.get("tx.quality", "").strip() or state["tx"]["quality"]
+        v = _to_int(form.get("tx.progress"), state["tx"]["progress"])
+        if v is not None: state["tx"]["progress"] = max(0, min(100, v))
 
+    # angles
+    for k in ("angles.tilt_current","angles.tilt_required","angles.rotate_current","angles.rotate_required"):
+        if k in form:
+            v = _to_int(form.get(k), None)
+            if v is not None:
+                state["angles"][k.split(".",1)[1]] = v
+
+    # новый лог из формы
+    if form.get("new_log", "").strip():
+        add_log(form.get("new_log").strip())
+
+# --------- страницы ---------
 @app.route("/", methods=["GET"])
 def index():
     return render_template_string("""
@@ -153,22 +126,21 @@ def index():
 <meta charset="utf-8">
 <title>Демо-сервер состояния</title>
 <style>
-  :root { --b:#cfd3da; --r:12px; --fg:#111; --muted:#666; }
+  :root { --b:#cfd3da; --fg:#111; --muted:#666; }
   *{box-sizing:border-box}
   body{font:16px/1.5 system-ui, Segoe UI, Roboto, Arial; margin:24px; color:var(--fg)}
   h1{margin:0 0 16px}
-  .grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:16px;}
-  .card{border:1px solid var(--b); border-radius:16px; padding:16px; background:#fff}
+  .grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:16px;}
+  .card{border:1px solid var(--b); border-radius:12px; padding:16px; background:#fff}
   .row{display:flex; gap:10px; align-items:center; margin:8px 0}
-  label{font-size:13px; color:var(--muted); min-width:140px}
-  input[type="text"],input[type="number"],select,textarea{
-    width:100%; padding:8px 10px; border:1px solid var(--b); border-radius:10px
-  }
+  label{font-size:13px; color:var(--muted); min-width:180px}
+  input[type="text"],input[type="number"],select{width:100%; padding:8px 10px; border:1px solid var(--b); border-radius:8px}
   .switch{display:flex; align-items:center; gap:8px}
   .muted{color:var(--muted); font-size:13px}
-  button{padding:10px 14px; border:1px solid var(--b); border-radius:12px; background:#f7f8fb; cursor:pointer}
+  button{padding:10px 14px; border:1px solid var(--b); border-radius:10px; background:#f7f8fb; cursor:pointer}
   .footer{display:flex; gap:12px; margin-top:16px}
-  code{background:#f5f6f8; padding:2px 6px; border-radius:6px}
+  ul{margin:0; padding-left:18px; font-size:14px}
+  .log-line{white-space:pre-line}
 </style>
 
 <h1>Демо-сервер состояния</h1>
@@ -176,6 +148,7 @@ def index():
 
 <form action="{{ url_for('set_all_form') }}" method="post">
   <div class="grid">
+    <!-- Питание и сеть -->
     <div class="card">
       <h3>Питание и сеть</h3>
       <div class="row switch">
@@ -204,6 +177,7 @@ def index():
       </div>
     </div>
 
+    <!-- Координаты и статусы -->
     <div class="card">
       <h3>Координаты и статусы</h3>
       <div class="row">
@@ -223,7 +197,7 @@ def index():
         </select>
       </div>
       <div class="row">
-        <label for="gps_status">Статус GPS</label>
+        <label for="gps_status">Связь со спутником</label>
         <select id="gps_status" name="gps_status">
           {% for opt in status3 %}
             <option value="{{ opt }}" {% if state.gps_status==opt %}selected{% endif %}>{{ opt }}</option>
@@ -240,6 +214,7 @@ def index():
       </div>
     </div>
 
+    <!-- Температура и подключение -->
     <div class="card">
       <h3>Температура и подключение</h3>
       <div class="row">
@@ -252,30 +227,15 @@ def index():
         <label for="rx.progress">Прогресс RX, %</label>
         <input id="rx.progress" name="rx.progress" type="number" min="0" max="100" step="1" value="{{ state.rx.progress }}">
       </div>
-      <div class="row">
-        <label for="rx.rssi_db">RX RSSI, dB</label>
-        <input id="rx.rssi_db" name="rx.rssi_db" type="number" step="1" value="{{ state.rx.rssi_db }}">
-      </div>
-      <div class="row">
-        <label for="rx.quality">RX качество</label>
-        <input id="rx.quality" name="rx.quality" type="text" value="{{ state.rx.quality }}">
-      </div>
 
       <h4>TX</h4>
       <div class="row">
         <label for="tx.progress">Прогресс TX, %</label>
         <input id="tx.progress" name="tx.progress" type="number" min="0" max="100" step="1" value="{{ state.tx.progress }}">
       </div>
-      <div class="row">
-        <label for="tx.rssi_db">TX RSSI, dB</label>
-        <input id="tx.rssi_db" name="tx.rssi_db" type="number" step="1" value="{{ state.tx.rssi_db }}">
-      </div>
-      <div class="row">
-        <label for="tx.quality">TX качество</label>
-        <input id="tx.quality" name="tx.quality" type="text" value="{{ state.tx.quality }}">
-      </div>
     </div>
 
+    <!-- Экран «Идёт подключение…» -->
     <div class="card">
       <h3>Экран «Идёт подключение…»</h3>
       <div class="row">
@@ -291,6 +251,43 @@ def index():
         <input id="eta_sec" name="eta_sec" type="number" step="1" value="{{ state.eta_sec }}">
       </div>
     </div>
+
+    <!-- Углы -->
+    <div class="card">
+      <h3>Углы антенного поста</h3>
+      <div class="row">
+        <label for="angles.tilt_current">Угол наклона (азимута) — текущий</label>
+        <input id="angles.tilt_current" name="angles.tilt_current" type="number" step="1" value="{{ state.angles.tilt_current }}">
+      </div>
+      <div class="row">
+        <label for="angles.tilt_required">Угол наклона (азимута) — требуемый</label>
+        <input id="angles.tilt_required" name="angles.tilt_required" type="number" step="1" value="{{ state.angles.tilt_required }}">
+      </div>
+      <div class="row">
+        <label for="angles.rotate_current">Угол поворота — текущий</label>
+        <input id="angles.rotate_current" name="angles.rotate_current" type="number" step="1" value="{{ state.angles.rotate_current }}">
+      </div>
+      <div class="row">
+        <label for="angles.rotate_required">Угол поворота — требуемый</label>
+        <input id="angles.rotate_required" name="angles.rotate_required" type="number" step="1" value="{{ state.angles.rotate_required }}">
+      </div>
+    </div>
+
+    <!-- Логи -->
+    <div class="card">
+      <h3>Логи</h3>
+      <ul>
+        {% for line in state.logs %}
+          <li class="log-line">{{ line }}</li>
+        {% else %}
+          <li><i>Нет логов</i></li>
+        {% endfor %}
+      </ul>
+      <div class="row">
+        <label for="new_log">Добавить лог</label>
+        <input id="new_log" name="new_log" type="text" placeholder="Текст лога">
+      </div>
+    </div>
   </div>
 
   <div class="footer">
@@ -300,11 +297,12 @@ def index():
 </form>
 
 <p class="muted" style="margin-top:16px">
-  API: <code>GET /api/state</code>, <code>POST /api/state {"temp_c":число, ...}</code>
+  API: <code>GET /api/state</code>, <code>POST /api/state</code>,
+  <code>GET /api/logs</code>, <code>POST /api/log {"line":"..."}</code>
 </p>
 
 <script>
-  // Пассивное обновление температуры, чтобы видеть, что API живет
+  // Пассивное обновление температуры
   setInterval(async () => {
     try {
       const r = await fetch("{{ url_for('get_state') }}");
@@ -314,16 +312,6 @@ def index():
   }, 1000);
 </script>
 """, state=state, status3=STATUS3, system_states=SYSTEM_STATES)
-
-@app.route("/set", methods=["POST"])
-def set_temp_form():
-    # (этот маршрут остаётся для совместимости — меняет только temp_c)
-    try:
-        v = float(request.form.get("temp_c"))
-        state["temp_c"] = int(v)
-    except Exception:
-        pass
-    return redirect(url_for('index'))
 
 @app.route("/set_all", methods=["POST"])
 def set_all_form():
@@ -335,26 +323,28 @@ def set_all_form():
 def get_state():
     if request.method == "POST":
         data = request.get_json(silent=True) or {}
-        # Разрешим менять любые известные поля для тестов (включая вложенные)
         for k, v in data.items():
-            if k in ("rx", "tx", "coords") and isinstance(v, dict):
+            if k in ("rx", "tx", "coords", "angles") and isinstance(v, dict):
                 state[k].update(v)
+            elif k == "logs" and isinstance(v, list):
+                for line in v:
+                    add_log(str(line))
             else:
                 state[k] = v
     return jsonify(state)
 
-# совместимость со старым демо (только температура)
-@app.route("/api/temp", methods=["GET", "POST", "OPTIONS"])
-def get_temp():
-    if request.method == "POST":
-        data = request.get_json(silent=True) or {}
-        if "temp_c" in data:
-            try:
-                state["temp_c"] = int(float(data["temp_c"]))
-            except Exception:
-                pass
-    return jsonify({"temp_c": state["temp_c"]})
+@app.route("/api/logs", methods=["GET"])
+def get_logs():
+    return jsonify({"logs": state["logs"]})
+
+@app.route("/api/log", methods=["POST"])
+def add_log_api():
+    data = request.get_json(silent=True) or {}
+    line = data.get("line")
+    if not line:
+        abort(400, "no 'line'")
+    add_log(str(line))
+    return jsonify({"logs": state["logs"]})
 
 if __name__ == "__main__":
-    app.add_url_rule("/set_all", view_func=set_all_form, methods=["POST"])
     app.run(host="127.0.0.1", port=8000, debug=True)

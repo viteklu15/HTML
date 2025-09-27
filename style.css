@@ -1688,3 +1688,39 @@
 .edit-area {
   align-items: flex-end;  /* было center */
 }
+
+
+/* Универсальный контейнер прогресса */
+[role="progressbar"].frame-11 {
+  height: 8px;
+  border-radius: 10px;
+  overflow: hidden;        /* углы всегда аккуратные */
+  display: flex;
+}
+
+/* Сегменты внутри (текущий/оставшийся) */
+[role="progressbar"] .rectangle,      /* fill */
+[role="progressbar"] .rectangle-2 {   /* rest */
+  border-radius: 0;        /* углы даёт контейнер */
+}
+
+/* Когда прогресс НЕ ноль — серый скругляем только справа */
+[role="progressbar"]:not([aria-valuenow="0"]) .rectangle-2 {
+  border-radius: 0 10px 10px 0;
+}
+
+/* Когда прогресс ноль — серый заполняет всё и скруглён с двух сторон */
+[role="progressbar"][aria-valuenow="0"] .rectangle-2 {
+  border-radius: 10px;
+}
+
+/* Цвета как у тебя */
+#tx-progress-fill, #rx-progress-fill { background:#27c840; }
+#tx-progress-rest, #rx-progress-rest { background:#d9d9d9; }
+
+/* Если задаёшь ширину через flex — включи «проценты по flex-grow» */
+[role="progressbar"] .rectangle,
+[role="progressbar"] .rectangle-2 {
+  flex-basis: 0;
+  transition: flex-grow .25s ease;
+}
