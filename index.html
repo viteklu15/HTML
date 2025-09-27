@@ -125,7 +125,13 @@
         <section class="frame-13" aria-label="Детали подключения и управление">
           <div class="frame-14">
 
-            <section class="frame-15">
+            <section id="connection-attempt" class="connection-attempt" hidden>
+              <h2 class="connection-attempt__title">Идёт подключение…</h2>
+              <p class="connection-attempt__attempt">Попытка <span id="connection-attempt-number">1</span> из <span id="connection-attempt-total">3</span></p>
+              <p id="connection-attempt-eta-wrapper" class="connection-attempt__eta">Подождите ~<span id="connection-attempt-eta">3</span> мин</p>
+            </section>
+
+            <section id="connection-details" class="frame-15">
               <h2 class="text-wrapper-9">Детали подключения</h2>
 
               <div class="frame-16">
@@ -584,6 +590,14 @@
 
     const macField = document.getElementById('mac-address');
 
+    const connectionAttemptSection = document.getElementById('connection-attempt');
+    const connectionDetailsSection = document.getElementById('connection-details');
+    const connectionAttemptNumber = document.getElementById('connection-attempt-number');
+    const connectionAttemptTotal = document.getElementById('connection-attempt-total');
+    const connectionAttemptEta = document.getElementById('connection-attempt-eta');
+    const connectionAttemptEtaWrapper = document.getElementById('connection-attempt-eta-wrapper');
+    const ATTEMPT_TOTAL = 3;
+
     const COORDS_STATUS_LABELS = {
       pending: 'Определяем…',
       ok: 'Определены',
@@ -701,6 +715,44 @@
 
         eventLog.appendChild(article);
       });
+    }
+
+    function updateConnectionAttemptView(state) {
+      if (!connectionAttemptSection) return;
+
+      const rawAttempt = state?.attempt;
+      const attemptNumber = Number(rawAttempt);
+      const isFiniteAttempt = Number.isFinite(attemptNumber);
+      const normalizedAttempt = isFiniteAttempt ? Math.max(0, Math.min(ATTEMPT_TOTAL, Math.round(attemptNumber))) : null;
+      const shouldShowAttempt = normalizedAttempt != null && normalizedAttempt <= ATTEMPT_TOTAL;
+
+      if (!shouldShowAttempt) {
+        connectionAttemptSection.hidden = true;
+        if (connectionDetailsSection) connectionDetailsSection.hidden = false;
+        return;
+      }
+
+      connectionAttemptSection.hidden = false;
+      if (connectionDetailsSection) connectionDetailsSection.hidden = true;
+
+      const displayAttempt = normalizedAttempt === 0 ? 1 : normalizedAttempt;
+      if (connectionAttemptNumber) {
+        connectionAttemptNumber.textContent = String(Math.max(1, Math.min(ATTEMPT_TOTAL, displayAttempt)));
+      }
+      if (connectionAttemptTotal) {
+        connectionAttemptTotal.textContent = String(ATTEMPT_TOTAL);
+      }
+
+      const etaSeconds = Number(state?.eta_sec);
+      if (Number.isFinite(etaSeconds) && etaSeconds > 0) {
+        const etaMinutes = Math.max(1, Math.round(etaSeconds / 60));
+        if (connectionAttemptEta) {
+          connectionAttemptEta.textContent = String(etaMinutes);
+        }
+        if (connectionAttemptEtaWrapper) connectionAttemptEtaWrapper.hidden = false;
+      } else if (connectionAttemptEtaWrapper) {
+        connectionAttemptEtaWrapper.hidden = true;
+      }
     }
 
     /* ===== Пороги температуры ===== */
@@ -899,6 +951,8 @@
       if ('logs' in state) {
         renderLogs(state.logs);
       }
+
+      updateConnectionAttemptView(state);
 
       if ('system' in state) {
         const knownStates = ['pending', 'ok', 'warn', 'err', 'off'];
