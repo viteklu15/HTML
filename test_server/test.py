@@ -32,12 +32,12 @@ state = {
     "beam_number": 34,            # Номер луча
     "rf_cluster": 31,             # РЧ кластер
     "polarization": "A",          # Поляризация (A/B/…)
-    # пароль Wi-Fi храним открыто, как просили
+    # пароль Wi-Fi храним открыто
     "wifi_password": "",
     # логи (макс 10)
     "logs": [
         "Автовыключение — Сработало из-за повышенной температуры\n25.09.2025, 12:41",
-        " Температура модема — Высокая: 85℃, Выше нормальной на 56℃\n25.09.2025, 12:34"
+        "Температура модема — Высокая: 85℃, Выше нормальной на 56℃\n25.09.2025, 12:34"
     ]
 }
 
@@ -147,22 +147,45 @@ def index():
   *{box-sizing:border-box}
   body{font:16px/1.5 system-ui, Segoe UI, Roboto, Arial; margin:24px; color:var(--fg)}
   h1{margin:0 0 16px}
-  .grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:16px;}
+
+  /* Фиксированная сетка 3×3 */
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr); /* всегда 3 колонки */
+    gap:16px;
+  }
+
   .card{border:1px solid var(--b); border-radius:12px; padding:16px; background:#fff}
   .row{display:flex; gap:10px; align-items:center; margin:8px 0}
   .row.split{gap:6px}
   label{font-size:13px; color:var(--muted); min-width:180px}
-  input[type="text"],input[type="number"],input[type="password"],select{width:100%; padding:8px 10px; border:1px solid var(--b); border-radius:8px}
+
+  /* Общие поля ввода — повышаем читабельность */
+  input[type="text"],
+  input[type="number"],
+  input[type="password"],
+  select{
+    width:100%;
+    height:40px;
+    padding:8px 12px;
+    font-size:16px;
+    line-height:1.2;
+    border:1px solid var(--b);
+    border-radius:10px;
+  }
+
   .switch{display:flex; align-items:center; gap:8px}
   .muted{color:var(--muted); font-size:13px}
   button{padding:10px 14px; border:1px solid var(--b); border-radius:10px; background:#f7f8fb; cursor:pointer}
   .footer{display:flex; gap:12px; margin-top:16px}
   ul{margin:0; padding-left:18px; font-size:14px}
   .log-line{white-space:pre-line}
-  .slash{min-width:12px; text-align:center}
-  .mini{max-width:110px}
-  .mini-sm{max-width:80px}
-  .hint{font-size:12px; color:var(--muted); margin-top:-4px}
+
+  /* Маленькие поля + разделитель */
+  .slash{min-width:16px; text-align:center; font-weight:600}
+  .mini{width:140px; min-width:120px}
+  .mini-sm{width:110px; min-width:96px; font-size:18px;} /* крупнее шрифт у коротких полей */
+  #rf_cluster, #polarization{ text-align:center; }
 </style>
 
 <h1>Демо-сервер состояния</h1>
@@ -186,16 +209,17 @@ def index():
         <label for="wifi_password">Пароль Wi-Fi</label>
         <input id="wifi_password" name="wifi_password" type="text" value="{{ state.wifi_password }}" placeholder="Пароль сети">
       </div>
-      <p class="hint">Пароль будет отправлен и сохранён в состоянии вместе с этой формой.</p>
 
       <div class="row">
         <label for="mac">MAC / ID</label>
         <input id="mac" name="mac" type="text" value="{{ state.mac }}">
       </div>
+
       <div class="row switch">
         <input id="modem_off" name="modem_off" type="checkbox" {% if state.modem_off %}checked{% endif %}>
         <label for="modem_off">Модем выключен (modem_off)</label>
       </div>
+
       <div class="row">
         <label for="system">Состояние системы</label>
         <select id="system" name="system">
@@ -242,13 +266,13 @@ def index():
         </select>
       </div>
 
-      <!-- НОВОЕ: Номер луча -->
+      <!-- Номер луча -->
       <div class="row">
         <label for="beam_number">Номер луча в радио-частотном (РЧ) кластере</label>
         <input id="beam_number" name="beam_number" class="mini" type="number" step="1" value="{{ state.beam_number }}">
       </div>
 
-      <!-- НОВОЕ: РЧ кластер / поляризация -->
+      <!-- РЧ кластер / поляризация -->
       <div class="row split">
         <label for="rf_cluster">РЧ кластер / поляризация</label>
         <input id="rf_cluster" name="rf_cluster" class="mini-sm" type="number" step="1" value="{{ state.rf_cluster }}">
@@ -291,11 +315,11 @@ def index():
     <div class="card">
       <h3>Углы антенного поста</h3>
       <div class="row">
-        <label for="angles.tilt_current">Угол наклона (азимута) — текущий</label>
+        <label for="angles.tilt_current">Угол наклона — текущий</label>
         <input id="angles.tilt_current" name="angles.tilt_current" type="number" step="1" value="{{ state.angles.tilt_current }}">
       </div>
       <div class="row">
-        <label for="angles.tilt_required">Угол наклона (азимута) — требуемый</label>
+        <label for="angles.tilt_required">Угол наклона — требуемый</label>
         <input id="angles.tilt_required" name="angles.tilt_required" type="number" step="1" value="{{ state.angles.tilt_required }}">
       </div>
       <div class="row">
