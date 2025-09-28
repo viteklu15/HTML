@@ -987,6 +987,25 @@
   letter-spacing: 0.05px;
 }
 
+.screen [data-angle-status] {
+  transition: color 0.2s ease;
+}
+
+.screen .text-wrapper-20.angle-status,
+.screen .text-wrapper-26.angle-status {
+  color: #ff5f57;
+}
+
+.screen .text-wrapper-20.angle-status.angle-status--match,
+.screen .text-wrapper-26.angle-status.angle-status--match {
+  color: #1ba230;
+}
+
+.screen .text-wrapper-20.angle-status.angle-status--mismatch,
+.screen .text-wrapper-26.angle-status.angle-status--mismatch {
+  color: #ff5f57;
+}
+
 .screen .footer {
   display: flex;
   align-items: flex-start;
