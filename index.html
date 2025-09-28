@@ -420,6 +420,9 @@
     const STATE_POLL_INTERVAL_MS = 2000;
     let statePollTimerId = null;
 
+    const wifiStatusElement = document.getElementById('wifi-status-text');
+    let resetWifiThumblerToInitial = null;
+
     function restartStatePollingTimer() {
       if (statePollTimerId !== null) {
         clearInterval(statePollTimerId);
@@ -495,8 +498,22 @@
       const thumbler = document.querySelector('[data-thumbler="wifi"]');
       if (!thumbler) return;
 
-      const radios = thumbler.querySelectorAll('input[name="wifi-toggle"]');
-      const statusText = document.getElementById('wifi-status-text');
+      const radios = Array.from(thumbler.querySelectorAll('input[name="wifi-toggle"]'));
+      const statusText = wifiStatusElement;
+
+      const initialThumblerClassName = thumbler.className;
+      const initialStatusText = statusText?.textContent || '';
+      const initialRadiosChecked = radios.map(radio => radio.checked);
+
+      resetWifiThumblerToInitial = function () {
+        thumbler.className = initialThumblerClassName;
+        thumbler.removeAttribute('aria-disabled');
+        radios.forEach((radio, index) => {
+          radio.checked = Boolean(initialRadiosChecked[index]);
+          radio.disabled = false;
+        });
+        if (statusText) statusText.textContent = initialStatusText;
+      };
 
       function applyState(value) {
         const normalized = (value === 'on') ? 'on' : 'off';
@@ -661,6 +678,56 @@
     const ATTEMPT_TOTAL = 3;
     const CONNECTION_ATTEMPT_TITLE_DEFAULT = 'Идёт подключение…';
     const CONNECTION_ATTEMPT_TITLE_ERROR = 'Что-то пошло не так';
+
+    const initialIndicatorTexts = {
+      power: indicators.power?.text?.textContent || '',
+      coords: indicators.coords?.text?.textContent || '',
+      gps: indicators.gps?.text?.textContent || '',
+      inet: indicators.inet?.text?.textContent || ''
+    };
+
+    const initialCoordinatesView = {
+      compact: indicators.coords?.compact?.textContent || '',
+      detailed: indicators.coords?.detailed?.textContent || '',
+      inputs: {
+        lat: indicators.coords?.inputs?.lat?.value || '',
+        lng: indicators.coords?.inputs?.lng?.value || ''
+      }
+    };
+
+    const initialAngleTexts = {
+      tiltCurrent: angleFields.tiltCurrent?.textContent || '',
+      tiltRequired: angleFields.tiltRequired?.textContent || '',
+      rotateCurrent: angleFields.rotateCurrent?.textContent || '',
+      rotateRequired: angleFields.rotateRequired?.textContent || ''
+    };
+
+    const spanTempInitial = document.getElementById('current-temp');
+    const tempMeterInitial = document.getElementById('temp-meter');
+    const modemStatusInitial = document.getElementById('modem-power-status');
+    const autoShutdownInitial = document.getElementById('auto-shutdown-hot');
+
+    const initialViewState = {
+      systemBadgeText: systemBadge?.querySelector('.text-wrapper-2')?.textContent || '',
+      wifiStatusText: wifiStatusElement?.textContent || '',
+      temperatureText: spanTempInitial?.textContent || '',
+      tempMeterValueNow: tempMeterInitial?.getAttribute('aria-valuenow') || '',
+      tempMeterLabel: tempMeterInitial?.getAttribute('aria-label') || '',
+      tempMeterPending: tempMeterInitial?.dataset.pending ?? '',
+      macText: macField?.textContent || '',
+      beamText: beamNumberField?.textContent || '',
+      rfClusterText: rfClusterField?.textContent || '',
+      coords: initialCoordinatesView,
+      powerStatusText: initialIndicatorTexts.power,
+      coordsStatusText: initialIndicatorTexts.coords,
+      gpsStatusText: initialIndicatorTexts.gps,
+      inetStatusText: initialIndicatorTexts.inet,
+      wifiPasswordView: wifiPasswordView?.textContent || '',
+      wifiPasswordInput: wifiPasswordInput?.value || '',
+      modemStatusText: modemStatusInitial?.textContent || '',
+      cbAutoChecked: autoShutdownInitial?.checked ?? false,
+      angleTexts: initialAngleTexts
+    };
 
     const COORDS_STATUS_LABELS = {
       pending: 'Определяем…',
@@ -833,6 +900,74 @@
       }
     }
 
+    function resetInterfaceToInitialState() {
+      setSystemStatus('pending', initialViewState.systemBadgeText, { lock: true });
+
+      if (typeof resetWifiThumblerToInitial === 'function') resetWifiThumblerToInitial();
+      if (wifiStatusElement) wifiStatusElement.textContent = initialViewState.wifiStatusText;
+
+      if (spanTemp) spanTemp.textContent = initialViewState.temperatureText;
+      if (tempMeter) {
+        tempMeter.classList.remove('meter--ok', 'meter--warn', 'meter--err');
+        if (initialViewState.tempMeterValueNow) tempMeter.setAttribute('aria-valuenow', initialViewState.tempMeterValueNow);
+        else tempMeter.removeAttribute('aria-valuenow');
+        if (initialViewState.tempMeterLabel) tempMeter.setAttribute('aria-label', initialViewState.tempMeterLabel);
+        else tempMeter.removeAttribute('aria-label');
+        if (initialViewState.tempMeterPending !== undefined && initialViewState.tempMeterPending !== '') tempMeter.dataset.pending = initialViewState.tempMeterPending;
+        else delete tempMeter.dataset.pending;
+      }
+      if (fillEl) fillEl.style.flexGrow = '';
+      if (restEl) restEl.style.flexGrow = '';
+
+      hideOverheatAdvice();
+      autoShutdownSent = false;
+      if (cbAuto) cbAuto.checked = initialViewState.cbAutoChecked;
+
+      if (macField) macField.textContent = initialViewState.macText;
+      if (beamNumberField) beamNumberField.textContent = initialViewState.beamText;
+      if (rfClusterField) rfClusterField.textContent = initialViewState.rfClusterText;
+
+      if (indicators.coords?.compact) indicators.coords.compact.textContent = initialViewState.coords.compact;
+      if (indicators.coords?.detailed) indicators.coords.detailed.textContent = initialViewState.coords.detailed;
+      if (indicators.coords?.inputs?.lat) indicators.coords.inputs.lat.value = initialViewState.coords.inputs.lat;
+      if (indicators.coords?.inputs?.lng) indicators.coords.inputs.lng.value = initialViewState.coords.inputs.lng;
+
+      setIndicatorState(indicators.power, 'pending', initialViewState.powerStatusText);
+      setIndicatorState(indicators.coords, 'pending', initialViewState.coordsStatusText);
+      setIndicatorState(indicators.gps, 'pending', initialViewState.gpsStatusText);
+      setIndicatorState(indicators.inet, 'pending', initialViewState.inetStatusText);
+
+      updateProgressState(indicators.rx, 0, 'Приём данных');
+      updateProgressState(indicators.tx, 0, 'Передача данных');
+
+      if (wifiPasswordView) wifiPasswordView.textContent = initialViewState.wifiPasswordView;
+      if (wifiPasswordInput) wifiPasswordInput.value = initialViewState.wifiPasswordInput;
+
+      if (typeof resetModemThumblerToInitial === 'function') resetModemThumblerToInitial();
+      if (modemStatusText) modemStatusText.textContent = initialViewState.modemStatusText;
+
+      if (angleFields.tiltCurrent) angleFields.tiltCurrent.textContent = initialViewState.angleTexts.tiltCurrent;
+      if (angleFields.tiltRequired) angleFields.tiltRequired.textContent = initialViewState.angleTexts.tiltRequired;
+      if (angleFields.rotateCurrent) angleFields.rotateCurrent.textContent = initialViewState.angleTexts.rotateCurrent;
+      if (angleFields.rotateRequired) angleFields.rotateRequired.textContent = initialViewState.angleTexts.rotateRequired;
+      updateAngleMatchState(angleFields.tiltCurrent, null, null);
+      updateAngleMatchState(angleFields.rotateCurrent, null, null);
+
+      renderLogs([]);
+      updateConnectionAttemptView({});
+      if (connectionAttemptSection) {
+        connectionAttemptSection.classList.remove('connection-attempt--error');
+        connectionAttemptSection.hidden = true;
+      }
+      if (connectionAttemptTitle) connectionAttemptTitle.textContent = CONNECTION_ATTEMPT_TITLE_DEFAULT;
+      if (connectionAttemptAttempt) connectionAttemptAttempt.hidden = false;
+      if (connectionAttemptError) connectionAttemptError.hidden = true;
+      if (connectionAttemptNumber) connectionAttemptNumber.textContent = '';
+      if (connectionAttemptTotal) connectionAttemptTotal.textContent = '';
+      if (connectionAttemptEtaWrapper) connectionAttemptEtaWrapper.hidden = true;
+
+    }
+
 
     /* ===== Пороги температуры ===== */
     const TEMP_WARN = 70;   // жёлтый
@@ -888,6 +1023,7 @@
     const cbAuto = document.getElementById('auto-shutdown-hot');
     let updateModemThumbler = null;
     let setModemThumblerDisabled = null;
+    let resetModemThumblerToInitial = null;
 
     function showOverheatAdvice(level, tempC) {
       if (!tempAlert) return;
@@ -901,6 +1037,21 @@
 
     (function initModemThumbler() {
       if (!modemThumbler) return;
+
+      const initialThumblerClassName = modemThumbler.className;
+      const initialRadiosChecked = modemPowerRadios.map(radio => radio.checked);
+      const initialRadiosDisabled = modemPowerRadios.map(radio => radio.disabled);
+      const initialStatusText = modemStatusText?.textContent || '';
+
+      resetModemThumblerToInitial = function () {
+        modemThumbler.className = initialThumblerClassName;
+        modemThumbler.removeAttribute('aria-disabled');
+        modemPowerRadios.forEach((radio, index) => {
+          radio.checked = Boolean(initialRadiosChecked[index]);
+          radio.disabled = Boolean(initialRadiosDisabled[index]);
+        });
+        if (modemStatusText) modemStatusText.textContent = initialStatusText;
+      };
 
       function applyState(value) {
         const normalized = value === 'on' ? 'on' : 'off';
@@ -1124,11 +1275,18 @@
     async function pollDeviceState() {
       try {
         const r = await fetch(API_STATE_URL, { cache: "no-store" });
-        if (!r.ok) return;
+        if (!r.ok) {
+          resetInterfaceToInitialState();
+          return;
+        }
         const data = await r.json();
+        if (!data || typeof data !== 'object') {
+          resetInterfaceToInitialState();
+          return;
+        }
         window.onDeviceState?.(data);
       } catch (e) {
-        // console.debug("state poll error", e);
+        resetInterfaceToInitialState();
       }
     }
     pollDeviceState();
