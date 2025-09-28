@@ -135,8 +135,7 @@ def apply_form_to_state(form):
         if v is not None:
             state["beam_number"] = v
 
-    # РЧ кластер / поляризация -> сохраняем как одну строку "31/A"
-    # Если прислали хотя бы одно из двух полей — пересобираем значение
+    # РЧ кластер / поляризация -> сохраняем как одну строку "X/Y"
     if ("rf_cluster" in form) or ("polarization" in form):
         cluster = form.get("rf_cluster", "").strip()
         pol = form.get("polarization", "").strip()
@@ -231,9 +230,10 @@ def index():
         <input id="mac" name="mac" type="text" value="{{ state.mac }}">
       </div>
 
+      <!-- ИСПРАВЛЕНО: используем modem_off_temp и в id, и в name -->
       <div class="row switch">
-        <input id="modem_off" name="modem_off" type="checkbox" {% if state.modem_off %}checked{% endif %}>
-        <label for="modem_off">Выключать автоматически при опасных температурах (modem_off_temp)</label>
+        <input id="modem_off_temp" name="modem_off_temp" type="checkbox" {% if state.modem_off_temp %}checked{% endif %}>
+        <label for="modem_off_temp">Выключать автоматически при опасных температурах (modem_off_temp)</label>
       </div>
 
       <div class="row">
@@ -377,16 +377,7 @@ def index():
   <code>GET /api/logs</code>, <code>POST /api/log {"line":"..."}</code>
 </p>
 
-<script>
-  // Пассивное обновление температуры
-  setInterval(async () => {
-    try {
-      const r = await fetch("{{ url_for('get_state') }}");
-      const d = await r.json();
-      document.getElementById('cur').textContent = (d && d.temp_c != null) ? d.temp_c : '-';
-    } catch (e) {}
-  }, 1000);
-</script>
+
 """, state=state, status3=STATUS3, system_states=SYSTEM_STATES)
 
 @app.route("/set_all", methods=["POST"])
@@ -415,7 +406,6 @@ def get_logs():
 
 @app.route("/api/log", methods=["POST"])
 def add_log_api():
-    data = request.get_json(silent=True) or {}
     line = data.get("line")
     if not line:
         abort(400, "no 'line'")
