@@ -261,19 +261,28 @@
                     </div>
 
                     <div class="temp-alert__actions">
-                      <button id="btn-shutdown-modem" type="button" class="btn btn-primary temp-alert__btn">
-                        Выключить модем
-                      </button>
-
-                      <label class="temp-alert__auto">
-                        <input id="auto-shutdown-hot" type="checkbox" class="temp-alert__checkbox" checked />
-                        Выключать автоматически при опасных температурах
-                      </label>
+                      <p class="temp-alert__text" id="temp-alert-controls-hint">
+                        Для снижения температуры отключите модем вручную или включите автоматическое отключение.
+                      </p>
                     </div>
                   </div>
 
                 </div>
 
+              </div>
+            </section>
+
+            <section class="modem-controls" aria-labelledby="modem-controls-title">
+              <h3 id="modem-controls-title" class="sr-only">Управление питанием модема</h3>
+              <div class="temp-alert__actions modem-controls__row">
+                <button id="btn-shutdown-modem" type="button" class="btn btn-primary temp-alert__btn">
+                  Выключить модем
+                </button>
+
+                <label class="temp-alert__auto" for="auto-shutdown-hot">
+                  <input id="auto-shutdown-hot" type="checkbox" class="temp-alert__checkbox" />
+                  Выключать автоматически при опасных температурах
+                </label>
               </div>
             </section>
 
@@ -395,6 +404,8 @@
   const API_WIFI_COMMAND_ENDPOINT = "/api/wifi";
   const API_COORDS_SAVE_ENDPOINT = "/api/coords/save";
   const API_WIFI_PASSWORD_ENDPOINT = "/api/wifi/password";
+  const API_MODEM_POWER_ENDPOINT = "/api/modem/power";
+  const API_MODEM_AUTO_SHUTDOWN_ENDPOINT = "/api/modem/off-temp";
 
   async function sendLocalGet(path, params = {}) {
     try {
@@ -860,24 +871,62 @@ function updateConnectionAttemptView(state = {}) {
   }
   function hideOverheatAdvice() { if (tempAlert) tempAlert.hidden = true; }
 
+  function updatePowerControls(powerOn) {
+    if (!btnShutdown) return;
+    const isOn = powerOn === true;
+    btnShutdown.disabled = false;
+    btnShutdown.dataset.nextState = isOn ? 'off' : 'on';
+    btnShutdown.textContent = isOn ? 'Выключить модем' : 'Включить модем';
+  }
+
   let autoShutdownSent = false;
   async function shutdownModemSafely(isAuto = false) {
+    if (!btnShutdown) return;
+    const prevText = btnShutdown.textContent;
     try {
       setSystemStatus('off', 'Модем отключен', { lock: true });
-      if (btnShutdown) {
-        btnShutdown.disabled = true;
-        btnShutdown.textContent = 'Выключаем...';
-      }
+      btnShutdown.disabled = true;
+      btnShutdown.textContent = 'Выключаем...';
+      await sendLocalGet(API_MODEM_POWER_ENDPOINT, { state: 'off', source: isAuto ? 'auto' : 'manual' });
+      updatePowerControls(false);
     } catch (e) {
       console.error('Не удалось выключить модем:', e);
       autoShutdownSent = false;
-      if (btnShutdown) {
-        btnShutdown.disabled = false;
-        btnShutdown.textContent = 'Выключить модем';
-      }
+      btnShutdown.textContent = prevText;
+    } finally {
+      btnShutdown.disabled = false;
     }
   }
-  btnShutdown?.addEventListener('click', () => shutdownModemSafely(false));
+
+  btnShutdown?.addEventListener('click', async () => {
+    if (!btnShutdown) return;
+    const nextState = btnShutdown.dataset.nextState === 'off' ? 'off' : 'on';
+    const isTurningOff = nextState === 'off';
+    const prevText = btnShutdown.textContent;
+    try {
+      btnShutdown.disabled = true;
+      btnShutdown.textContent = isTurningOff ? 'Выключаем...' : 'Включаем...';
+      await sendLocalGet(API_MODEM_POWER_ENDPOINT, { state: nextState, source: 'manual' });
+      updatePowerControls(nextState === 'on');
+    } catch (e) {
+      console.error('Не удалось переключить питание модема', e);
+      btnShutdown.textContent = prevText;
+    } finally {
+      btnShutdown.disabled = false;
+    }
+  });
+
+  cbAuto?.addEventListener('change', async (event) => {
+    const enabled = event.target.checked;
+    try {
+      cbAuto.disabled = true;
+      await sendLocalGet(API_MODEM_AUTO_SHUTDOWN_ENDPOINT, { state: enabled ? 'on' : 'off' });
+    } catch (e) {
+      console.error('Не удалось изменить настройку автотушения модема', e);
+    } finally {
+      cbAuto.disabled = false;
+    }
+  });
 
   function applyStatusByTemperature(tempC, { allowBadgeUpdate = true } = {}) {
     if (tempC == null || isNaN(tempC)) return;
@@ -941,10 +990,15 @@ function updateConnectionAttemptView(state = {}) {
       const powerStatus = state.power === true ? 'ok' : (state.power === false ? 'off' : 'pending');
       const powerText = state.power === true ? 'Есть' : (state.power === false ? 'Нет' : 'Ожидание…');
       setIndicatorState(indicators.power, powerStatus, powerText);
+      updatePowerControls(state.power === true);
     }
 
     if ('wifi_on' in state && typeof updateWifiThumbler === 'function') {
       updateWifiThumbler(state.wifi_on ? 'on' : 'off');
+    }
+
+    if ('modem_off_temp' in state && cbAuto) {
+      cbAuto.checked = state.modem_off_temp === true;
     }
 
     const coords = state.coords || {};

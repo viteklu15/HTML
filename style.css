@@ -1567,6 +1567,14 @@
   /* нативная синяя галочка как на скрине */
 }
 
+.modem-controls {
+  margin-top: 16px;
+}
+
+.modem-controls__row {
+  justify-content: flex-start;
+}
+
 /* Цвета метра по уровням */
 .meter--ok .meter__fill {
   background: #27c840;
