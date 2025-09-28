@@ -30,8 +30,8 @@ state = {
     },
     # новые поля под скрин
     "beam_number": 34,            # Номер луча
-    "rf_cluster": 31,             # РЧ кластер
-    "polarization": "A",          # Поляризация (A/B/…)
+    # РЧ кластер + поляризация вместе (например: "31/A")
+    "rf_cluster_polarization": "31/A",
     # пароль Wi-Fi храним открыто
     "wifi_password": "",
     # логи (макс 10)
@@ -78,37 +78,49 @@ def apply_form_to_state(form):
         state[k] = (k in form)
 
     # строки/числа
-    if "mac" in form: state["mac"] = form.get("mac", "").strip()
+    if "mac" in form:
+        state["mac"] = form.get("mac", "").strip()
+
     if "temp_c" in form:
         v = _to_int(form.get("temp_c"), state["temp_c"])
-        if v is not None: state["temp_c"] = v
+        if v is not None:
+            state["temp_c"] = v
 
     # попытка
     if "attempt" in form:
         v = _to_int(form.get("attempt"), state["attempt"])
-        if v is not None: state["attempt"] = v
+        if v is not None:
+            state["attempt"] = v
 
     # статусы
-    if form.get("coords_status") in STATUS3: state["coords_status"] = form.get("coords_status")
-    if form.get("gps_status")   in STATUS3: state["gps_status"]   = form.get("gps_status")
-    if form.get("inet_status")  in STATUS3: state["inet_status"]  = form.get("inet_status")
-    if form.get("system")       in SYSTEM_STATES: state["system"] = form.get("system")
+    if form.get("coords_status") in STATUS3:
+        state["coords_status"] = form.get("coords_status")
+    if form.get("gps_status") in STATUS3:
+        state["gps_status"] = form.get("gps_status")
+    if form.get("inet_status") in STATUS3:
+        state["inet_status"] = form.get("inet_status")
+    if form.get("system") in SYSTEM_STATES:
+        state["system"] = form.get("system")
 
     # coords
     if "coords.lat" in form:
         v = _to_float(form.get("coords.lat"), state["coords"]["lat"])
-        if v is not None: state["coords"]["lat"] = v
+        if v is not None:
+            state["coords"]["lat"] = v
     if "coords.lng" in form:
         v = _to_float(form.get("coords.lng"), state["coords"]["lng"])
-        if v is not None: state["coords"]["lng"] = v
+        if v is not None:
+            state["coords"]["lng"] = v
 
     # rx/tx progress
     if "rx.progress" in form:
         v = _to_int(form.get("rx.progress"), state["rx"]["progress"])
-        if v is not None: state["rx"]["progress"] = max(0, min(100, v))
+        if v is not None:
+            state["rx"]["progress"] = max(0, min(100, v))
     if "tx.progress" in form:
         v = _to_int(form.get("tx.progress"), state["tx"]["progress"])
-        if v is not None: state["tx"]["progress"] = max(0, min(100, v))
+        if v is not None:
+            state["tx"]["progress"] = max(0, min(100, v))
 
     # углы
     for k in ("angles.tilt_current","angles.tilt_required","angles.rotate_current","angles.rotate_required"):
@@ -120,12 +132,16 @@ def apply_form_to_state(form):
     # новые поля (как на скрине)
     if "beam_number" in form:
         v = _to_int(form.get("beam_number"), state["beam_number"])
-        if v is not None: state["beam_number"] = v
-    if "rf_cluster" in form:
-        v = _to_int(form.get("rf_cluster"), state["rf_cluster"])
-        if v is not None: state["rf_cluster"] = v
-    if "polarization" in form:
-        state["polarization"] = form.get("polarization", "").strip()
+        if v is not None:
+            state["beam_number"] = v
+
+    # РЧ кластер / поляризация -> сохраняем как одну строку "31/A"
+    # Если прислали хотя бы одно из двух полей — пересобираем значение
+    if ("rf_cluster" in form) or ("polarization" in form):
+        cluster = form.get("rf_cluster", "").strip()
+        pol = form.get("polarization", "").strip()
+        if cluster or pol:
+            state["rf_cluster_polarization"] = f"{cluster}/{pol}"
 
     # Wi-Fi пароль — сохраняем как есть
     if "wifi_password" in form:
@@ -272,12 +288,13 @@ def index():
         <input id="beam_number" name="beam_number" class="mini" type="number" step="1" value="{{ state.beam_number }}">
       </div>
 
-      <!-- РЧ кластер / поляризация -->
+      <!-- РЧ кластер / поляризация (редактируем по отдельности, сохраняем как "X/Y") -->
+      {% set parts = (state.rf_cluster_polarization or '').split('/') %}
       <div class="row split">
         <label for="rf_cluster">РЧ кластер / поляризация</label>
-        <input id="rf_cluster" name="rf_cluster" class="mini-sm" type="number" step="1" value="{{ state.rf_cluster }}">
+        <input id="rf_cluster" name="rf_cluster" class="mini-sm" type="number" step="1" value="{{ parts[0] if parts|length>0 else '' }}">
         <div class="slash">/</div>
-        <input id="polarization" name="polarization" class="mini-sm" type="text" maxlength="2" placeholder="A/B" value="{{ state.polarization }}">
+        <input id="polarization" name="polarization" class="mini-sm" type="text" maxlength="2" placeholder="A/B" value="{{ parts[1] if parts|length>1 else '' }}">
       </div>
     </div>
 
