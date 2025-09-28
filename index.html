@@ -391,6 +391,25 @@
 
   <!-- Скрипт переключения режима редактирования -->
   <script>
+  const API_BASE_URL = "http://127.0.0.1:8000";
+  const API_WIFI_COMMAND_ENDPOINT = "/api/wifi";
+  const API_COORDS_SAVE_ENDPOINT = "/api/coords/save";
+  const API_WIFI_PASSWORD_ENDPOINT = "/api/wifi/password";
+
+  async function sendLocalGet(path, params = {}) {
+    try {
+      const url = new URL(path, API_BASE_URL);
+      Object.entries(params).forEach(([key, value]) => {
+        if (value != null) {
+          url.searchParams.set(key, value);
+        }
+      });
+      await fetch(url.toString(), { method: 'GET', cache: 'no-store' });
+    } catch (error) {
+      console.error('Не удалось выполнить локальный GET-запрос', error);
+    }
+  }
+
   /* ===== Режим редактирования/просмотра по чекбоксам ===== */
   document.querySelectorAll('.checkbox-input').forEach(cb => {
     cb.addEventListener('change', e => {
@@ -423,11 +442,13 @@
         row.querySelector('.value-view .span').textContent = `Широта: ${lat}; Долгота: ${lng}`;
         const compact = document.getElementById('coords-compact');
         if (compact) compact.textContent = `Ш: ${lat}; Д: ${lng}`;
+        await sendLocalGet(API_COORDS_SAVE_ENDPOINT, { lat, lng });
       }
 
       if (row.id === 'row-wifi-pass') {
         const pass = form.querySelector('[name="wifi-pass"]').value;
         row.querySelector('.value-view .span').textContent = pass;
+        await sendLocalGet(API_WIFI_PASSWORD_ENDPOINT, { password: pass });
       }
 
       const cb = row.querySelector('.checkbox-input');
@@ -460,6 +481,7 @@
       r.addEventListener('change', (e) => {
         const v = e.target.value === 'on' ? 'on' : 'off';
         applyState(v);
+        sendLocalGet(API_WIFI_COMMAND_ENDPOINT, { state: v });
       });
     });
   })();
