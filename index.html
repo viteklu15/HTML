@@ -560,12 +560,25 @@
     }
   };
 
+  const rows = {
+    coords: document.getElementById('row-coords'),
+    wifiPass: document.getElementById('row-wifi-pass')
+  };
+
+  const wifiPasswordView = rows.wifiPass?.querySelector('.value-view .span') || null;
+  const wifiPasswordInput = document.getElementById('wifi-pass');
+
   const angleFields = {
     tiltCurrent:   document.getElementById('tilt-angle-current'),
     tiltRequired:  document.getElementById('tilt-angle-required'),
     rotateCurrent: document.getElementById('rotate-angle-current'),
     rotateRequired:document.getElementById('rotate-angle-required')
   };
+
+  function isRowEditing(rowEl) {
+    const checkbox = rowEl?.querySelector('.checkbox-input');
+    return Boolean(checkbox?.checked);
+  }
 
   // Стартовые значения прогресса = 0%
   updateProgressState(indicators.rx, 0, 'Приём данных');
@@ -859,13 +872,21 @@ function updateConnectionAttemptView(state = {}) {
     }
 
     const coords = state.coords || {};
-    if (indicators.coords) {
+    const coordsEditing = isRowEditing(rows.coords);
+    if (indicators.coords && !coordsEditing) {
       const formattedLat = (coords.lat != null && coords.lat !== '') ? formatCoordinate(coords.lat) : '—';
       const formattedLng = (coords.lng != null && coords.lng !== '') ? formatCoordinate(coords.lng) : '—';
       if (indicators.coords.compact)  indicators.coords.compact.textContent  = `Ш: ${formattedLat}; Д: ${formattedLng}`;
       if (indicators.coords.detailed) indicators.coords.detailed.textContent = ` Широта: ${formattedLat}; Долгота: ${formattedLng}`;
       if (indicators.coords.inputs?.lat) indicators.coords.inputs.lat.value = (coords.lat != null && coords.lat !== '') ? String(coords.lat) : '';
       if (indicators.coords.inputs?.lng) indicators.coords.inputs.lng.value = (coords.lng != null && coords.lng !== '') ? String(coords.lng) : '';
+    }
+
+    if ('wifi_password' in state && !isRowEditing(rows.wifiPass)) {
+      const rawPass = state.wifi_password;
+      const passwordText = rawPass == null ? '' : String(rawPass);
+      if (wifiPasswordView) wifiPasswordView.textContent = passwordText;
+      if (wifiPasswordInput) wifiPasswordInput.value = passwordText;
     }
 
     if ('coords_status' in state && indicators.coords) {
