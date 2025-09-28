@@ -220,14 +220,14 @@
                   <div class="div-wrapper">
                     <p class="div-3">Номер луча в радио-частотном (РЧ) кластере</p>
                   </div>
-                  <p class="span-wrapper"><span class="span">34</span></p>
+                  <p class="span-wrapper"><span id="beam-number-value" class="span">—</span></p>
                 </div>
                 <div class="separator" aria-hidden="true"></div>
                 <div class="frame-18">
                   <div class="div-wrapper">
                     <div class="text-wrapper-11">РЧ кластер / поляризация</div>
                   </div>
-                  <p class="element-2"><span class="span">31 / А</span></p>
+                  <p class="element-2"><span id="rf-cluster-polarization-value" class="span">—</span></p>
                 </div>
                 <div class="separator" aria-hidden="true"></div>
                 <div class="frame-19">
@@ -591,6 +591,8 @@
   const MAX_LOG_ENTRIES = 10;
 
   const macField = document.getElementById('mac-address');
+  const beamNumberField = document.getElementById('beam-number-value');
+  const rfClusterField = document.getElementById('rf-cluster-polarization-value');
 
   const connectionAttemptSection = document.getElementById('connection-attempt');
   const connectionDetailsSection = document.getElementById('connection-details');
@@ -877,6 +879,17 @@ function updateConnectionAttemptView(state = {}) {
 
     if (typeof state.mac === 'string' && macField) {
       macField.textContent = `MAC-адрес: ${state.mac}`;
+    }
+
+    if ('beam_number' in state && beamNumberField) {
+      const beamValue = state.beam_number;
+      beamNumberField.textContent = (beamValue == null || beamValue === '') ? '—' : String(beamValue);
+    }
+
+    if ('rf_cluster_polarization' in state && rfClusterField) {
+      const clusterValue = state.rf_cluster_polarization;
+      const formattedCluster = (clusterValue == null || clusterValue === '') ? '—' : String(clusterValue);
+      rfClusterField.textContent = formattedCluster;
     }
 
     if ('power' in state) {
