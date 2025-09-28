@@ -20,7 +20,7 @@ state = {
     "attempt": 1,
     # общая индикация
     "system": "pending",          # pending|ok|warn|err|off
-    "modem_off": False,
+    "modem_off_temp": False,
     # углы
     "angles": {
         "tilt_current": 123,
@@ -33,7 +33,7 @@ state = {
     # РЧ кластер + поляризация вместе (например: "31/A")
     "rf_cluster_polarization": "31/A",
     # пароль Wi-Fi храним открыто
-    "wifi_password": "",
+    "wifi_password": "12345678",
     # логи (макс 10)
     "logs": [
         "Автовыключение — Сработало из-за повышенной температуры\n25.09.2025, 12:41",
@@ -74,7 +74,7 @@ def add_log(line: str):
 
 def apply_form_to_state(form):
     # булевы
-    for k in ["power", "wifi_on", "modem_off"]:
+    for k in ["power", "wifi_on", "modem_off_temp"]:
         state[k] = (k in form)
 
     # строки/числа
@@ -214,7 +214,7 @@ def index():
       <h3>Питание и сеть</h3>
       <div class="row switch">
         <input id="power" name="power" type="checkbox" {% if state.power %}checked{% endif %}>
-        <label for="power">Питание (power)</label>
+        <label for="power">Питание модема (power)</label>
       </div>
       <div class="row switch">
         <input id="wifi_on" name="wifi_on" type="checkbox" {% if state.wifi_on %}checked{% endif %}>
@@ -233,7 +233,7 @@ def index():
 
       <div class="row switch">
         <input id="modem_off" name="modem_off" type="checkbox" {% if state.modem_off %}checked{% endif %}>
-        <label for="modem_off">Модем выключен (modem_off)</label>
+        <label for="modem_off">Выключать автоматически при опасных температурах (modem_off_temp)</label>
       </div>
 
       <div class="row">
