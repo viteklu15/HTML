@@ -268,9 +268,10 @@
               <h3 id="modem-controls-title" class="sr-only">Управление питанием модема</h3>
               <div class="temp-alert__actions modem-controls__row">
                 <div class="modem-controls__toggle">
-                  <div id="modem-power-status" class="modem-controls__status">Модем: ожидание…</div>
+                  <div id="modem-power-status" class="modem-controls__status">Модем:</div>
 
-                  <fieldset class="thumbler" data-thumbler="modem" role="radiogroup" aria-labelledby="modem-power-status">
+                  <fieldset class="thumbler" data-thumbler="modem" role="radiogroup"
+                    aria-labelledby="modem-power-status">
                     <legend class="sr-only">Питание модема</legend>
                     <div class="thumbler__knob" aria-hidden="true"></div>
 
@@ -916,15 +917,15 @@
           const previous = currentState();
           if (requested === previous) return;
 
-          setDisabled(true);
-          if (modemStatusText) {
-            modemStatusText.textContent = requested === 'on' ? 'Включаем…' : 'Выключаем…';
-          }
+          // setDisabled(true);
+          // if (modemStatusText) {
+          //   modemStatusText.textContent = requested === 'on' ? 'Включаем…' : 'Выключаем…';
+          // }
 
           applyState(requested);
 
           try {
-            await sendLocalGet(API_MODEM_POWER_ENDPOINT, { state: requested, source: 'manual' });
+            await sendLocalGet(API_MODEM_POWER_ENDPOINT, { state: requested });
             updatePowerControls(requested === 'on');
           } catch (e) {
             console.error('Не удалось переключить питание модема', e);
@@ -938,24 +939,11 @@
       const isOn = powerOn === true;
       if (setModemThumblerDisabled) setModemThumblerDisabled(false);
       if (updateModemThumbler) updateModemThumbler(isOn ? 'on' : 'off');
-      if (modemStatusText) modemStatusText.textContent = isOn ? 'Модем включен' : 'Модем выключен';
+      //   if (modemStatusText) modemStatusText.textContent = isOn ? 'Модем включен' : 'Модем выключен';
     }
 
     let autoShutdownSent = false;
-    async function shutdownModemSafely(isAuto = false) {
-      try {
-        setSystemStatus('off', 'Модем отключен', { lock: true });
-        if (setModemThumblerDisabled) setModemThumblerDisabled(true);
-        if (modemStatusText) modemStatusText.textContent = 'Выключаем…';
-        if (updateModemThumbler) updateModemThumbler('off');
-        await sendLocalGet(API_MODEM_POWER_ENDPOINT, { state: 'off', source: isAuto ? 'auto' : 'manual' });
-        updatePowerControls(false);
-      } catch (e) {
-        console.error('Не удалось выключить модем:', e);
-        autoShutdownSent = false;
-        updatePowerControls(true);
-      }
-    }
+   
 
     cbAuto?.addEventListener('change', async (event) => {
       const enabled = event.target.checked;
