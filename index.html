@@ -328,7 +328,7 @@
                     stroke="#8C8C8C" stroke-linecap="round" />
                 </svg>
                 <div class="frame-28">
-                  <div class="text-wrapper-20">Текущий — <span id="tilt-angle-current">—</span></div>
+                  <div class="text-wrapper-20 angle-status angle-status--mismatch" data-angle-status>Текущий — <span id="tilt-angle-current">—</span></div>
                   <div class="text-wrapper-21">Требуемый — <span id="tilt-angle-required">—</span></div>
                 </div>
               </div>
@@ -363,7 +363,7 @@
                 </div>
                 <div class="frame-28">
                   <p class="element-3">
-                    <span class="text-wrapper-26">Текущий — <span id="rotate-angle-current">—</span></span>
+                    <span class="text-wrapper-26 angle-status angle-status--mismatch" data-angle-status>Текущий — <span id="rotate-angle-current">—</span></span>
                   </p>
                   <div class="text-wrapper-21">Требуемый — <span id="rotate-angle-required">—</span></div>
                 </div>
@@ -649,6 +649,29 @@
   function setAngleValue(el, value) {
     if (!el) return;
     el.textContent = formatAngle(value);
+  }
+
+  function normalizeAngleForCompare(value) {
+    if (value == null || value === '') return null;
+    const num = Number(value);
+    if (!Number.isNaN(num)) return num;
+    const text = String(value).trim();
+    return text === '' ? null : text;
+  }
+
+  function updateAngleMatchState(fieldEl, currentRaw, requiredRaw) {
+    if (!fieldEl) return;
+    const container = fieldEl.closest('[data-angle-status]');
+    if (!container) return;
+
+    const currentNormalized = normalizeAngleForCompare(currentRaw);
+    const requiredNormalized = normalizeAngleForCompare(requiredRaw);
+    const isMatch = currentNormalized != null &&
+      requiredNormalized != null &&
+      currentNormalized === requiredNormalized;
+
+    container.classList.toggle('angle-status--match', Boolean(isMatch));
+    container.classList.toggle('angle-status--mismatch', !isMatch);
   }
 
   function parseLogTimestamp(raw) {
@@ -939,10 +962,18 @@ function updateConnectionAttemptView(state = {}) {
     if (state.tx) updateProgressState(indicators.tx, state.tx.progress, 'Передача данных');
 
     if (state.angles) {
-      setAngleValue(angleFields.tiltCurrent,   state.angles.tilt_current);
-      setAngleValue(angleFields.tiltRequired,  state.angles.tilt_required);
-      setAngleValue(angleFields.rotateCurrent, state.angles.rotate_current);
-      setAngleValue(angleFields.rotateRequired,state.angles.rotate_required);
+      const tiltCurrentRaw = state.angles.tilt_current;
+      const tiltRequiredRaw = state.angles.tilt_required;
+      const rotateCurrentRaw = state.angles.rotate_current;
+      const rotateRequiredRaw = state.angles.rotate_required;
+
+      setAngleValue(angleFields.tiltCurrent,   tiltCurrentRaw);
+      setAngleValue(angleFields.tiltRequired,  tiltRequiredRaw);
+      setAngleValue(angleFields.rotateCurrent, rotateCurrentRaw);
+      setAngleValue(angleFields.rotateRequired,rotateRequiredRaw);
+
+      updateAngleMatchState(angleFields.tiltCurrent,   tiltCurrentRaw,   tiltRequiredRaw);
+      updateAngleMatchState(angleFields.rotateCurrent, rotateCurrentRaw, rotateRequiredRaw);
     }
 
     if ('logs' in state) renderLogs(state.logs);
