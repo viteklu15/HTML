@@ -32,6 +32,8 @@ state = {
     "beam_number": 34,            # Номер луча
     "rf_cluster": 31,             # РЧ кластер
     "polarization": "A",          # Поляризация (A/B/…)
+    # пароль Wi-Fi храним открыто, как просили
+    "wifi_password": "",
     # логи (макс 10)
     "logs": [
         "1) Автовыключение — Сработало из-за повышенной температуры\n25.09.2025, 12:41",
@@ -83,7 +85,7 @@ def apply_form_to_state(form):
         v = _to_int(form.get("temp_c"), state["temp_c"])
         if v is not None: state["temp_c"] = v
 
-    # попытка (оставили только attempt)
+    # попытка
     if "attempt" in form:
         v = _to_int(form.get("attempt"), state["attempt"])
         if v is not None: state["attempt"] = v
@@ -127,6 +129,10 @@ def apply_form_to_state(form):
     if "polarization" in form:
         state["polarization"] = form.get("polarization", "").strip()
 
+    # Wi-Fi пароль — сохраняем как есть
+    if "wifi_password" in form:
+        state["wifi_password"] = form.get("wifi_password", "")
+
     # новый лог из формы
     if form.get("new_log", "").strip():
         add_log(form.get("new_log").strip())
@@ -148,7 +154,7 @@ def index():
   .row{display:flex; gap:10px; align-items:center; margin:8px 0}
   .row.split{gap:6px}
   label{font-size:13px; color:var(--muted); min-width:180px}
-  input[type="text"],input[type="number"],select{width:100%; padding:8px 10px; border:1px solid var(--b); border-radius:8px}
+  input[type="text"],input[type="number"],input[type="password"],select{width:100%; padding:8px 10px; border:1px solid var(--b); border-radius:8px}
   .switch{display:flex; align-items:center; gap:8px}
   .muted{color:var(--muted); font-size:13px}
   button{padding:10px 14px; border:1px solid var(--b); border-radius:10px; background:#f7f8fb; cursor:pointer}
@@ -158,6 +164,7 @@ def index():
   .slash{min-width:12px; text-align:center}
   .mini{max-width:110px}
   .mini-sm{max-width:80px}
+  .hint{font-size:12px; color:var(--muted); margin-top:-4px}
 </style>
 
 <h1>Демо-сервер состояния</h1>
@@ -176,6 +183,13 @@ def index():
         <input id="wifi_on" name="wifi_on" type="checkbox" {% if state.wifi_on %}checked{% endif %}>
         <label for="wifi_on">Wi-Fi включён (wifi_on)</label>
       </div>
+
+      <div class="row">
+        <label for="wifi_password">Пароль Wi-Fi</label>
+        <input id="wifi_password" name="wifi_password" type="text" value="{{ state.wifi_password }}" placeholder="Пароль сети">
+      </div>
+      <p class="hint">Пароль будет отправлен и сохранён в состоянии вместе с этой формой.</p>
+
       <div class="row">
         <label for="mac">MAC / ID</label>
         <input id="mac" name="mac" type="text" value="{{ state.mac }}">
@@ -273,7 +287,6 @@ def index():
         <label for="attempt">Попытка</label>
         <input id="attempt" name="attempt" type="number" step="1" value="{{ state.attempt }}">
       </div>
-      <!-- Поля "Всего попыток" и "Осталось, сек" удалены по запросу -->
     </div>
 
     <!-- Углы -->
