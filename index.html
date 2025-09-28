@@ -127,10 +127,12 @@
 
             <section id="connection-attempt" class="connection-attempt" hidden>
               <h2 class="connection-attempt__title">Идёт подключение…</h2>
-              <p class="connection-attempt__attempt">Попытка <span id="connection-attempt-number">1</span> из <span
-                  id="connection-attempt-total">3</span></p>
-              <p  class="connection-attempt__eta">Подождите ~<span
+              <p id="connection-attempt-attempt" class="connection-attempt__attempt">Попытка <span
+                  id="connection-attempt-number">1</span> из <span id="connection-attempt-total">3</span></p>
+              <p id="connection-attempt-eta-wrapper" class="connection-attempt__eta">Подождите ~<span
                   id="connection-attempt-eta">3</span> мин</p>
+              <p id="connection-attempt-error" class="connection-attempt__error" hidden>Перезагрузить, что-то пошло не
+                так</p>
             </section>
 
             <section id="connection-details" class="frame-15">
@@ -592,11 +594,16 @@
 
   const connectionAttemptSection = document.getElementById('connection-attempt');
   const connectionDetailsSection = document.getElementById('connection-details');
-  const connectionAttemptNumber = document.getElementById('connection-attempt-number');
-  const connectionAttemptTotal  = document.getElementById('connection-attempt-total');
-  const connectionAttemptEta    = document.getElementById('connection-attempt-eta');
+  const connectionAttemptTitle   = connectionAttemptSection?.querySelector('.connection-attempt__title') || null;
+  const connectionAttemptAttempt = document.getElementById('connection-attempt-attempt');
+  const connectionAttemptNumber  = document.getElementById('connection-attempt-number');
+  const connectionAttemptTotal   = document.getElementById('connection-attempt-total');
+  const connectionAttemptEta     = document.getElementById('connection-attempt-eta');
   const connectionAttemptEtaWrapper = document.getElementById('connection-attempt-eta-wrapper');
+  const connectionAttemptError   = document.getElementById('connection-attempt-error');
   const ATTEMPT_TOTAL = 3;
+  const CONNECTION_ATTEMPT_TITLE_DEFAULT = 'Идёт подключение…';
+  const CONNECTION_ATTEMPT_TITLE_ERROR   = 'Что-то пошло не так';
 
   const COORDS_STATUS_LABELS = {
     pending: 'Определяем…',
@@ -707,31 +714,42 @@
 function updateConnectionAttemptView(state = {}) {
   const n = Number(state.attempt);
   const showAttempt = Number.isFinite(n) && n >= 0 && n <= ATTEMPT_TOTAL;
+  const isErrorAttempt = showAttempt && n >= ATTEMPT_TOTAL;
 
-  // Один переключатель на обе секции:
-  if (connectionAttemptSection) connectionAttemptSection.hidden = !showAttempt;
+  if (connectionAttemptSection) {
+    connectionAttemptSection.hidden = !showAttempt;
+    connectionAttemptSection.classList.toggle('connection-attempt--error', Boolean(isErrorAttempt));
+  }
   if (connectionDetailsSection) connectionDetailsSection.hidden =  showAttempt;
 
-  if (showAttempt) {
-    if (n === ATTEMPT_TOTAL) {
-      // если достигнут лимит попыток — выводим "Перезагрузить"
-      if (connectionAttemptNumber) connectionAttemptNumber.textContent = "Перезагрузить";
-      if (connectionAttemptTotal)  connectionAttemptTotal.textContent  = "";
-      if (connectionAttemptEtaWrapper) connectionAttemptEtaWrapper.hidden = true;
-    } else {
-      // обычный режим с цифрами
-      if (connectionAttemptNumber) connectionAttemptNumber.textContent = String(n+1);
-      if (connectionAttemptTotal)  connectionAttemptTotal.textContent  = String(ATTEMPT_TOTAL);
+  if (!showAttempt) return;
 
-      const etaSec = Number(state.eta_sec);
-      if (Number.isFinite(etaSec) && etaSec > 0) {
-        const m = Math.max(1, Math.round(etaSec / 60));
-        if (connectionAttemptEta) connectionAttemptEta.textContent = String(m);
-        if (connectionAttemptEtaWrapper) connectionAttemptEtaWrapper.hidden = false;
-      } else if (connectionAttemptEtaWrapper) {
-        connectionAttemptEtaWrapper.hidden = true;
-      }
-    }
+  if (connectionAttemptTitle) {
+    connectionAttemptTitle.textContent = isErrorAttempt
+      ? CONNECTION_ATTEMPT_TITLE_ERROR
+      : CONNECTION_ATTEMPT_TITLE_DEFAULT;
+  }
+
+  if (connectionAttemptAttempt) connectionAttemptAttempt.hidden = Boolean(isErrorAttempt);
+  if (connectionAttemptError) connectionAttemptError.hidden = !isErrorAttempt;
+
+  if (isErrorAttempt) {
+    if (connectionAttemptNumber) connectionAttemptNumber.textContent = '';
+    if (connectionAttemptTotal)  connectionAttemptTotal.textContent  = '';
+    if (connectionAttemptEtaWrapper) connectionAttemptEtaWrapper.hidden = true;
+    return;
+  }
+
+  if (connectionAttemptNumber) connectionAttemptNumber.textContent = String(n + 1);
+  if (connectionAttemptTotal)  connectionAttemptTotal.textContent  = String(ATTEMPT_TOTAL);
+
+  const etaSec = Number(state.eta_sec);
+  if (Number.isFinite(etaSec) && etaSec > 0) {
+    const m = Math.max(1, Math.round(etaSec / 60));
+    if (connectionAttemptEta) connectionAttemptEta.textContent = String(m);
+    if (connectionAttemptEtaWrapper) connectionAttemptEtaWrapper.hidden = false;
+  } else if (connectionAttemptEtaWrapper) {
+    connectionAttemptEtaWrapper.hidden = true;
   }
 }
 
