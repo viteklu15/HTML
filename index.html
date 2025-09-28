@@ -417,6 +417,16 @@
     const API_MODEM_POWER_ENDPOINT = "/api/modem/power";
     const API_MODEM_AUTO_SHUTDOWN_ENDPOINT = "/api/modem/off-temp";
 
+    const STATE_POLL_INTERVAL_MS = 2000;
+    let statePollTimerId = null;
+
+    function restartStatePollingTimer() {
+      if (statePollTimerId !== null) {
+        clearInterval(statePollTimerId);
+      }
+      statePollTimerId = setInterval(pollDeviceState, STATE_POLL_INTERVAL_MS);
+    }
+
     async function sendLocalGet(path, params = {}) {
       try {
         const url = new URL(path, API_BASE_URL);
@@ -428,6 +438,8 @@
         await fetch(url.toString(), { method: 'GET', cache: 'no-store' });
       } catch (error) {
         console.error('Не удалось выполнить локальный GET-запрос', error);
+      } finally {
+        restartStatePollingTimer();
       }
     }
 
@@ -1120,7 +1132,7 @@
       }
     }
     pollDeviceState();
-    setInterval(pollDeviceState, 2000);
+    restartStatePollingTimer();
   </script>
 
 
