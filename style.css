@@ -1431,6 +1431,15 @@
   outline-offset: 2px;
 }
 
+.thumbler--disabled {
+  opacity: .6;
+  pointer-events: none;
+}
+
+.thumbler--disabled .thumbler__option {
+  cursor: not-allowed;
+}
+
 /* --- Статусы системы --- */
 .badge {
   background: #fff;
@@ -1573,6 +1582,22 @@
 
 .modem-controls__row {
   justify-content: flex-start;
+}
+
+.modem-controls__toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modem-controls__status {
+  font-family: var(--m3-body-medium-font-family);
+  font-weight: var(--m3-body-medium-font-weight);
+  font-size: var(--m3-body-medium-font-size);
+  line-height: var(--m3-body-medium-line-height);
+  letter-spacing: var(--m3-body-medium-letter-spacing);
+  color: var(--black);
+  white-space: nowrap;
 }
 
 /* Цвета метра по уровням */

@@ -31,7 +31,7 @@
       <div class="frame-3">
         <div class="wi-fi" id="wifi-status-text">WiFi: ожидание…</div>
 
-        <fieldset class="thumbler" role="radiogroup" aria-labelledby="wifi-status">
+        <fieldset class="thumbler" data-thumbler="wifi" role="radiogroup" aria-labelledby="wifi-status">
           <legend id="wifi-status" class="sr-only">Статус WiFi</legend>
 
           <!-- подложка-ползунок -->
@@ -267,9 +267,24 @@
             <section class="modem-controls" aria-labelledby="modem-controls-title">
               <h3 id="modem-controls-title" class="sr-only">Управление питанием модема</h3>
               <div class="temp-alert__actions modem-controls__row">
-                <button id="btn-shutdown-modem" type="button" class="btn btn-primary temp-alert__btn">
-                  Выключить модем
-                </button>
+                <div class="modem-controls__toggle">
+                  <div id="modem-power-status" class="modem-controls__status">Модем: ожидание…</div>
+
+                  <fieldset class="thumbler" data-thumbler="modem" role="radiogroup" aria-labelledby="modem-power-status">
+                    <legend class="sr-only">Питание модема</legend>
+                    <div class="thumbler__knob" aria-hidden="true"></div>
+
+                    <label class="thumbler__option thumbler__option--left">
+                      <input type="radio" name="modem-power-toggle" value="off" class="sr-only" />
+                      <span>Выкл</span>
+                    </label>
+
+                    <label class="thumbler__option thumbler__option--right">
+                      <input type="radio" name="modem-power-toggle" value="on" class="sr-only" />
+                      <span>Вкл</span>
+                    </label>
+                  </fieldset>
+                </div>
 
                 <label class="temp-alert__auto" for="auto-shutdown-hot">
                   <input id="auto-shutdown-hot" type="checkbox" class="temp-alert__checkbox" />
@@ -464,7 +479,7 @@
     /* ===== Тумблер Wi-Fi ===== */
     let updateWifiThumbler = null;
     (function () {
-      const thumbler = document.querySelector('.thumbler');
+      const thumbler = document.querySelector('[data-thumbler="wifi"]');
       if (!thumbler) return;
 
       const radios = thumbler.querySelectorAll('input[name="wifi-toggle"]');
@@ -852,8 +867,14 @@
     /* ===== Подсказки и статус по температуре ===== */
     const tempAlert = document.getElementById('temp-alert');
     const tempAlertText = document.getElementById('temp-alert-text');
-    const btnShutdown = document.getElementById('btn-shutdown-modem');
+    const modemStatusText = document.getElementById('modem-power-status');
+    const modemThumbler = document.querySelector('[data-thumbler="modem"]');
+    const modemPowerRadios = modemThumbler
+      ? Array.from(modemThumbler.querySelectorAll('input[name="modem-power-toggle"]'))
+      : [];
     const cbAuto = document.getElementById('auto-shutdown-hot');
+    let updateModemThumbler = null;
+    let setModemThumblerDisabled = null;
 
     function showOverheatAdvice(level, tempC) {
       if (!tempAlert) return;
@@ -865,50 +886,76 @@
     }
     function hideOverheatAdvice() { if (tempAlert) tempAlert.hidden = true; }
 
+    (function initModemThumbler() {
+      if (!modemThumbler) return;
+
+      function applyState(value) {
+        const normalized = value === 'on' ? 'on' : 'off';
+        modemThumbler.classList.toggle('thumbler--on', normalized === 'on');
+        modemThumbler.classList.toggle('thumbler--off', normalized === 'off');
+        modemPowerRadios.forEach(radio => { radio.checked = radio.value === normalized; });
+      }
+
+      function setDisabled(disabled) {
+        modemPowerRadios.forEach(radio => { radio.disabled = disabled; });
+        modemThumbler.classList.toggle('thumbler--disabled', disabled);
+        if (disabled) modemThumbler.setAttribute('aria-disabled', 'true');
+        else modemThumbler.removeAttribute('aria-disabled');
+      }
+
+      function currentState() {
+        return modemThumbler.classList.contains('thumbler--on') ? 'on' : 'off';
+      }
+
+      updateModemThumbler = applyState;
+      setModemThumblerDisabled = setDisabled;
+
+      modemPowerRadios.forEach(radio => {
+        radio.addEventListener('change', async (event) => {
+          const requested = event.target.value === 'on' ? 'on' : 'off';
+          const previous = currentState();
+          if (requested === previous) return;
+
+          setDisabled(true);
+          if (modemStatusText) {
+            modemStatusText.textContent = requested === 'on' ? 'Включаем…' : 'Выключаем…';
+          }
+
+          applyState(requested);
+
+          try {
+            await sendLocalGet(API_MODEM_POWER_ENDPOINT, { state: requested, source: 'manual' });
+            updatePowerControls(requested === 'on');
+          } catch (e) {
+            console.error('Не удалось переключить питание модема', e);
+            updatePowerControls(previous === 'on');
+          }
+        });
+      });
+    })();
+
     function updatePowerControls(powerOn) {
-      if (!btnShutdown) return;
       const isOn = powerOn === true;
-      btnShutdown.disabled = false;
-      btnShutdown.dataset.nextState = isOn ? 'off' : 'on';
-      btnShutdown.textContent = isOn ? 'Выключить модем' : 'Включить модем';
+      if (setModemThumblerDisabled) setModemThumblerDisabled(false);
+      if (updateModemThumbler) updateModemThumbler(isOn ? 'on' : 'off');
+      if (modemStatusText) modemStatusText.textContent = isOn ? 'Модем включен' : 'Модем выключен';
     }
 
     let autoShutdownSent = false;
     async function shutdownModemSafely(isAuto = false) {
-      if (!btnShutdown) return;
-      const prevText = btnShutdown.textContent;
       try {
         setSystemStatus('off', 'Модем отключен', { lock: true });
-        btnShutdown.disabled = true;
-        btnShutdown.textContent = 'Выключаем...';
+        if (setModemThumblerDisabled) setModemThumblerDisabled(true);
+        if (modemStatusText) modemStatusText.textContent = 'Выключаем…';
+        if (updateModemThumbler) updateModemThumbler('off');
         await sendLocalGet(API_MODEM_POWER_ENDPOINT, { state: 'off', source: isAuto ? 'auto' : 'manual' });
         updatePowerControls(false);
       } catch (e) {
         console.error('Не удалось выключить модем:', e);
         autoShutdownSent = false;
-        btnShutdown.textContent = prevText;
-      } finally {
-        btnShutdown.disabled = false;
+        updatePowerControls(true);
       }
     }
-
-    btnShutdown?.addEventListener('click', async () => {
-      if (!btnShutdown) return;
-      const nextState = btnShutdown.dataset.nextState === 'off' ? 'off' : 'on';
-      const isTurningOff = nextState === 'off';
-      const prevText = btnShutdown.textContent;
-      try {
-        btnShutdown.disabled = true;
-        btnShutdown.textContent = isTurningOff ? 'Выключаем...' : 'Включаем...';
-        await sendLocalGet(API_MODEM_POWER_ENDPOINT, { state: nextState, source: 'manual' });
-        updatePowerControls(nextState === 'on');
-      } catch (e) {
-        console.error('Не удалось переключить питание модема', e);
-        btnShutdown.textContent = prevText;
-      } finally {
-        btnShutdown.disabled = false;
-      }
-    });
 
     cbAuto?.addEventListener('change', async (event) => {
       const enabled = event.target.checked;
