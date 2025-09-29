@@ -1615,6 +1615,15 @@
   background: #ff5f57;
 }
 
+.meter[data-pending="true"] .meter__fill {
+  flex-grow: 0;
+  background: #27c840;
+}
+
+.meter[data-pending="true"] .meter__rest {
+  flex-grow: 100;
+}
+
 /* красный */
 /* чтобы flex корректно делил ширину по flex-grow */
 .meter {
