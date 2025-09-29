@@ -23,7 +23,7 @@
 
       <div class="frame-2">
         <p class=" value-view ">
-          <span id="current-temp" class="span">Температура: —℃</span>
+          <span id="current-temp" class="span">Температура: −30℃</span>
         </p>
 
         <div id="mac-address" class="div-2">MAC-адрес: —</div>
@@ -236,7 +236,7 @@
                       <div class="div-3">Температура модема</div>
                     </div>
                     <div class="state-default">
-                      <div class="frame-11 meter" id="temp-meter" role="meter" aria-valuenow="-30" aria-valuemin="-30"
+                      <div class="frame-11 meter meter--ok" id="temp-meter" role="meter" aria-valuenow="-30" aria-valuemin="-30"
                         aria-valuemax="85" aria-label="Температура модема — данные не получены" data-pending="true">
                         <div class="rectangle rectangle-4 meter__fill"></div>
                         <div class="rectangle-2 meter__rest"></div>
@@ -919,6 +919,8 @@
       if (fillEl) fillEl.style.flexGrow = '';
       if (restEl) restEl.style.flexGrow = '';
 
+      applyPendingTemperatureView(TEMP_MIN);
+
       hideOverheatAdvice();
       autoShutdownSent = false;
       if (cbAuto) cbAuto.checked = initialViewState.cbAutoChecked;
@@ -1010,6 +1012,25 @@
       tempMeter.setAttribute('aria-valuenow', String(Math.round(tempC)));
       tempMeter.setAttribute('aria-label', `Температура модема ${Math.round(tempC)} градусов`);
       tempMeter.removeAttribute('data-pending');
+    }
+
+    function applyPendingTemperatureView(defaultTemp = TEMP_MIN) {
+      if (!tempMeter || !fillEl || !restEl) return;
+
+      const normalized = Number.isFinite(defaultTemp) ? defaultTemp : TEMP_MIN;
+      const clamped = clamp(normalized, TEMP_MIN, TEMP_MAX);
+      const progress = (clamped - TEMP_MIN) / (TEMP_MAX - TEMP_MIN);
+
+      fillEl.style.flexGrow = String(progress * 100);
+      restEl.style.flexGrow = String((1 - progress) * 100);
+
+      tempMeter.classList.remove('meter--warn', 'meter--err');
+      tempMeter.classList.add('meter--ok');
+      tempMeter.setAttribute('aria-valuenow', String(Math.round(clamped)));
+      tempMeter.setAttribute('aria-label', 'Температура модема — данные не получены');
+      tempMeter.dataset.pending = 'true';
+
+      updateTemperatureField(clamped);
     }
 
     /* ===== Подсказки и статус по температуре ===== */
@@ -1146,14 +1167,19 @@
     (function initTempFromDOM() {
       const meter = document.querySelector('[role="meter"][aria-label*="Температура модема"]');
       if (!meter) return;
-      if (meter.dataset.pending === 'true') return;
       const raw = meter.getAttribute('aria-valuenow');
-      if (!raw) return;
-      const now = parseFloat(raw);
-      if (!Number.isNaN(now)) {
-        updateTemperatureField(now);
-        applyStatusByTemperature(now, { allowBadgeUpdate: !systemStatusLocked });
-        updateTempBar(now);
+      const parsed = raw == null ? NaN : parseFloat(raw);
+
+      if (meter.dataset.pending === 'true') {
+        if (!Number.isNaN(parsed)) applyPendingTemperatureView(parsed);
+        else applyPendingTemperatureView(TEMP_MIN);
+        return;
+      }
+
+      if (!Number.isNaN(parsed)) {
+        updateTemperatureField(parsed);
+        applyStatusByTemperature(parsed, { allowBadgeUpdate: !systemStatusLocked });
+        updateTempBar(parsed);
       }
     })();
 
