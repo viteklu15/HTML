@@ -1632,6 +1632,20 @@
   transition: flex-grow .25s ease;
 }
 
+.meter[data-pending="true"] .meter__fill {
+  flex-grow: 0 !important;
+  width: 0 !important;
+  min-width: 0;
+  background-color: #d9d9d9;
+  border-radius: 10px;
+}
+
+.meter[data-pending="true"] .meter__rest {
+  flex-grow: 1 !important;
+  background-color: #d9d9d9;
+  border-radius: 10px;
+}
+
 /* верхний ряд карточек: все в одну строку */
 .frame-5 {
   display: grid !important;
