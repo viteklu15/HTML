@@ -1024,7 +1024,7 @@
   position: relative;
   flex: 1;
   flex-grow: 1;
-  background-color: #ffffff;
+  /* background-color: #ffffff; */
 }
 
 .screen .text-wrapper-27 {
@@ -1081,7 +1081,7 @@
   position: relative;
   flex: 1;
   flex-grow: 1;
-  background-color: #ffffff;
+  /* background-color: #ffffff; */
 }
 
 /* Original CSS code should be injected here */
