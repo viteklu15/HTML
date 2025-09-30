@@ -132,6 +132,7 @@
   justify-content: flex-end;
   gap: 16px;
   position: relative;
+  transition: opacity .2s ease;
 }
 
 .screen .wi-fi {
@@ -1530,6 +1531,7 @@
   align-items: center;
   gap: 14px;
   flex-wrap: wrap;
+  transition: opacity .2s ease;
 }
 
 .temp-alert__btn {
@@ -1582,6 +1584,24 @@
   letter-spacing: var(--m3-body-medium-letter-spacing);
   color: var(--black);
   white-space: nowrap;
+}
+
+.frame-3.is-disabled,
+.temp-alert__actions.is-disabled {
+  opacity: .45;
+}
+
+.frame-3.is-disabled .wi-fi,
+.temp-alert__actions.is-disabled .modem-controls__status,
+.temp-alert__actions.is-disabled .title-3 {
+  color: #8c8c8c;
+}
+
+.frame-3.is-disabled .thumbler,
+.temp-alert__actions.is-disabled .thumbler,
+.temp-alert__actions.is-disabled .checkbox,
+.temp-alert__actions.is-disabled .temp-alert__btn {
+  pointer-events: none;
 }
 
 /* Цвета метра по уровням */
