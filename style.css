@@ -459,7 +459,7 @@
 
 .screen .frame-17 {
   /* display: flex; */
-  align-items: center;
+  /* align-items: center; */
   gap: 16px;
   padding: 0px 0px 8px;
   position: relative;
@@ -1162,7 +1162,8 @@
 .frame-17 .edit-area {
   display: none;
   gap: 12px;
-  align-items: center;
+  /* align-items: center; */
+  align-items: flex-end;
   flex-wrap: wrap;
 }
 
@@ -1252,7 +1253,8 @@
 .edit-area {
   display: none;
   grid-column: 2 / 5;
-  align-items: center;
+  /* align-items: center; */
+  align-items: flex-end;
   gap: 12px;
   width: 100%;
 }
@@ -1266,9 +1268,9 @@
   display: none !important;
 }
 
-.frame-17.editing .edit-area {
+/* .frame-17.editing .edit-area {
   display: flex;
-}
+} */
 
 /* Поля ввода */
 .input {
@@ -1333,7 +1335,7 @@
 }
 
 .edit-area .spacer {
-  flex: 1;
+  /* flex: 1; */
 }
 
 /* Подсказка для Wi-Fi */
