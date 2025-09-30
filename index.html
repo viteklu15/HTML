@@ -287,10 +287,15 @@
                   </fieldset>
                 </div>
 
-                <label class="temp-alert__auto" for="auto-shutdown-hot">
-                  <input id="auto-shutdown-hot" type="checkbox" class="temp-alert__checkbox" />
-                  Выключать автоматически при опасных температурах
-                </label>
+                <div class="temp-alert__auto checkbox-w-label">
+                  <input id="auto-shutdown-hot" type="checkbox" class="checkbox-input sr-only" />
+                  <label for="auto-shutdown-hot" class="checkbox">
+                    <div class="rectangle-3"></div>
+                  </label>
+                  <label for="auto-shutdown-hot" class="label temp-alert__auto-label">
+                    <span class="title-3">Выключать автоматически при опасных температурах</span>
+                  </label>
+                </div>
               </div>
             </section>
 

@@ -1548,15 +1548,16 @@
   display: inline-flex;
   gap: 8px;
   align-items: center;
-  color: #404040;
-  font: 400 14px/1.2 "Roboto", Arial, sans-serif;
 }
 
-.temp-alert__checkbox {
-  width: 18px;
-  height: 18px;
-  accent-color: #0b74d0;
-  /* нативная синяя галочка как на скрине */
+.temp-alert__auto .label {
+  padding: 4px 0;
+}
+
+.temp-alert__auto .title-3 {
+  white-space: normal;
+  line-height: 1.35;
+  text-align: left;
 }
 
 .modem-controls {
