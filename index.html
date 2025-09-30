@@ -427,6 +427,7 @@
 
     const wifiStatusElement = document.getElementById('wifi-status-text');
     let resetWifiThumblerToInitial = null;
+    let setWifiThumblerDisabled = null;
 
     function restartStatePollingTimer() {
       if (statePollTimerId !== null) {
@@ -509,13 +510,16 @@
       const initialThumblerClassName = thumbler.className;
       const initialStatusText = statusText?.textContent || '';
       const initialRadiosChecked = radios.map(radio => radio.checked);
+      const initialRadiosDisabled = radios.map(radio => radio.disabled);
+      const initialThumblerAriaDisabled = thumbler.getAttribute('aria-disabled');
 
       resetWifiThumblerToInitial = function () {
         thumbler.className = initialThumblerClassName;
-        thumbler.removeAttribute('aria-disabled');
+        if (initialThumblerAriaDisabled != null) thumbler.setAttribute('aria-disabled', initialThumblerAriaDisabled);
+        else thumbler.removeAttribute('aria-disabled');
         radios.forEach((radio, index) => {
           radio.checked = Boolean(initialRadiosChecked[index]);
-          radio.disabled = false;
+          radio.disabled = Boolean(initialRadiosDisabled[index]);
         });
         if (statusText) statusText.textContent = initialStatusText;
       };
@@ -530,7 +534,15 @@
         radios.forEach(r => { r.checked = (r.value === normalized); });
       }
 
+      function setDisabled(disabled) {
+        radios.forEach(radio => { radio.disabled = disabled; });
+        thumbler.classList.toggle('thumbler--disabled', disabled);
+        if (disabled) thumbler.setAttribute('aria-disabled', 'true');
+        else thumbler.removeAttribute('aria-disabled');
+      }
+
       updateWifiThumbler = applyState;
+      setWifiThumblerDisabled = setDisabled;
 
       radios.forEach(r => {
         r.addEventListener('change', (e) => {
@@ -971,6 +983,7 @@
       if (connectionAttemptTotal) connectionAttemptTotal.textContent = '';
       if (connectionAttemptEtaWrapper) connectionAttemptEtaWrapper.hidden = true;
 
+      setInteractiveControlsDisabled(true);
     }
 
 
@@ -1046,11 +1059,13 @@
       const initialThumblerClassName = modemThumbler.className;
       const initialRadiosChecked = modemPowerRadios.map(radio => radio.checked);
       const initialRadiosDisabled = modemPowerRadios.map(radio => radio.disabled);
+      const initialThumblerAriaDisabled = modemThumbler.getAttribute('aria-disabled');
       const initialStatusText = modemStatusText?.textContent || '';
 
       resetModemThumblerToInitial = function () {
         modemThumbler.className = initialThumblerClassName;
-        modemThumbler.removeAttribute('aria-disabled');
+        if (initialThumblerAriaDisabled != null) modemThumbler.setAttribute('aria-disabled', initialThumblerAriaDisabled);
+        else modemThumbler.removeAttribute('aria-disabled');
         modemPowerRadios.forEach((radio, index) => {
           radio.checked = Boolean(initialRadiosChecked[index]);
           radio.disabled = Boolean(initialRadiosDisabled[index]);
@@ -1166,6 +1181,7 @@
     window.onDeviceState = function (state) {
       if (!state) return;
 
+      setInteractiveControlsDisabled(false);
       systemStatusLocked = false;
 
       if (typeof state.mac === 'string' && macField) {
@@ -1273,6 +1289,30 @@
         }
       }
     };
+
+    const wifiControlsSection = document.querySelector('.frame-3');
+    const modemControlsSection = document.querySelector('.temp-alert__actions.modem-controls__row');
+
+    function toggleSectionDisabled(section, disabled) {
+      if (!section) return;
+      section.classList.toggle('is-disabled', disabled);
+      if (disabled) section.setAttribute('aria-disabled', 'true');
+      else section.removeAttribute('aria-disabled');
+    }
+
+    function setInteractiveControlsDisabled(disabled) {
+      toggleSectionDisabled(wifiControlsSection, disabled);
+      toggleSectionDisabled(modemControlsSection, disabled);
+
+      if (typeof setWifiThumblerDisabled === 'function') setWifiThumblerDisabled(disabled);
+      if (typeof setModemThumblerDisabled === 'function') setModemThumblerDisabled(disabled);
+
+      if (cbAuto) cbAuto.disabled = disabled;
+
+      modemControlsSection?.querySelectorAll('button').forEach(btn => { btn.disabled = disabled; });
+    }
+
+    setInteractiveControlsDisabled(true);
 
     /* ===== Пуллинг состояния с демо-сервером ===== */
     const API_STATE_URL = "http://127.0.0.1:8000/api/state";
