@@ -1,3 +1,8 @@
+html,
+body {
+  background-color: #f0f3f8;
+}
+
 .screen {
   display: flex;
   flex-direction: column;
@@ -357,7 +362,7 @@
   align-self: stretch;
   width: 100%;
   flex-grow: 1;
-  /* background-color: #f0f3f8; */
+  background-color: #FFF;
 }
 
 .screen .frame-14 {
@@ -840,8 +845,7 @@
   align-items: center;
   gap: 8px;
   position: relative;
-  align-self: stretch;
-  width: 100%;
+  width: 100% !important;
   flex: 0 0 auto;
 }
 
@@ -1015,6 +1019,7 @@
   width: 100%;
   flex: 0 0 auto;
   background-color: transparent;
+  background-color: #fff;
 }
 
 .screen .frame-29 {
