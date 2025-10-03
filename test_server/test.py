@@ -4,41 +4,51 @@ from flask import Flask, request, jsonify, redirect, url_for, render_template_st
 app = Flask(__name__)
 
 # "память" сервера (вместо БД)
+# "память" сервера (вместо БД)
 state = {
-    "power": True,
-    "wifi_on": True,
-    "mac": "12.34.56.78",
-    "temp_c": 45,
-    "coords": {"lat": 55.73, "lng": 37.61},
+    "power": True,                        # Питание модема (вкл/выкл)
+    "wifi_on": True,                      # Состояние Wi-Fi (вкл/выкл)
+    "mac": "12.34.56.78",                 # MAC-адрес / идентификатор устройства
+    "temp_c": 45,                         # Температура устройства (°C)
+    "coords": {"lat": 55.73, "lng": 37.61},   # Геокоординаты: широта/долгота
+
     # верхняя линейка статусов
-    "coords_status": "pending",   # pending|ok|err
-    "gps_status": "pending",      # pending|ok|err
-    "inet_status": "pending",     # pending|ok|err
-    "rx": {"progress": 0},
-    "tx": {"progress": 0},
+    "coords_status": "pending",           # Статус координат (pending|ok|err)
+    "gps_status": "pending",              # Статус GPS связи (pending|ok|err)
+    "inet_status": "pending",             # Статус интернета (pending|ok|err)
+
+    "rx": {"progress": 0},                # Прогресс приёма данных (0–100%)
+    "tx": {"progress": 0},                # Прогресс передачи данных (0–100%)
+
     # экран «Идёт подключение…»
-    "attempt": 1,
+    "attempt": 1,                         # Номер попытки подключения
+
     # общая индикация
-    "system": "pending",          # pending|ok|warn|err|off
-    "modem_off_temp": False,
-    # углы
+    "system": "pending",                  # Состояние системы (pending|ok|warn|err|off)
+    "modem_off_temp": False,              # Автовыключение модема при перегреве (True/False)
+
+    # углы антенного поста
     "angles": {
-        "tilt_current": 123,
-        "tilt_required": 456,
-        "rotate_current": 1860,
-        "rotate_required": 1860
+        "tilt_current": 123,              # Угол наклона текущий
+        "tilt_required": 456,             # Угол наклона требуемый
+        "rotate_current": 1860,           # Угол поворота текущий
+        "rotate_required": 1860           # Угол поворота требуемый
     },
+
     # новые поля под скрин
-    "beam_number": 34,            # Номер луча
-    "rf_cluster_polarization": "31/A",
+    "beam_number": 34,                    # Номер луча в РЧ кластере
+    "rf_cluster_polarization": "31/A",    # РЧ кластер / поляризация (строкой "X/Y")
+
     # пароль Wi-Fi храним открыто
-    "wifi_password": "12345678",
-    # логи (макс 10)
+    "wifi_password": "12345678",          # Пароль Wi-Fi
+
+    # логи (максимум 10 последних строк)
     "logs": [
-        "Автовыключение — Сработало из-за повышенной температуры\n25.09.2025, 12:41",
-        "Температура модема — Высокая: 85℃, Выше нормальной на 56℃\n25.09.2025, 12:34"
+        "log1",                           # Пример лога
+        "log2"                            # Пример лога
     ]
 }
+
 
 # ===== CORS/Cache =====
 # Разрешаем фронт с Go Live и file:// (Origin: null) — для DEV.
