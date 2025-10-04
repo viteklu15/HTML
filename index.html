@@ -29,7 +29,7 @@
       <div class="frame-3">
         <div class="wi-fi" id="wifi-status-text">WiFi: ожидание…</div>
 
-       <fieldset class="thumbler thumbler--off" data-thumbler="wifi" role="radiogroup" aria-labelledby="wifi-status">
+        <fieldset class="thumbler thumbler--off" data-thumbler="wifi" role="radiogroup" aria-labelledby="wifi-status">
           <legend id="wifi-status" class="sr-only">Статус WiFi</legend>
 
           <!-- подложка-ползунок -->
@@ -234,8 +234,8 @@
                       <div class="div-3">Температура модема</div>
                     </div>
                     <div class="state-default">
-                      <div class="frame-11 meter" id="temp-meter" role="meter" aria-valuemin="-30"
-                        aria-valuemax="85" aria-label="Температура модема — данные не получены" data-pending="true">
+                      <div class="frame-11 meter" id="temp-meter" role="meter" aria-valuemin="-30" aria-valuemax="85"
+                        aria-label="Температура модема — данные не получены" data-pending="true">
                         <div class="rectangle rectangle-4 meter__fill"></div>
                         <div class="rectangle-2 meter__rest"></div>
                       </div>
@@ -760,15 +760,31 @@
       err: 'Нет соединения'
     };
 
-    function updateProgressState(indicator, progress, labelPrefix) {
+    const PROGRESS_RANGE = {
+      rx: { min: 0, max: 10 },   //   диапазона для RX 
+      tx: { min: -5, max: 50 }    //  диапазона для TX 
+    };
+
+
+    function updateProgressState(indicator, rawValue, labelPrefix, range = { min: 0, max: 100 }) {
       if (!indicator?.bar) return;
-      const clamped = clampPercent(progress);
-      if (indicator.fill) indicator.fill.style.flexGrow = String(clamped);
-      if (indicator.rest) indicator.rest.style.flexGrow = String(100 - clamped);
-      indicator.bar.setAttribute('aria-valuenow', String(clamped));
-      indicator.bar.setAttribute('aria-label', `${labelPrefix} ${clamped}%`);
-      if (indicator.value) indicator.value.textContent = `${clamped}%`;
+
+      const v = Number(rawValue);
+      const min = Number.isFinite(range.min) ? range.min : 0;
+      const max = Number.isFinite(range.max) ? range.max : 100;
+      const span = max - min;
+
+      const norm = Number.isFinite(v) ? (v - min) : 0;               // сдвиг к 0
+      const clamped = span !== 0 ? Math.min(span, Math.max(0, norm)) : 0; // клип 0..span
+      const percent = Math.round((clamped / (span || 1)) * 100);     // 0..100
+
+      if (indicator.fill) indicator.fill.style.flexGrow = String(percent);
+      if (indicator.rest) indicator.rest.style.flexGrow = String(100 - percent);
+      indicator.bar.setAttribute('aria-valuenow', String(percent));
+      indicator.bar.setAttribute('aria-label', `${labelPrefix} ${percent}%`);
+      if (indicator.value) indicator.value.textContent = `${percent}%`;
     }
+
 
     function formatCoordinate(value, fractionDigits = 2) {
       const num = Number(value);
@@ -952,8 +968,10 @@
       setIndicatorState(indicators.gps, 'pending', initialViewState.gpsStatusText);
       setIndicatorState(indicators.inet, 'pending', initialViewState.inetStatusText);
 
-      updateProgressState(indicators.rx, 0, 'Приём данных');
-      updateProgressState(indicators.tx, 0, 'Передача данных');
+      // Стартовые значения прогресса = 0%
+      updateProgressState(indicators.rx, 0, 'Приём данных', PROGRESS_RANGE.rx);
+      updateProgressState(indicators.tx, 0, 'Передача данных', PROGRESS_RANGE.tx);
+
 
       if (wifiPasswordView) wifiPasswordView.textContent = initialViewState.wifiPasswordView;
       if (wifiPasswordInput) wifiPasswordInput.value = initialViewState.wifiPasswordInput;
@@ -1124,7 +1142,7 @@
     }
 
     let autoShutdownSent = false;
-   
+
 
     cbAuto?.addEventListener('change', async (event) => {
       const enabled = event.target.checked;
@@ -1245,8 +1263,9 @@
         setIndicatorState(indicators.inet, status, INTERNET_STATUS_LABELS[status] || INTERNET_STATUS_LABELS.pending);
       }
 
-      if (state.rx) updateProgressState(indicators.rx, state.rx.progress, 'Приём данных');
-      if (state.tx) updateProgressState(indicators.tx, state.tx.progress, 'Передача данных');
+      if (state.rx) updateProgressState(indicators.rx, state.rx.progress, 'Приём данных', PROGRESS_RANGE.rx);
+      if (state.tx) updateProgressState(indicators.tx, state.tx.progress, 'Передача данных', PROGRESS_RANGE.tx);
+
 
       if (state.angles) {
         const tiltCurrentRaw = state.angles.tilt_current;
