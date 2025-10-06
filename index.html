@@ -413,14 +413,14 @@
 
   <!-- Скрипт переключения режима редактирования -->
   <script>
-    const API_BASE_URL = "http://127.0.0.1:8000";
+    const API_BASE_URL = window.location.origin;
     const API_WIFI_COMMAND_ENDPOINT = "/api/wifi";
     const API_COORDS_SAVE_ENDPOINT = "/api/coords/save";
     const API_WIFI_PASSWORD_ENDPOINT = "/api/wifi/password";
     const API_MODEM_POWER_ENDPOINT = "/api/modem/power";
     const API_MODEM_AUTO_SHUTDOWN_ENDPOINT = "/api/modem/off-temp";
 
-    const STATE_POLL_INTERVAL_MS = 2000;
+    const STATE_POLL_INTERVAL_MS = 500;
     let statePollTimerId = null;
 
     const wifiStatusElement = document.getElementById('wifi-status-text');
