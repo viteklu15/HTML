@@ -672,6 +672,48 @@
     const beamNumberField = document.getElementById('beam-number-value');
     const rfClusterField = document.getElementById('rf-cluster-polarization-value');
 
+    function parseNumbersFromString(raw) {
+      if (typeof raw !== 'string') return [];
+      return (raw.match(/\d+/g) || [])
+        .map((value) => {
+          const parsed = parseInt(value, 10);
+          return Number.isNaN(parsed) ? null : parsed;
+        })
+        .filter((value) => value != null);
+    }
+
+    function normalizeBeamNumber(raw) {
+      if (raw == null) return null;
+      if (typeof raw === 'number' && Number.isFinite(raw)) return raw;
+      if (typeof raw === 'string') {
+        const match = raw.match(/\d+/);
+        if (match) {
+          const parsed = parseInt(match[0], 10);
+          if (!Number.isNaN(parsed)) return parsed;
+        }
+      }
+      return null;
+    }
+
+    function updateRfClusterMatchHighlight(beamRaw, clusterRaw) {
+      if (!rfClusterField) return;
+      const beamNumber = normalizeBeamNumber(beamRaw);
+      const normalizedClusterRaw =
+        typeof clusterRaw === 'string' ? clusterRaw : clusterRaw == null ? '' : String(clusterRaw);
+      const clusterNumbers = parseNumbersFromString(normalizedClusterRaw);
+
+      if (beamNumber == null || clusterNumbers.length === 0) {
+        rfClusterField.style.color = '';
+        if (beamNumberField) beamNumberField.style.color = '';
+        return;
+      }
+
+      const hasMatch = clusterNumbers.includes(beamNumber);
+      const colorValue = hasMatch ? 'var(--black)' : 'red';
+      rfClusterField.style.color = colorValue;
+      if (beamNumberField) beamNumberField.style.color = colorValue;
+    }
+
     const connectionDetailsSection = document.getElementById('connection-details');
     const connectionDetailsTitle = document.getElementById('connection-details-title');
     const connectionDetailsSubtitle = document.getElementById('connection-details-subtitle');
@@ -1171,16 +1213,26 @@
         macField.textContent = `MAC-адрес: ${state.mac}`;
       }
 
+      let beamValueForHighlight = beamNumberField?.textContent || '';
       if ('beam_number' in state && beamNumberField) {
         const beamValue = state.beam_number;
         beamNumberField.textContent = (beamValue == null || beamValue === '') ? '—' : String(beamValue);
+        beamValueForHighlight = beamValue;
+      } else if (beamNumberField) {
+        beamValueForHighlight = beamNumberField.textContent;
       }
 
+      let rfClusterValueForHighlight = rfClusterField?.textContent || '';
       if ('rf_cluster_polarization' in state && rfClusterField) {
         const clusterValue = state.rf_cluster_polarization;
         const formattedCluster = (clusterValue == null || clusterValue === '') ? '—' : String(clusterValue);
         rfClusterField.textContent = formattedCluster;
+        rfClusterValueForHighlight = clusterValue;
+      } else if (rfClusterField) {
+        rfClusterValueForHighlight = rfClusterField.textContent;
       }
+
+      updateRfClusterMatchHighlight(beamValueForHighlight, rfClusterValueForHighlight);
 
       if ('power' in state) {
         const powerStatus = state.power === true ? 'ok' : (state.power === false ? 'off' : 'pending');
