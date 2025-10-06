@@ -1930,3 +1930,9 @@ a {
   display: flex;
   /* flex-direction: row-reverse; */
 }
+
+.connection-subtitle {
+  font-size: 14px;
+  color: rgba(70, 68, 68, 0.6); /* полупрозрачный серый */
+  margin: 4px 0 0 0;
+}
