@@ -123,19 +123,10 @@
         <section class="frame-13" aria-label="Детали подключения и управление">
           <div class="frame-14">
 
-            <section id="connection-attempt" class="connection-attempt" hidden>
-              <h2 class="connection-attempt__title">Идёт подключение…</h2>
-              <p id="connection-attempt-attempt" class="connection-attempt__attempt">Попытка <span
-                  id="connection-attempt-number">1</span> из <span id="connection-attempt-total">3</span></p>
-              <p id="connection-attempt-eta-wrapper" class="connection-attempt__eta">Подождите ~<span
-                  id="connection-attempt-eta">3</span> мин</p>
-              <p id="connection-attempt-error" class="connection-attempt__error" hidden>Перезагрузить, что-то пошло не
-                так</p>
-            </section>
-
             <section id="connection-details" class="frame-15">
-              <h2 class="text-wrapper-9">Детали подключения</h2>
-              <p class="connection-subtitle">вариант 1 </p>
+              <h2 id="connection-details-title" class="text-wrapper-9">Идет подключение</h2>
+              <p id="connection-details-subtitle" class="connection-subtitle"> </p>
+
               <div class="frame-16">
 
                 <div class="frame-17" id="row-coords">
@@ -681,18 +672,26 @@
     const beamNumberField = document.getElementById('beam-number-value');
     const rfClusterField = document.getElementById('rf-cluster-polarization-value');
 
-    const connectionAttemptSection = document.getElementById('connection-attempt');
     const connectionDetailsSection = document.getElementById('connection-details');
-    const connectionAttemptTitle = connectionAttemptSection?.querySelector('.connection-attempt__title') || null;
-    const connectionAttemptAttempt = document.getElementById('connection-attempt-attempt');
-    const connectionAttemptNumber = document.getElementById('connection-attempt-number');
-    const connectionAttemptTotal = document.getElementById('connection-attempt-total');
-    const connectionAttemptEta = document.getElementById('connection-attempt-eta');
-    const connectionAttemptEtaWrapper = document.getElementById('connection-attempt-eta-wrapper');
-    const connectionAttemptError = document.getElementById('connection-attempt-error');
-    const ATTEMPT_TOTAL = 3;
-    const CONNECTION_ATTEMPT_TITLE_DEFAULT = 'Идёт подключение…';
-    const CONNECTION_ATTEMPT_TITLE_ERROR = 'Что-то пошло не так';
+    const connectionDetailsTitle = document.getElementById('connection-details-title');
+    const connectionDetailsSubtitle = document.getElementById('connection-details-subtitle');
+    const CONNECTION_DETAIL_VARIANTS = [
+      { title: 'Идет подключение', subtitle: 'Попытка 1 из 3' },
+      { title: 'Идет подключение', subtitle: 'Попытка 2 из 3' },
+      { title: 'Идет подключение', subtitle: 'Попытка 3 из 3' },
+      { title: 'Детали подключения', subtitle: ' ' },
+      { title: 'H вариант 4', subtitle: 'P вариант 4' },
+      { title: 'H вариант 5', subtitle: 'P вариант 5' },
+      { title: 'H вариант 6', subtitle: 'P вариант 6' },
+      { title: 'H вариант 7', subtitle: 'P вариант 7' },
+      { title: 'H вариант 8', subtitle: 'P вариант 8' },
+      { title: 'H вариант 9', subtitle: 'P вариант 9' },
+      { title: 'H вариант 10', subtitle: 'P вариант 10' }
+    ];
+    const defaultConnectionDetails = {
+      title: connectionDetailsTitle?.textContent || CONNECTION_DETAIL_VARIANTS[0].title,
+      subtitle: connectionDetailsSubtitle?.textContent || CONNECTION_DETAIL_VARIANTS[0].subtitle
+    };
 
     const initialIndicatorTexts = {
       power: indicators.power?.text?.textContent || '',
@@ -737,6 +736,10 @@
       coordsStatusText: initialIndicatorTexts.coords,
       gpsStatusText: initialIndicatorTexts.gps,
       inetStatusText: initialIndicatorTexts.inet,
+      connectionDetails: {
+        title: connectionDetailsTitle?.textContent || defaultConnectionDetails.title,
+        subtitle: connectionDetailsSubtitle?.textContent || defaultConnectionDetails.subtitle
+      },
       wifiPasswordView: wifiPasswordView?.textContent || '',
       wifiPasswordInput: wifiPasswordInput?.value || '',
       modemStatusText: modemStatusInitial?.textContent || '',
@@ -888,47 +891,19 @@
       });
     }
 
-    /* ===== ПРОСТАЯ ЛОГИКА ПОКАЗ/СКРЫТИЕ ATTEMPT/DETAILS ===== */
+    /* ===== ВЫБОР ВАРИАНТА ТЕКСТА ДЛЯ ДЕТАЛЕЙ ПОДКЛЮЧЕНИЯ ===== */
     function updateConnectionAttemptView(state = {}) {
-      const n = Number(state.attempt);
-      const showAttempt = Number.isFinite(n) && n >= 0 && n <= ATTEMPT_TOTAL;
-      const isErrorAttempt = showAttempt && n >= ATTEMPT_TOTAL;
+      if (connectionDetailsSection) connectionDetailsSection.hidden = false;
 
-      if (connectionAttemptSection) {
-        connectionAttemptSection.hidden = !showAttempt;
-        connectionAttemptSection.classList.toggle('connection-attempt--error', Boolean(isErrorAttempt));
-      }
-      if (connectionDetailsSection) connectionDetailsSection.hidden = showAttempt;
-
-      if (!showAttempt) return;
-
-      if (connectionAttemptTitle) {
-        connectionAttemptTitle.textContent = isErrorAttempt
-          ? CONNECTION_ATTEMPT_TITLE_ERROR
-          : CONNECTION_ATTEMPT_TITLE_DEFAULT;
+      const attemptNumber = Number(state.attempt);
+      let variant = defaultConnectionDetails;
+      if (Number.isFinite(attemptNumber) && attemptNumber >= 0) {
+        const normalizedIndex = Math.min(CONNECTION_DETAIL_VARIANTS.length - 1, Math.floor(attemptNumber));
+        variant = CONNECTION_DETAIL_VARIANTS[normalizedIndex] || defaultConnectionDetails;
       }
 
-      if (connectionAttemptAttempt) connectionAttemptAttempt.hidden = Boolean(isErrorAttempt);
-      if (connectionAttemptError) connectionAttemptError.hidden = !isErrorAttempt;
-
-      if (isErrorAttempt) {
-        if (connectionAttemptNumber) connectionAttemptNumber.textContent = '';
-        if (connectionAttemptTotal) connectionAttemptTotal.textContent = '';
-        if (connectionAttemptEtaWrapper) connectionAttemptEtaWrapper.hidden = true;
-        return;
-      }
-
-      if (connectionAttemptNumber) connectionAttemptNumber.textContent = String(n + 1);
-      if (connectionAttemptTotal) connectionAttemptTotal.textContent = String(ATTEMPT_TOTAL);
-
-      const etaSec = Number(state.eta_sec);
-      if (Number.isFinite(etaSec) && etaSec > 0) {
-        const m = Math.max(1, Math.round(etaSec / 60));
-        if (connectionAttemptEta) connectionAttemptEta.textContent = String(m);
-        if (connectionAttemptEtaWrapper) connectionAttemptEtaWrapper.hidden = false;
-      } else if (connectionAttemptEtaWrapper) {
-        connectionAttemptEtaWrapper.hidden = true;
-      }
+      if (connectionDetailsTitle) connectionDetailsTitle.textContent = variant.title || defaultConnectionDetails.title;
+      if (connectionDetailsSubtitle) connectionDetailsSubtitle.textContent = variant.subtitle || defaultConnectionDetails.subtitle;
     }
 
     function resetInterfaceToInitialState() {
@@ -987,17 +962,9 @@
       updateAngleMatchState(angleFields.rotateCurrent, null, null);
 
       renderLogs([]);
-      updateConnectionAttemptView({});
-      if (connectionAttemptSection) {
-        connectionAttemptSection.classList.remove('connection-attempt--error');
-        connectionAttemptSection.hidden = true;
-      }
-      if (connectionAttemptTitle) connectionAttemptTitle.textContent = CONNECTION_ATTEMPT_TITLE_DEFAULT;
-      if (connectionAttemptAttempt) connectionAttemptAttempt.hidden = false;
-      if (connectionAttemptError) connectionAttemptError.hidden = true;
-      if (connectionAttemptNumber) connectionAttemptNumber.textContent = '';
-      if (connectionAttemptTotal) connectionAttemptTotal.textContent = '';
-      if (connectionAttemptEtaWrapper) connectionAttemptEtaWrapper.hidden = true;
+      updateConnectionAttemptView({ attempt: 0 });
+      if (connectionDetailsTitle) connectionDetailsTitle.textContent = initialViewState.connectionDetails.title;
+      if (connectionDetailsSubtitle) connectionDetailsSubtitle.textContent = initialViewState.connectionDetails.subtitle;
 
       setInteractiveControlsDisabled(true);
     }
@@ -1284,7 +1251,7 @@
 
       if ('logs' in state) renderLogs(state.logs);
 
-      // Показываем/скрываем "Идёт подключение…" vs "Детали"
+      // Обновляем текст "Детали подключения" в зависимости от attempt
       updateConnectionAttemptView(state);
 
       if ('system' in state) {
