@@ -38,7 +38,7 @@ STATE = {
     "inet_status": "pending",
     "rx": {"progress": 3},
     "tx": {"progress": 45},
-    "attempt": 0,
+    "attempt": 1,
     "system": "pending",
     "modem_off_temp": False,
     "angles": {

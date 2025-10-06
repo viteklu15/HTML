@@ -1392,10 +1392,6 @@ a {
   justify-content: flex-start;
 }
 
-.edit-area .spacer {
-  /* flex: 1; */
-}
-
 /* Подсказка для Wi-Fi */
 .hint {
   font: 12px/1.4 "Roboto", Arial, sans-serif;
