@@ -703,15 +703,15 @@
       const clusterNumbers = parseNumbersFromString(normalizedClusterRaw);
 
       if (beamNumber == null || clusterNumbers.length === 0) {
-        rfClusterField.style.color = '';
+        rfClusterField.style.color = 'var(--black)';
         if (beamNumberField) beamNumberField.style.color = '';
         return;
       }
 
       const hasMatch = clusterNumbers.includes(beamNumber);
-      const colorValue = hasMatch ? 'var(--black)' : 'red';
-      rfClusterField.style.color = colorValue;
-      if (beamNumberField) beamNumberField.style.color = colorValue;
+      const beamColor = hasMatch ? 'var(--black)' : 'red';
+      rfClusterField.style.color = 'var(--black)';
+      if (beamNumberField) beamNumberField.style.color = beamColor;
     }
 
     const connectionDetailsSection = document.getElementById('connection-details');
