@@ -1931,4 +1931,660 @@ a {
   font-size: 14px;
   color: rgba(70, 68, 68, 0.6); /* полупрозрачный серый */
   margin: 4px 0 0 0;
+
+
 }
+
+@media (max-width: 1024px) {
+  .screen .frame {
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .screen .div,
+  .screen .frame-2,
+  .screen .frame-3 {
+    width: 100%;
+  }
+
+  .screen .frame-2,
+  .screen .frame-3 {
+    justify-content: space-between;
+  }
+
+  .screen .frame-5 {
+    padding: 20px;
+  }
+
+  .screen .frame-13 {
+    padding: 20px;
+  }
+
+  .screen .frame-14,
+  .screen .frame-16,
+  .screen .frame-24,
+  .screen .frame-25 {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .screen .frame {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .screen .frame-2 {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .screen .frame-3 {
+    align-items: center;
+    gap: 12px;
+  }
+
+  .screen .wi-fi {
+    text-align: left;
+  }
+
+  .screen .frame-wrapper {
+    border-radius: 16px 16px 0 0;
+  }
+
+  .screen .frame-5 {
+    display: flex !important;
+    flex-direction: column;
+    gap: 12px;
+    overflow: visible;
+  }
+
+  .screen .frame-5 > article {
+    border-radius: 8px;
+  }
+
+  .screen .frame-5 > article:first-child,
+  .screen .frame-5 > article:last-child {
+    border-radius: 8px;
+  }
+
+  .screen .frame-6,
+  .screen .frame-9,
+  .screen .frame-10,
+  .screen .frame-12 {
+    width: 100%;
+  }
+
+  .screen .frame-13 {
+    padding: 16px;
+  }
+
+  .screen .frame-14 {
+    gap: 24px;
+  }
+
+  .screen .frame-17 {
+    grid-template-columns: 1fr;
+    row-gap: 12px;
+  }
+
+  .frame-17 .div-wrapper,
+  .frame-17 .value-view,
+  .frame-17 .checkbox-w-label,
+  .frame-17 .edit-area {
+    grid-column: 1 / -1;
+  }
+
+  .frame-17 .checkbox-w-label {
+    justify-self: flex-start;
+  }
+
+  .frame-17.editing .edit-area {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .frame-17.editing .edit-area .input,
+  .frame-17.editing .edit-area .btn {
+    width: 100%;
+  }
+
+  .frame-17.editing .edit-area .btn {
+    max-width: none;
+  }
+
+  .frame-17.editing .edit-area .input-group {
+    width: 100%;
+  }
+
+  .frame-17.editing .edit-area .input-dash {
+    display: none;
+  }
+
+  .frame-20,
+  .frame-24,
+  .frame-25 {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .screen .frame-21,
+  .screen .frame-26,
+  .screen .frame-26 .frame-27,
+  .screen .frame-26 .frame-28 {
+    width: 100% !important;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .screen .frame-26 {
+    margin-left: 0;
+    align-items: stretch;
+  }
+
+  .screen .frame-26 .frame-27 {
+    align-self: stretch;
+  }
+
+  .screen .frame-26 .frame-28 {
+    align-items: flex-start;
+  }
+
+  .screen .button-wrapper,
+  .screen .frame-29 {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0 16px 16px;
+    gap: 12px;
+  }
+
+  .screen .button-2,
+  .screen .title-4,
+  .temp-alert__actions {
+    width: 100%;
+  }
+
+  .temp-alert__actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .screen .frame {
+    padding: 16px;
+  }
+
+  .screen .frame-2 {
+    gap: 4px;
+  }
+
+  .screen .frame-3 {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .screen .thumbler {
+    width: 100%;
+  }
+
+  .screen .badge {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .screen .wi-fi {
+    width: 100%;
+  }
+}
+
+/* ======== МОБИЛЬНАЯ ВЕРСИЯ ======== */
+@media (max-width: 768px) {
+  .frame-5 {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr; /* две колонки */
+    gap: 8px;
+    padding: 16px;
+  }
+
+  .status-card {
+    width: 100% !important;
+    min-width: auto;
+    border-radius: 8px;
+  }
+
+  .frame-6,
+  .frame-9,
+  .frame-10,
+  .frame-12 {
+    width: 100% !important;
+    padding: 12px;
+  }
+
+  /* убрать фиксированную ширину у карточек */
+  .frame-6,
+  .frame-9 {
+    flex: 1 1 auto;
+  }
+
+  /* компактнее блок Wi-Fi */
+  .frame-3 {
+    width: auto;
+    justify-content: space-between;
+  }
+
+  /* выравнивание заголовка и статуса */
+  header.frame {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  /* общее уплотнение отступов */
+  .frame-13 {
+    flex-direction: column;
+    padding: 16px;
+  }
+}
+
+/* === МОБИЛЬНО: выровнять карточки статусов === */
+@media (max-width: 768px) {
+  /* сетка: 2 колонки */
+  main.screen .frame-wrapper .frame-4 .frame-5 {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    padding: 12px 16px !important;
+    align-items: stretch !important;   /* растягиваем ячейки по высоте */
+  }
+
+  /* единый стиль карточек */
+  main.screen .frame-wrapper .frame-4 .frame-5 > article.status-card,
+  .frame-6, .frame-9, .frame-10, .frame-12 {
+    width: auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+
+    /* одинаковая геометрия */
+    border-radius: 12px !important;
+    padding: 12px !important;
+
+    /* одинаковая высота — чтобы ряды были ровными */
+    height: 120px !important;          /* при необходимости поменяй на 110–130 */
+    box-sizing: border-box !important;
+
+    /* выравнивание контента */
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  /* внутри карточек выравниваем колонки */
+  .status-card .frame-7 {
+    align-items: center !important;
+  }
+
+  /* прогресс-блокам одинаковые отступы, чтобы вписались в 120px */
+  #rx-status-card, #tx-status-card {
+    gap: 8px !important;
+  }
+  #rx-status-card .frame-11,
+  #tx-status-card .frame-11 {
+    margin: 2px 0 0 !important;
+  }
+}
+
+/* === МОБИЛЬНАЯ СЕТКА: 2 карточки в ряд === */
+@media (max-width: 768px) {
+  /* контейнер статусов — принудительно GRID из двух колонок */
+  main.screen .frame-wrapper .frame-4 .frame-5 {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-auto-rows: auto;
+    grid-auto-flow: row dense;
+    gap: 12px !important;
+    padding: 12px 16px !important;
+  }
+
+  /* каждая карточка — одна ячейка, без фиксированных ширин */
+  main.screen .frame-wrapper .frame-4 .frame-5 > * {
+    grid-column: auto / span 1 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    align-self: start !important;
+    justify-self: stretch !important;
+  }
+
+  /* убираем прежние «ширина 140px» и растяжение от flex */
+  .frame-6, .frame-9, .frame-10, .frame-12 {
+    width: auto !important;
+    align-self: auto !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+  }
+}
+
+/* === МОБИЛЬНО: выровнять карточки статусов === */
+@media (max-width: 768px) {
+  /* сетка: 2 колонки */
+  main.screen .frame-wrapper .frame-4 .frame-5 {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    padding: 12px 16px !important;
+    align-items: stretch !important;   /* растягиваем ячейки по высоте */
+  }
+
+  /* единый стиль карточек */
+  main.screen .frame-wrapper .frame-4 .frame-5 > article.status-card,
+  .frame-6, .frame-9, .frame-10, .frame-12 {
+    width: auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+
+    /* одинаковая геометрия */
+    border-radius: 12px !important;
+    padding: 12px !important;
+
+    /* одинаковая высота — чтобы ряды были ровными */
+    height: 120px !important;          /* при необходимости поменяй на 110–130 */
+    box-sizing: border-box !important;
+
+    /* выравнивание контента */
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  /* внутри карточек выравниваем колонки */
+  .status-card .frame-7 {
+    align-items: center !important;
+  }
+
+  /* прогресс-блокам одинаковые отступы, чтобы вписались в 120px */
+  #rx-status-card, #tx-status-card {
+    gap: 8px !important;
+  }
+  #rx-status-card .frame-11,
+  #tx-status-card .frame-11 {
+    margin: 2px 0 0 !important;
+  }
+}
+
+/* === МОБИЛЬНАЯ ВЕРСИЯ: кнопка модема на всю ширину === */
+@media (max-width: 768px) {
+  /* контейнер с модемом */
+  .modem-controls__toggle {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  /* сама надпись "Модем:" */
+  #modem-power-status {
+    flex-shrink: 0 !important;
+    font-weight: 500;
+  }
+
+  /* сам тумблер на всю оставшуюся ширину */
+  .modem-controls__toggle fieldset.thumbler {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    justify-content: center;
+  }
+
+  /* выравниваем кнопки Вкл/Выкл */
+  .modem-controls__toggle .thumbler__option {
+    flex: 1 1 50% !important;
+    text-align: center;
+  }
+}
+
+/* === МОБИЛЬНАЯ ВЕРСИЯ: "Номер луча" в одну строку === */
+@media (max-width: 768px) {
+  /* общий контейнер строки */
+  #beam-number-value {
+    font-weight: 600;
+    color: #d92c2c; /* если хочешь, можно убрать/заменить цвет */
+  }
+
+  /* строка "Номер луча..." */
+  .frame-17:has(#beam-number-value) {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  /* убираем переносы */
+  .frame-17:has(#beam-number-value) .div-wrapper,
+  .frame-17:has(#beam-number-value) .span-wrapper {
+    width: auto !important;
+    white-space: nowrap !important;
+  }
+
+  /* подпись выравниваем влево */
+  .frame-17:has(#beam-number-value) .div-wrapper {
+    flex: 1 1 auto !important;
+  }
+
+  /* значение справа */
+  .frame-17:has(#beam-number-value) .span-wrapper {
+    flex-shrink: 0 !important;
+  }
+}
+
+/* === МОБИЛЬНАЯ ВЕРСИЯ: выравнивание строк "Номер луча" и "РЧ кластер" === */
+@media (max-width: 768px) {
+  /* общие параметры для обеих строк */
+  .frame-17:has(#beam-number-value),
+  .frame-18 {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  /* подписи — слева */
+  .frame-17:has(#beam-number-value) .div-wrapper,
+  .frame-18 .div-wrapper {
+    flex: 1 1 auto !important;
+    width: auto !important;
+    white-space: nowrap !important;
+  }
+
+  /* значения — справа */
+  .frame-17:has(#beam-number-value) .span-wrapper,
+  .frame-18 .element-2 {
+    flex-shrink: 0 !important;
+    width: auto !important;
+    white-space: nowrap !important;
+    text-align: right !important;
+  }
+
+  /* значение номера луча — выделено цветом (можно убрать при желании) */
+  #beam-number-value {
+    font-weight: 600;
+    color: #d92c2c;
+  }
+
+  /* значения РЧ кластера — выделены жирным */
+  #rf-cluster-polarization-value {
+    font-weight: 700;
+  }
+}
+
+/* === МОБИЛЬНАЯ ВЕРСИЯ: перенос длинной подписи у чекбокса автоотключения === */
+@media (max-width: 768px) {
+  .temp-alert__auto {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+  }
+
+  /* контейнер подписи */
+  .temp-alert__auto-label {
+    white-space: normal !important;      /* разрешаем перенос */
+    word-break: break-word !important;   /* перенос по словам */
+    flex: 1 1 auto !important;           /* занимает всё свободное место */
+    line-height: 1.3 !important;         /* компактнее */
+  }
+
+  /* сам текст чуть меньше для мобильного */
+  .temp-alert__auto-label .title-3 {
+    font-size: 13px !important;
+  }
+}
+
+/* === Мобильный лог: всё в одну строку с обрезкой === */
+@media (max-width: 768px) {
+  #event-log .frame-24,
+  #event-log .frame-25 {
+    display: flex !important;
+    flex-direction: row !important;     /* обратно в строку */
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  /* номер слева, узкий столбец */
+  #event-log .text-wrapper-17 {
+    width: auto !important;
+    min-width: 2ch;                     /* 1, 2, 10 и т.п. */
+    text-align: right;
+  }
+
+  /* текст по центру — тянется, с троеточием */
+  #event-log .div-3 {
+    flex: 1 1 auto !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* время справа, не переносим */
+  #event-log .text-wrapper-18 {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+    margin-left: auto;                  /* прижать к правому краю */
+  }
+}
+
+/* === МОБИЛЬНАЯ ВЕРСИЯ: скрыть "Версия ПО" === */
+@media (max-width: 768px) {
+  .footer .text-wrapper-27 {
+    display: none !important;
+  }
+}
+
+
+/* === МОБИЛЬНАЯ ВЕРСИЯ: "Координаты" и "Пароль Wi-Fi" в одну строку === */
+@media (max-width: 768px) {
+  /* общая строка */
+  #row-coords,
+  #row-wifi-pass {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important; /* разрешаем перенос только при нехватке места */
+  }
+
+  /* подпись слева */
+  #row-coords .div-wrapper,
+  #row-wifi-pass .div-wrapper {
+    flex: 1 1 auto !important;
+    width: auto !important;
+    white-space: nowrap !important;
+  }
+
+  /* значение справа, переносим только если не влезает */
+  #row-coords .value-view,
+  #row-wifi-pass .value-view {
+    flex: 0 1 auto !important;
+    text-align: right !important;
+    white-space: normal !important; /* разрешаем перенос при нехватке места */
+    word-break: break-word !important;
+  }
+
+  /* чекбокс "Изменить" переносим вниз */
+  #row-coords .checkbox-w-label,
+  #row-wifi-pass .checkbox-w-label {
+    width: 100% !important;
+    margin-top: 4px !important;
+  }
+}
+
+/* === МОБИЛЬНО: Координаты / Пароль — в одну строку, чекбокс ниже === */
+@media (max-width: 768px) {
+  #row-coords,
+  #row-wifi-pass {
+    display: grid !important;
+    grid-template-columns: 1fr auto !important; /* подпись | значение */
+    align-items: center !important;
+    column-gap: 8px !important;
+    row-gap: 4px !important;
+  }
+
+  /* подпись слева */
+  #row-coords .div-wrapper,
+  #row-wifi-pass .div-wrapper {
+    grid-column: 1 / 2 !important;
+    white-space: nowrap !important;
+  }
+
+  /* значение справа (в одну строку, с троеточием при нехватке места) */
+  #row-coords .value-view,
+  #row-wifi-pass .value-view {
+    grid-column: 2 / 3 !important;
+    justify-self: end !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
+  }
+
+  /* чекбокс "Изменить" — на следующей строке на всю ширину */
+  #row-coords .checkbox-w-label,
+  #row-wifi-pass .checkbox-w-label {
+    grid-column: 1 / -1 !important;
+    margin-top: 2px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .btn {
+    padding: 0 !important;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
