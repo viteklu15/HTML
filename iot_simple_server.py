@@ -50,7 +50,7 @@ STATE = {
     "beam_number": 24,
     "rf_cluster_polarization": "23/B, 28/B, 17/A",
     "wifi_password": "12345678",
-    "logs": ["log1", "log2"],
+    "logs": ["событие прошло ", "модем подключен"],
     "last_update": None,
 }
 

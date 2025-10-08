@@ -2572,6 +2572,161 @@ a {
   }
 }
 
+/* === МОБИЛЬНО: <= 400px === */
+@media (max-width: 400px) {
+  html, body { overflow-x: hidden; }
+
+  /* Сжимаем шапку и выключаем подпись Wi-Fi */
+  .screen .frame { padding: 12px; }
+  /* #wifi-status-text { display: none !important; } скрыть "WiFi Работает" */
+  .thumbler { width: 80px; height: 28px; }        /* тумблер компактнее */
+
+  /* Карточки статусов в две колонки и без фикс. ширин */
+  .frame-5 { padding: 12px; gap: 8px; flex-wrap: wrap; }
+  .frame-6, .frame-9, .frame-10, .frame-12 { 
+    width: calc(50% - 4px) !important; 
+    border-radius: 8px;
+  }
+
+  /* Правый сайдбар вниз, всё тянется на 100% */
+  .frame-13 { flex-direction: column; gap: 16px; padding: 12px; }
+  .frame-14, .frame-16, .frame-24, .frame-25, .frame-26 { 
+    width: 100% !important; 
+  }
+  .frame-26 { margin-left: 0; }
+
+  /* Строки параметров — сеткой: подпись | значение | чекбокс */
+  #row-coords, #row-wifi-pass,
+  .frame-17, .frame-18, .frame-19 { 
+    display: grid !important;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    column-gap: 8px;
+    row-gap: 6px;
+    padding-bottom: 8px;
+  }
+
+  /* Колонка с подписью не фиксированная */
+  .div-wrapper, .frame-21, .text-wrapper-10, .text-wrapper-11 { 
+    width: auto !important;
+  }
+
+  /* Значение прижато вправо и режется троеточием */
+  .value-view { 
+    justify-self: end;
+    max-width: 60vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Чекбокс всегда третьим столбцом */
+  .checkbox-w-label { justify-self: end; }
+
+  /* Редактор (когда включён чекбокс) — на всю ширину, под строкой */
+  .frame-17.editing, #row-coords.editing, #row-wifi-pass.editing {
+    grid-template-columns: 1fr auto; /* подпись | чекбокс */
+  }
+  .frame-17.editing .edit-area,
+  #row-coords.editing .edit-area,
+  #row-wifi-pass.editing .edit-area {
+    grid-column: 1 / -1; 
+    display: grid !important;
+    grid-template-columns: 1fr;
+    row-gap: 8px;
+  }
+
+  /* Метр температуры и подписи к нему — без жёстких ширин */
+  .state-default .frame-11 { width: 100% !important; }
+  .frame-22 { gap: 6px; }
+
+  /* Футер — в столбик */
+  .footer { flex-direction: column; }
+  .frame-29, .button-wrapper { padding: 12px; justify-content: space-between; }
+}
+
+
+/* === Суперузкие экраны: всё влезает при <=400px === */
+@media (max-width: 400px) {
+  html, body { overflow-x: hidden; }
+
+  /* снимаем фиксированные ширины */
+  .screen .frame-14,
+  .screen .frame-24,
+  .screen .frame-25,
+  .screen .frame-26 { width: 100% !important; }
+
+  .screen .frame-21,
+  .screen .text-wrapper-10,
+  .screen .text-wrapper-11 { width: auto !important; }
+
+  /* карточки статусов — одна колонка, без жёстких размеров */
+  .frame-5 { 
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    padding: 10px !important;
+  }
+  .frame-6, .frame-9, .frame-10, .frame-12 {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    padding: 12px !important;
+  }
+
+  /* строка параметров: подпись | значение | чекбокс — компактно */
+  #connection-details .frame-17,
+  #connection-details .frame-18,
+  #connection-details .frame-19,
+  #row-coords,
+  #row-wifi-pass {
+    display: grid !important;
+    grid-template-columns: 1fr auto auto;
+    column-gap: 8px; row-gap: 6px;
+    padding: 8px 0 !important;
+  }
+
+  /* длинные значения не рвут верстку */
+  .value-view {
+    justify-self: end;
+    max-width: 62vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* тумблер Wi-Fi и кнопки — компактнее */
+  .thumbler { width: 100% !important; }
+}
+
+/* === Совсем узко: <=320px — кнопки в столбик и строки в одну колонку === */
+@media (max-width: 320px) {
+  html { font-size: 13px; }
+
+  .button-wrapper {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 0 0 12px !important;
+  }
+  .button-wrapper .button { width: 100% !important; }
+
+  /* параметры — одна колонка (подпись, затем значение, затем чекбокс) */
+  #connection-details .frame-17,
+  #connection-details .frame-18,
+  #connection-details .frame-19,
+  #row-coords,
+  #row-wifi-pass {
+    grid-template-columns: 1fr !important;
+  }
+  .value-view, .checkbox-w-label {
+    justify-self: start;
+    max-width: 100%;
+    white-space: normal;  /* можно переносить */
+  }
+}
+
+
 
 
 
