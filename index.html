@@ -386,7 +386,7 @@
               </div>
             </div>
              <div class="button-wrapper">
-                <button type="button" class="button-2">
+                <button type="button" class="button-2" id="repeat-navigation-button">
                   <span class="title-4">Повторное навидение</span>
                 </button>
               </div>
@@ -418,6 +418,7 @@
     const API_WIFI_PASSWORD_ENDPOINT = "/api/wifi/password";
     const API_MODEM_POWER_ENDPOINT = "/api/modem/power";
     const API_MODEM_AUTO_SHUTDOWN_ENDPOINT = "/api/modem/off-temp";
+    const API_REPEAT_NAVIGATION_ENDPOINT = "/api/antenna/retarget";
 
     const STATE_POLL_INTERVAL_MS = 500;
     let statePollTimerId = null;
@@ -450,6 +451,13 @@
     }
 
     /* ===== Режим редактирования/просмотра по чекбоксам ===== */
+    const repeatNavigationButton = document.getElementById('repeat-navigation-button');
+    if (repeatNavigationButton) {
+      repeatNavigationButton.addEventListener('click', () => {
+        sendLocalGet(API_REPEAT_NAVIGATION_ENDPOINT);
+      });
+    }
+
     document.querySelectorAll('.checkbox-input').forEach(cb => {
       cb.addEventListener('change', e => {
         const row = e.target.closest('.frame-17');
