@@ -835,6 +835,18 @@
     };
 
 
+    function formatProgressRawValue(value) {
+      if (value == null || value === '') return '';
+
+      const num = Number(value);
+      if (!Number.isNaN(num)) {
+        const fractionDigits = Math.abs(num) < 10 ? 1 : 0;
+        return `${num.toFixed(fractionDigits)}dB`;
+      }
+
+      return String(value);
+    }
+
     function updateProgressState(indicator, rawValue, labelPrefix, range = { min: 0, max: 100 }) {
       if (!indicator?.bar) return;
 
@@ -847,11 +859,14 @@
       const clamped = span !== 0 ? Math.min(span, Math.max(0, norm)) : 0; // клип 0..span
       const percent = Math.round((clamped / (span || 1)) * 100);     // 0..100
 
+      const formattedRaw = formatProgressRawValue(rawValue);
+      const rawSuffix = formattedRaw ? ` (${formattedRaw})` : '';
+
       if (indicator.fill) indicator.fill.style.flexGrow = String(percent);
       if (indicator.rest) indicator.rest.style.flexGrow = String(100 - percent);
       indicator.bar.setAttribute('aria-valuenow', String(percent));
-      indicator.bar.setAttribute('aria-label', `${labelPrefix} ${percent}%`);
-      if (indicator.value) indicator.value.textContent = `${percent}%`;
+      indicator.bar.setAttribute('aria-label', `${labelPrefix} ${percent}%${rawSuffix}`);
+      if (indicator.value) indicator.value.textContent = `${percent}%${rawSuffix}`;
     }
 
 
