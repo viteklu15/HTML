@@ -187,6 +187,10 @@ class Handler(BaseHTTPRequestHandler):
                     elif state_val == "off": STATE["wifi_on"] = False
                 return self._send(204, "text/plain; charset=utf-8")
 
+            if path == "/api/antenna/retarget":
+                log("Повторное наведение инициировано")
+                return self._send(204, "text/plain; charset=utf-8")
+
             # --- Корень: строго index.html
             if path == "/":
                 index_path = os.path.join(DOC_ROOT, INDEX_FILE)
