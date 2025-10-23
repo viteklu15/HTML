@@ -385,6 +385,11 @@
                 </div>
               </div>
             </div>
+             <div class="button-wrapper">
+                <button type="button" class="button-2">
+                  <span class="title-4">Повторное навидение</span>
+                </button>
+              </div>
           </aside>
         </section>
 
@@ -396,9 +401,9 @@
             </button>
           </div>
           <div class="button-wrapper">
-            <button type="button" class="button-2">
+            <a class="button-2" href="/api/modem/open" target="_blank" rel="noopener" role="button">
               <span class="title-4">Перенастроить модем</span>
-            </button>
+            </a>
           </div>
         </footer>
       </div>
@@ -721,10 +726,13 @@
     const connectionDetailsTitle = document.getElementById('connection-details-title');
     const connectionDetailsSubtitle = document.getElementById('connection-details-subtitle');
     const CONNECTION_DETAIL_VARIANTS = [
-      { title: 'Идет подключение', subtitle: 'Попытка 1 из 3', subtitleColor: '#gray' },
-      { title: 'Идет подключение', subtitle: 'Попытка 2 из 3', subtitleColor: 'gray' },
-      { title: 'Идет подключение', subtitle: 'Попытка 3 из 3', subtitleColor: 'red' },
-      { title: 'Детали подключения', subtitle: ' ', subtitleColor: 'blue' },
+      { title: 'Идет подключение', subtitle: 'Калибровка компаса...', subtitleColor: '#gray' },
+      { title: 'Идет подключение', subtitle: 'Калибровка компаса завершена.', subtitleColor: '#gray' },
+      { title: 'Идет подключение', subtitle: 'Ожидание модема...', subtitleColor: 'gray' },
+      { title: 'Идет подключение', subtitle: 'Наведение антенны...', subtitleColor: 'gray' },
+      { title: 'Идет подключение', subtitle: 'Ошибка получения координат. Введите вручную!', subtitleColor: 'red' },
+      { title: 'Идет подключение', subtitle: 'Ошибка подключения. Проверьте РЧ-кластер, поляризацию и возможные препятсвия прохождения сигнала!', subtitleColor: 'red' },
+      { title: 'Детали подключения', subtitle: '', subtitleColor: 'blue' },
       { title: 'H вариант 4', subtitle: 'P вариант 4', subtitleColor: 'green' },
       { title: 'H вариант 5', subtitle: 'P вариант 5', subtitleColor: '#6b7280' },
       { title: 'H вариант 6', subtitle: 'P вариант 6', subtitleColor: '#7c3aed' },
@@ -815,7 +823,7 @@
 
     const PROGRESS_RANGE = {
       rx: { min: 0, max: 10 },   //   диапазона для RX 
-      tx: { min: -5, max: 50 }    //  диапазона для TX 
+      tx: { min: 0, max: 72 }    //  диапазона для TX 
     };
 
 
