@@ -50,6 +50,7 @@ STATE = {
     "beam_number": 24,
     "rf_cluster_polarization": "23/B, 28/B, 17/A",
     "wifi_password": "12345678",
+    "ssid": "Orion",
     "logs": ["событие прошло ", "модем подключен"],
     "last_update": None,
 }
@@ -196,6 +197,20 @@ class Handler(BaseHTTPRequestHandler):
                 with STATE_LOCK:
                     if   state_val == "on":  STATE["wifi_on"] = True
                     elif state_val == "off": STATE["wifi_on"] = False
+                return self._send(204, "text/plain; charset=utf-8")
+
+            if path == "/api/wifi/password":
+                q = parse_qs(u.query)
+                password_val = q.get("password", [""])[0]
+                with STATE_LOCK:
+                    STATE["wifi_password"] = password_val
+                return self._send(204, "text/plain; charset=utf-8")
+
+            if path == "/api/wifi/ssid":
+                q = parse_qs(u.query)
+                ssid_val = q.get("ssid", [""])[0]
+                with STATE_LOCK:
+                    STATE["ssid"] = ssid_val
                 return self._send(204, "text/plain; charset=utf-8")
 
             if path == "/api/antenna/retarget":

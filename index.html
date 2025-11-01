@@ -174,15 +174,15 @@
 
                 <div class="separator" aria-hidden="true"></div>
 
-                <!-- ===== Пароль Wi-Fi (редактирование по чекбоксу) ===== -->
+                <!-- ===== Настройки Wi-Fi (редактирование по чекбоксу) ===== -->
                 <div class="frame-17" id="row-wifi-pass">
                   <div class="div-wrapper">
-                    <label class="text-wrapper-10" for="wifi-pass">Пароль на WiFi</label>
+                    <label class="text-wrapper-10" for="wifi-ssid">Wi-Fi</label>
                   </div>
 
                   <!-- Просмотр -->
                   <p class="span-wrapper value-view">
-                    <span class="span">12345678</span>
+                    <span class="span">Сеть: <span id="wifi-ssid-view">—</span>; Пароль: <span id="wifi-password-view">—</span></span>
                   </p>
 
                   <!-- Переключатель -->
@@ -195,10 +195,22 @@
                   </div>
 
                   <!-- Редактор -->
-                  <form class="edit-area" aria-label="Редактирование пароля Wi-Fi">
-                    <input id="wifi-pass" name="wifi-pass" minlength="8" class="input"
-                      placeholder="Введите новый пароль" value="" aria-describedby="wifi-hint"
-                      aria-label="Пароль Wi-Fi">
+                  <form class="edit-area" aria-label="Редактирование настроек Wi-Fi">
+                    <div class="input-group">
+                      <label for="wifi-ssid">Имя сети</label>
+                      <input id="wifi-ssid" name="wifi-ssid" class="input" placeholder="Введите имя сети" value=""
+                        aria-label="Имя сети Wi-Fi">
+                    </div>
+
+                    <span class="input-dash" aria-hidden="true">—</span>
+
+                    <div class="input-group">
+                      <label for="wifi-pass">Пароль</label>
+                      <input id="wifi-pass" name="wifi-pass" minlength="8" class="input"
+                        placeholder="Введите новый пароль" value="" aria-describedby="wifi-hint"
+                        aria-label="Пароль Wi-Fi">
+                    </div>
+
                     <span id="wifi-hint" class="hint">Минимум 8 символов</span>
 
                     <button class="btn btn-primary btn-save" type="submit">Сохранить</button>
@@ -416,6 +428,7 @@
     const API_WIFI_COMMAND_ENDPOINT = "/api/wifi";
     const API_COORDS_SAVE_ENDPOINT = "/api/coords/save";
     const API_WIFI_PASSWORD_ENDPOINT = "/api/wifi/password";
+    const API_WIFI_SSID_ENDPOINT = "/api/wifi/ssid";
     const API_MODEM_POWER_ENDPOINT = "/api/modem/power";
     const API_MODEM_AUTO_SHUTDOWN_ENDPOINT = "/api/modem/off-temp";
     const API_REPEAT_NAVIGATION_ENDPOINT = "/api/antenna/retarget";
@@ -499,9 +512,18 @@
         }
 
         if (row.id === 'row-wifi-pass') {
+          const ssid = form.querySelector('[name="wifi-ssid"]').value;
           const pass = form.querySelector('[name="wifi-pass"]').value;
-          row.querySelector('.value-view .span').textContent = pass;
-          await sendLocalGet(API_WIFI_PASSWORD_ENDPOINT, { password: pass });
+          const viewSsid = row.querySelector('#wifi-ssid-view');
+          const viewPass = row.querySelector('#wifi-password-view');
+          const displaySsid = ssid === '' ? '—' : ssid;
+          const displayPass = pass === '' ? '—' : pass;
+          if (viewSsid) viewSsid.textContent = displaySsid;
+          if (viewPass) viewPass.textContent = displayPass;
+          await Promise.all([
+            sendLocalGet(API_WIFI_SSID_ENDPOINT, { ssid }),
+            sendLocalGet(API_WIFI_PASSWORD_ENDPOINT, { password: pass })
+          ]);
         }
 
         const cb = row.querySelector('.checkbox-input');
@@ -667,7 +689,9 @@
       wifiPass: document.getElementById('row-wifi-pass')
     };
 
-    const wifiPasswordView = rows.wifiPass?.querySelector('.value-view .span') || null;
+    const wifiSsidView = document.getElementById('wifi-ssid-view');
+    const wifiPasswordView = document.getElementById('wifi-password-view');
+    const wifiSsidInput = document.getElementById('wifi-ssid');
     const wifiPasswordInput = document.getElementById('wifi-pass');
 
     const angleFields = {
@@ -812,6 +836,8 @@
         subtitle: connectionDetailsSubtitle?.textContent || defaultConnectionDetails.subtitle,
         subtitleColor: connectionDetailsSubtitle?.style?.color || defaultConnectionDetails.subtitleColor
       },
+      wifiSsidView: wifiSsidView?.textContent || '',
+      wifiSsidInput: wifiSsidInput?.value || '',
       wifiPasswordView: wifiPasswordView?.textContent || '',
       wifiPasswordInput: wifiPasswordInput?.value || '',
       modemStatusText: modemStatusInitial?.textContent || '',
@@ -1040,6 +1066,8 @@
       updateProgressState(indicators.tx, 0, 'Передача данных', PROGRESS_RANGE.tx);
 
 
+      if (wifiSsidView) wifiSsidView.textContent = initialViewState.wifiSsidView;
+      if (wifiSsidInput) wifiSsidInput.value = initialViewState.wifiSsidInput;
       if (wifiPasswordView) wifiPasswordView.textContent = initialViewState.wifiPasswordView;
       if (wifiPasswordInput) wifiPasswordInput.value = initialViewState.wifiPasswordInput;
 
@@ -1318,8 +1346,15 @@
       if ('wifi_password' in state && !isRowEditing(rows.wifiPass)) {
         const rawPass = state.wifi_password;
         const passwordText = rawPass == null ? '' : String(rawPass);
-        if (wifiPasswordView) wifiPasswordView.textContent = passwordText;
+        if (wifiPasswordView) wifiPasswordView.textContent = passwordText === '' ? '—' : passwordText;
         if (wifiPasswordInput) wifiPasswordInput.value = passwordText;
+      }
+
+      if ('ssid' in state && !isRowEditing(rows.wifiPass)) {
+        const rawSsid = state.ssid;
+        const ssidText = rawSsid == null ? '' : String(rawSsid);
+        if (wifiSsidView) wifiSsidView.textContent = ssidText === '' ? '—' : ssidText;
+        if (wifiSsidInput) wifiSsidInput.value = ssidText;
       }
 
       if ('coords_status' in state && indicators.coords) {
