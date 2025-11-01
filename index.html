@@ -385,20 +385,20 @@
                 </div>
               </div>
             </div>
-             <div class="button-wrapper">
-                <button type="button" class="button-2" id="repeat-navigation-button">
-                  <span class="title-4">Повторное навидение</span>
-                </button>
-              </div>
+            <div class="button-wrapper">
+              <button type="button" class="button-2" id="repeat-navigation-button">
+                <span class="title-4">Повторное навидение</span>
+              </button>
+            </div>
           </aside>
         </section>
 
         <footer class="footer">
           <div class="frame-29">
-            <div class="text-wrapper-27">Версия ПО: 1.1</div>
-            <button type="button" class="button-2">
-              <span class="title-4">Обновить до 1.2</span>
-            </button>
+            <!-- <div class="text-wrapper-27">Версия ПО: 1.1</div> -->
+            <a class="button-2" href="update.html" target="_blank" rel="noopener" role="button">
+              <span class="title-4">Обновить ПО</span>
+            </a>
           </div>
           <div class="button-wrapper">
             <a class="button-2" href="/api/modem/open" target="_blank" rel="noopener" role="button">
@@ -454,7 +454,13 @@
     const repeatNavigationButton = document.getElementById('repeat-navigation-button');
     if (repeatNavigationButton) {
       repeatNavigationButton.addEventListener('click', () => {
-        sendLocalGet(API_REPEAT_NAVIGATION_ENDPOINT);
+        // Окно подтверждения
+        const isConfirmed = confirm('Вы уверены, что хотите выполнить повторное наведение?');
+
+        if (isConfirmed) {
+          sendLocalGet(API_REPEAT_NAVIGATION_ENDPOINT);
+        }
+        // Если пользователь нажал "Отмена", ничего не происходит
       });
     }
 

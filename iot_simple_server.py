@@ -16,7 +16,7 @@ except Exception:
 IS_WIN      = (os.name == "nt")
 SERIAL_PORT = os.environ.get("SERIAL_PORT", "COM3" if IS_WIN else "/dev/ttyS1")
 BAUD_RATE   = int(os.environ.get("BAUD_RATE", "115200"))
-HTTP_HOST   = os.environ.get("HTTP_HOST", "127.0.0.1")      # локально, чтобы Windows не ругался
+HTTP_HOST   = os.environ.get("HTTP_HOST", "0.0.0.0")        # доступ по сети
 HTTP_PORT   = int(os.environ.get("HTTP_PORT", "18080"))     # не 8080, чтобы реже конфликтовать
 INDEX_FILE  = os.environ.get("INDEX_FILE", "index.html")
 DOC_ROOT    = os.path.abspath(os.environ.get("DOC_ROOT", "."))
@@ -36,8 +36,8 @@ STATE = {
     "coords_status": "pending",
     "gps_status": "pending",
     "inet_status": "pending",
-    "rx": {"progress": 3},
-    "tx": {"progress": 45},
+    "rx": {"progress": 5},
+    "tx": {"progress": 5},
     "attempt": 1,
     "system": "pending",
     "modem_off_temp": False,
@@ -162,6 +162,17 @@ class Handler(BaseHTTPRequestHandler):
                 with STATE_LOCK:
                     body = json.dumps(STATE, ensure_ascii=False).encode("utf-8")
                 return self._send(200, "application/json; charset=utf-8", body)
+            if self.path == "/update.html":
+                log(">>> Отправить команду на включение WIFI <<<")
+
+            if self.path == "/update_esp":
+                  # Отправляем редирект на новый URL
+                self.send_response(200)
+                self.send_header("Content-type", "text/plain")
+                self.end_headers()
+                self.wfile.write(b"http://192.168.0.194/update")
+
+                return 
 
             if path == "/api/modem/power":
                 q = parse_qs(u.query)
