@@ -200,6 +200,7 @@
                       <label for="wifi-ssid">Имя сети</label>
                       <input id="wifi-ssid" name="wifi-ssid" class="input" placeholder="Введите имя сети" value=""
                         aria-label="Имя сети Wi-Fi">
+                        <span id="wifi-hint" class="hint">Введите имя Wi-Fi сети </span>
                     </div>
 
                     <span class="input-dash" aria-hidden="true">—</span>
@@ -209,9 +210,10 @@
                       <input id="wifi-pass" name="wifi-pass" minlength="8" class="input"
                         placeholder="Введите новый пароль" value="" aria-describedby="wifi-hint"
                         aria-label="Пароль Wi-Fi">
+                        <span id="wifi-hint" class="hint">Минимум 8 символов</span>
                     </div>
 
-                    <span id="wifi-hint" class="hint">Минимум 8 символов</span>
+                    
 
                     <button class="btn btn-primary btn-save" type="submit">Сохранить</button>
                     <button class="btn btn-secondary btn-cancel" type="button">Отменить</button>
