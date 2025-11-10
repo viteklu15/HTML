@@ -1203,6 +1203,13 @@ a {
   outline-offset: 2px;
 }
 
+.button-2--disabled,
+.button-2[aria-disabled="true"] {
+  opacity: 0.4;
+  pointer-events: none;
+  cursor: default;
+}
+
 /* Ensure proper label association */
 .checkbox {
   cursor: pointer;

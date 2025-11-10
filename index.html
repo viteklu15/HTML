@@ -415,7 +415,7 @@
             </a>
           </div>
           <div class="button-wrapper">
-            <a class="button-2" href="/api/modem/open" target="_blank" rel="noopener" role="button">
+            <a id="modem-reconfigure-link" class="button-2" href="/api/modem/open" target="_blank" rel="noopener" role="button">
               <span class="title-4">Перенастроить модем</span>
             </a>
           </div>
@@ -441,6 +441,93 @@
     const wifiStatusElement = document.getElementById('wifi-status-text');
     let resetWifiThumblerToInitial = null;
     let setWifiThumblerDisabled = null;
+
+    const modemReconfigureLink = document.getElementById('modem-reconfigure-link');
+    const MODEM_GATEWAY_RECHECK_INTERVAL = 5000;
+    let currentModemGatewayUrl = null;
+    let modemGatewayReachable = false;
+    let modemGatewayCheckPromise = null;
+    let lastModemGatewayCheckTime = 0;
+    let latestModemGatewayAddress = null;
+
+    function setModemReconfigureDisabled(disabled) {
+      if (!modemReconfigureLink) return;
+      if (disabled) {
+        modemReconfigureLink.setAttribute('aria-disabled', 'true');
+        modemReconfigureLink.classList.add('button-2--disabled');
+      } else {
+        modemReconfigureLink.setAttribute('aria-disabled', 'false');
+        modemReconfigureLink.classList.remove('button-2--disabled');
+      }
+    }
+
+    setModemReconfigureDisabled(true);
+
+    modemReconfigureLink?.addEventListener('click', (event) => {
+      if (modemReconfigureLink.getAttribute('aria-disabled') === 'true') {
+        event.preventDefault();
+      }
+    });
+
+    function normalizeGatewayUrl(raw) {
+      if (raw == null) return null;
+      const trimmed = String(raw).trim();
+      if (!trimmed) return null;
+      if (/^https?:\/\//i.test(trimmed)) return trimmed;
+      return `http://${trimmed}`;
+    }
+
+    function ensureModemGatewayReachability(address) {
+      if (!modemReconfigureLink) return;
+      if (address !== undefined) {
+        latestModemGatewayAddress = address;
+      }
+
+      const normalized = normalizeGatewayUrl(address !== undefined ? address : latestModemGatewayAddress);
+      if (!normalized) {
+        currentModemGatewayUrl = null;
+        modemGatewayReachable = false;
+        setModemReconfigureDisabled(true);
+        return;
+      }
+
+      if (normalized !== currentModemGatewayUrl) {
+        currentModemGatewayUrl = normalized;
+        modemGatewayReachable = false;
+        lastModemGatewayCheckTime = 0;
+      }
+
+      if (modemGatewayReachable) {
+        setModemReconfigureDisabled(false);
+        return;
+      }
+
+      const now = Date.now();
+      if (modemGatewayCheckPromise || (now - lastModemGatewayCheckTime) < MODEM_GATEWAY_RECHECK_INTERVAL) {
+        setModemReconfigureDisabled(true);
+        return;
+      }
+
+      lastModemGatewayCheckTime = now;
+      setModemReconfigureDisabled(true);
+
+      modemGatewayCheckPromise = fetch(normalized, { method: 'GET', mode: 'no-cors' })
+        .then(() => {
+          if (currentModemGatewayUrl === normalized) {
+            modemGatewayReachable = true;
+            setModemReconfigureDisabled(false);
+          }
+        })
+        .catch(() => {
+          if (currentModemGatewayUrl === normalized) {
+            modemGatewayReachable = false;
+            setModemReconfigureDisabled(true);
+          }
+        })
+        .finally(() => {
+          modemGatewayCheckPromise = null;
+        });
+    }
 
     function restartStatePollingTimer() {
       if (statePollTimerId !== null) {
@@ -1094,6 +1181,12 @@
       }
 
       setInteractiveControlsDisabled(true);
+      latestModemGatewayAddress = null;
+      currentModemGatewayUrl = null;
+      modemGatewayReachable = false;
+      modemGatewayCheckPromise = null;
+      lastModemGatewayCheckTime = 0;
+      setModemReconfigureDisabled(true);
     }
 
 
@@ -1294,6 +1387,8 @@
       setInteractiveControlsDisabled(false);
       systemStatusLocked = false;
 
+      ensureModemGatewayReachability('modem_gateway' in state ? state.modem_gateway : null);
+
       if (typeof state.mac === 'string' && macField) {
         macField.textContent = `MAC-адрес: ${state.mac}`;
       }
@@ -1438,6 +1533,9 @@
       if (cbAuto) cbAuto.disabled = disabled;
 
       modemControlsSection?.querySelectorAll('button').forEach(btn => { btn.disabled = disabled; });
+
+      if (disabled) setModemReconfigureDisabled(true);
+      else ensureModemGatewayReachability();
     }
 
     setInteractiveControlsDisabled(true);
