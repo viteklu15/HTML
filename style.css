@@ -1,5 +1,23 @@
-@import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
-@import url("https://fonts.googleapis.com/css?family=Roboto:var(--m3-title-large-font-weight),var(--m3-body-medium-font-weight),var(--m3-body-small-emphasized-font-weight),400,700,600,var(--m3-body-small-font-weight)");
+/* === LOCAL RESET (без интернета) === */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
 
 * {
   -webkit-font-smoothing: antialiased;
@@ -24,36 +42,45 @@ a {
 }
 
 :root {
+  --font-main: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
   --black: rgba(0, 0, 0, 1);
   --white: rgba(255, 255, 255, 1);
   --black-8: rgba(0, 0, 0, 0.8);
-  --m3-body-medium-font-family: "Roboto", Helvetica;
+
+  --m3-body-medium-font-family: var(--font-main);
   --m3-body-medium-font-weight: 400;
   --m3-body-medium-font-size: 14px;
   --m3-body-medium-letter-spacing: 0.25px;
   --m3-body-medium-line-height: 20px;
   --m3-body-medium-font-style: normal;
-  --m3-title-large-font-family: "Roboto", Helvetica;
+
+  --m3-title-large-font-family: var(--font-main);
   --m3-title-large-font-weight: 400;
   --m3-title-large-font-size: 22px;
   --m3-title-large-letter-spacing: 0px;
   --m3-title-large-line-height: 28px;
   --m3-title-large-font-style: normal;
-  --m3-body-small-emphasized-font-family: "Roboto", Helvetica;
+
+  --m3-body-small-emphasized-font-family: var(--font-main);
   --m3-body-small-emphasized-font-weight: 500;
   --m3-body-small-emphasized-font-size: 12px;
   --m3-body-small-emphasized-letter-spacing: 0.4000000059604645px;
   --m3-body-small-emphasized-line-height: 16px;
   --m3-body-small-emphasized-font-style: normal;
-  --m3-body-small-font-family: "Roboto", Helvetica;
+
+  --m3-body-small-font-family: var(--font-main);
   --m3-body-small-font-weight: 400;
   --m3-body-small-font-size: 12px;
   --m3-body-small-letter-spacing: 0.4000000059604645px;
   --m3-body-small-line-height: 16px;
   --m3-body-small-font-style: normal;
-  --m3-elevation-dark-1: 0px 1px 2px 0px rgba(0, 0, 0, 0.3),
+
+  --m3-elevation-dark-1:
+    0px 1px 2px 0px rgba(0, 0, 0, 0.3),
     0px 1px 3px 1px rgba(0, 0, 0, 0.15);
 }
+
 
 .screen {
   display: flex;
@@ -279,7 +306,7 @@ a {
   position: relative;
   align-self: stretch;
   margin-top: -1.00px;
-  font-family: "Roboto", Helvetica;
+  font-family: var(--font-main);
   font-weight: 400;
   color: #404040;
   font-size: 12px;
@@ -297,7 +324,7 @@ a {
   letter-spacing: 0.40px;
   line-height: normal;
   position: relative;
-  font-family: "Roboto", Helvetica;
+  font-family: var(--font-main);
 }
 
 .screen .element {
@@ -308,7 +335,7 @@ a {
   text-align: center;
   line-height: 12px;
   position: relative;
-  font-family: "Roboto", Helvetica;
+  font-family: var(--font-main);
 }
 
 .screen .text-wrapper-5 {
@@ -376,7 +403,7 @@ a {
 
 .screen .p {
   align-self: stretch;
-  font-family: "Roboto", Helvetica;
+  font-family: var(--font-main);
   font-size: 12px;
   text-align: center;
   letter-spacing: 0.40px;
@@ -472,7 +499,7 @@ a {
 .connection-attempt__attempt,
 .connection-attempt__eta {
   margin: 0;
-  font-family: "Roboto", Helvetica;
+  font-family: var(--font-main);
   font-size: 16px;
   line-height: 24px;
   letter-spacing: 0.15px;
@@ -485,7 +512,7 @@ a {
 
 .connection-attempt__error {
   margin: 0;
-  font-family: "Roboto", Helvetica;
+  font-family: var(--font-main);
   font-size: 16px;
   line-height: 24px;
   letter-spacing: 0.15px;
@@ -557,7 +584,7 @@ a {
   font-size: 14px;
   line-height: 14px;
   position: relative;
-  font-family: "Roboto", Helvetica;
+  font-family: var(--font-main);
 }
 
 .screen .checkbox-w-label {
@@ -657,7 +684,7 @@ a {
   font-size: 14px;
   line-height: 14px;
   position: relative;
-  font-family: "Roboto", Helvetica;
+  font-family: var(--font-main);
 }
 
 .screen .frame-19 {
@@ -882,7 +909,7 @@ a {
   position: relative;
   width: fit-content;
   margin-top: -1.00px;
-  font-family: "Roboto", Helvetica;
+  font-family: var(--font-main);
   font-weight: 700;
   color: #404040;
   font-size: 14px;
@@ -930,7 +957,7 @@ a {
   letter-spacing: 0.40px;
   line-height: 18px;
   position: relative;
-  font-family: "Roboto", Helvetica;
+  font-family: var(--font-main);
 }
 
 .screen .text-wrapper-21 {
@@ -943,7 +970,7 @@ a {
   line-height: 18px;
   white-space: nowrap;
   position: relative;
-  font-family: "Roboto", Helvetica;
+  font-family: var(--font-main);
 }
 
 .screen .group-2 {
@@ -968,7 +995,7 @@ a {
   left: calc(50.00% - 9px);
   width: 9px;
   transform: rotate(180deg);
-  font-family: "Roboto", Helvetica;
+  font-family: var(--font-main);
   font-weight: 600;
   color: #404040;
   font-size: 12px;
@@ -984,7 +1011,7 @@ a {
   bottom: 54px;
   width: 9px;
   transform: rotate(180deg);
-  font-family: "Roboto", Helvetica;
+  font-family: var(--font-main);
   font-weight: 600;
   color: #404040;
   font-size: 12px;
@@ -1000,7 +1027,7 @@ a {
   left: 57px;
   width: 9px;
   transform: rotate(180deg);
-  font-family: "Roboto", Helvetica;
+  font-family: var(--font-main);
   font-weight: 600;
   color: #404040;
   font-size: 12px;
@@ -1016,7 +1043,7 @@ a {
   right: 65px;
   width: 9px;
   transform: rotate(180deg);
-  font-family: "Roboto", Helvetica;
+  font-family: var(--font-main);
   font-weight: 600;
   color: #404040;
   font-size: 12px;
@@ -1036,7 +1063,7 @@ a {
   line-height: 18px;
   white-space: nowrap;
   position: relative;
-  font-family: "Roboto", Helvetica;
+  font-family: var(--font-main);
 }
 
 .screen .text-wrapper-26 {
