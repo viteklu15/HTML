@@ -1782,6 +1782,9 @@ a {
   inline-size: 24px;
   block-size: 24px;
   display: inline-block;
+  flex: 0 0 auto;
+  min-inline-size: 24px;
+  min-block-size: 24px;
 }
 
 /* Размеры (если где-то нужен 28px) */
@@ -2759,7 +2762,6 @@ a {
     white-space: normal;  /* можно переносить */
   }
 }
-
 
 
 
